@@ -1,0 +1,27 @@
+image:
+- Visual Studio 2015
+environment:
+  matrix:
+    # node.js
+    - nodejs_version: "6.5.0"
+    - nodejs_version: "7.4.0"
+    - nodejs_version: "7.9.0"
+    - nodejs_version: "8.2.1"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm install
+
+test_script:
+  - node --version
+  - npm --version
+  - npm test
+  - node tools/coverage.js
+
+after_test:
+  - ps: |
+      $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
+      $file = '.\test-results.xml'
+      (New-Object 'System.Net.WebClient').UploadFile($url, (Resolve-Path $file))
+
+build: off
