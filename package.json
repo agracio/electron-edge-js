@@ -1,9 +1,11 @@
 {
   "name": "electron-edge-js",
   "author": {
-    "name": "Antonas Graciovas"
+    "name": "Tomasz Janczuk <tomasz@janczuk.org>",
+    "url": "http://tomasz.janczuk.org",
+    "twitter": "tjanczuk"
   },
-  "version": "8.2.2",
+  "version": "8.2.3",
   "description": "Edge.js: run .NET and Node.js in-process on Electron",
   "tags": [
     "owin",
@@ -21,12 +23,7 @@
   "engines": {
     "node": ">= 6"
   },
-  "licenses": [
-    {
-      "type": "Apache",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    }
-  ],
+  "license": "Apache-2.0",
   "dependencies": {
     "edge-cs": "1.2.1",
     "nan": "^2.6.1"
