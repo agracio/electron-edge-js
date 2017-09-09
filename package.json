@@ -1,12 +1,10 @@
 {
-  "name": "edge-js",
+  "name": "electron-edge-js",
   "author": {
-    "name": "Tomasz Janczuk <tomasz@janczuk.org>",
-    "url": "http://tomasz.janczuk.org",
-    "twitter": "tjanczuk"
+    "name": "Antonas Graciovas"
   },
   "version": "8.2.2",
-  "description": "Edge.js: run .NET and Node.js in-process on Windows, Mac OS, and Linux",
+  "description": "Edge.js: run .NET and Node.js in-process on Electron",
   "tags": [
     "owin",
     "edge",
@@ -16,7 +14,8 @@
     "c#",
     "mono",
     "managed",
-    ".net"
+    ".net",
+    "electron"
   ],
   "main": "./lib/edge.js",
   "engines": {
@@ -36,13 +35,13 @@
     "mocha": "3.2.0",
     "mocha-junit-reporter": "^1.13.0"
   },
-  "homepage": "https://github.com/agracio/edge-js",
+  "homepage": "https://github.com/agracio/electron-edge-js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:agracio/edge-js.git"
+    "url": "git@github.com:agracio/electron-edge-js.git"
   },
   "bugs": {
-    "url": "http://github.com/agracio/edge-js/issues"
+    "url": "http://github.com/agracio/electron-edge-js/issues"
   },
   "scripts": {
     "install": "node tools/install.js",
