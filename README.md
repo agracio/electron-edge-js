@@ -1,5 +1,7 @@
 .NET and Node.js in-process on Electron
 ================
+[![Build Status](https://travis-ci.org/agracio/electron-edge-js.svg)](https://travis-ci.org/agracio/electron-edge-js)[![Build status](https://ci.appveyor.com/api/projects/status/jnospsu289r41by1?svg=true)](https://ci.appveyor.com/project/agracio/electron-edge-js)
+
 
 This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/).
 
@@ -9,7 +11,11 @@ Compatible with
  * Electron 1.7.x - Node.js v7.9.0.
  * Electron 1.8.x - Node.js v8.2.1.
 
-The usage is same as edge or edge-js. just replace `require('edge')` or `require('edge-js')` with `require('electron-edge-js')`:
+Usage is the same as edge or edge-js, replace `require('edge')` or `require('edge-js')` with `require('electron-edge-js')`:
+
+```bash
+npm install electron-edge-js
+```
 
 ```diff
 -var edge = require('edge');
