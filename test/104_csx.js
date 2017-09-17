@@ -461,33 +461,33 @@ describe('edge-cs', function () {
         assert.throws(function() {
             edge.func({
                 source: process.env.EDGE_USE_CORECLR ?
-                    function () {/* 
+                    function () {/*
                         #r "Package.Doesnt.Exist"
 
                         using System.Threading.Tasks;
                         using System.Data;
 
-                        public class Startup 
+                        public class Startup
                         {
-                            public async Task<object> Invoke(object input) 
+                            public async Task<object> Invoke(object input)
                             {
                                 return "Hello, " + input.ToString();
                             }
-                        }           
+                        }
                     */} :
-                    function () {/* 
+                    function () {/*
                         #r "Package.Doesnt.Exist.dll"
 
                         using System.Threading.Tasks;
                         using System.Data;
 
-                        public class Startup 
+                        public class Startup
                         {
-                            public async Task<object> Invoke(object input) 
+                            public async Task<object> Invoke(object input)
                             {
                                 return "Hello, " + input.ToString();
                             }
-                        }           
+                        }
                     */}
             });
         },
@@ -501,7 +501,7 @@ describe('edge-cs', function () {
     });
 
     if (process.env.EDGE_USE_CORECLR) {
-        it('fails when dynamically loading an assembly that doesn\'t exist', function () {
+        it.skip('fails when dynamically loading an assembly that doesn\'t exist', function () {
             assert.throws(function() {
                 var func = edge.func({
                     source: function () {/* 

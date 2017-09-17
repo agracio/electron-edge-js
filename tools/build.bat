@@ -46,6 +46,17 @@ if %ERRORLEVEL% neq 0 (
 
 :gyp
 
+if "%3" equ "7.9.0" (
+    SET target=1.7.6
+) else if "%3" equ "7.4.0" (
+    SET target=1.6.2
+) else if "%3" equ "6.5.0" (
+    SET target=1.4.4
+) else (
+    echo edge-electron-js does not support Node.js %3.
+    exit /b -1
+)
+
 echo Building edge.node %FLAVOR% for node.js %2 v%3
 set NODEEXE=%DESTDIR%\node.exe
 set GYP=%APPDATA%\npm\node_modules\node-gyp\bin\node-gyp.js
@@ -54,7 +65,7 @@ if not exist "%GYP%" (
     exit /b -1
 )
 
-"%NODEEXE%" "%GYP%" configure build --msvs_version=2015 -%FLAVOR%
+"%NODEEXE%" "%GYP%" configure build --target=%target% --dist-url=https://atom.io/download/atom-shell --msvs_version=2015 -%FLAVOR%
 if %ERRORLEVEL% neq 0 (
     echo Error building edge.node %FLAVOR% for node.js %2 v%3
     exit /b -1
