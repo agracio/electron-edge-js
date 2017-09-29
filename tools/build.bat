@@ -52,6 +52,8 @@ if "%3" equ "7.9.0" (
     SET target=1.6.2
 ) else if "%3" equ "6.5.0" (
     SET target=1.4.4
+) else if "%3" equ "8.2.1" (
+    SET target=1.8.1
 ) else (
     echo edge-electron-js does not support Node.js %3.
     exit /b -1
@@ -65,7 +67,7 @@ if not exist "%GYP%" (
     exit /b -1
 )
 
-"%NODEEXE%" "%GYP%" configure build --target=%target% --dist-url=https://atom.io/download/atom-shell --msvs_version=2015 -%FLAVOR%
+"%NODEEXE%" "%GYP%" configure build --target=%target% --dist-url=https://atom.io/download/atom-shell --msvs_version=2017 -%FLAVOR%
 if %ERRORLEVEL% neq 0 (
     echo Error building edge.node %FLAVOR% for node.js %2 v%3
     exit /b -1
