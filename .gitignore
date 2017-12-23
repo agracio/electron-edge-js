@@ -28,6 +28,8 @@ obj/
 *.suo
 packages/*
 _ReSharper*
+src/*.sln
+src/EdgeJs.vcxproj
 
 Edge.Tests.*
 node.exe
@@ -44,7 +46,15 @@ Sample105.*
 
 adhoc/
 
+*cmake*
+
 package/
 tools/build
 /src/double/Edge.js/obj/
 /src/double/Edge.js/bin/
+/src/Debug/
+/test/obj/
+/test/bin/
+
+package-lock.json
+
