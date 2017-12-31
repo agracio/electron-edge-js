@@ -1,5 +1,5 @@
 declare module 'electron-edge-js' {
-    function func<TInput, TOutput>(params: string | Function | Params | Source): Func<TInput, TOutput>
+    function func<TInput, TOutput>(language: string = 'cs', params: string | Function | Params | Source | TSQL): Func<TInput, TOutput>
     interface Params {
         assemblyFile: string
         typeName?: string
@@ -8,7 +8,13 @@ declare module 'electron-edge-js' {
 
     interface Source {
         source: string | Function
-        references: string[]
+        references?: string[]
+    }
+
+    interface TSQL {
+        source: string
+        connectionString?: string
+        commandTimeout?: number
     }
 
     interface Func<TInput, TOutput> {
