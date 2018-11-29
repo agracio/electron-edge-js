@@ -38,6 +38,8 @@ v8::Local<v8::Function> ClrFunc::Initialize(System::Func<System::Object^,System:
 
 	//static Nan::Persistent<v8::Function> proxyFactory;
 	//static Nan::Persistent<v8::Function> proxyFunction;
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
 
 	Nan::EscapableHandleScope scope;
 
@@ -54,7 +56,10 @@ v8::Local<v8::Function> ClrFunc::Initialize(System::Func<System::Object^,System:
         proxyFunction.Reset(clrFuncProxyFunction);
         v8::Local<v8::String> code = Nan::New<v8::String>(
             "(function (f, ctx) { return function (d, cb) { return f(d, cb, ctx); }; })").ToLocalChecked();
-        v8::Local<v8::Function> codeFunction = v8::Local<v8::Function>::Cast(v8::Script::Compile(code)->Run());
+        v8::Local<v8::Function> codeFunction =
+                v8::Local<v8::Function>::Cast(
+                    v8::Script::Compile(context, code, nullptr).ToLocalChecked()
+                    ->Run(context).ToLocalChecked());
         proxyFactory.Reset(codeFunction);
     }
 
@@ -71,8 +76,11 @@ NAN_METHOD(ClrFunc::Initialize)
 {
     DBG("ClrFunc::Initialize MethodInfo wrapper");
 
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+
     Nan::EscapableHandleScope scope;
-    v8::Local<v8::Object> options = info[0]->ToObject();
+    v8::Local<v8::Object> options = info[0]->ToObject(context).ToLocalChecked();
     Assembly^ assembly;
     System::String^ typeName;
     System::String^ methodName;
@@ -418,6 +426,9 @@ v8::Local<v8::Object> ClrFunc::MarshalCLRObjectToV8(System::Object^ netdata)
 
 System::Object^ ClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata)
 {
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+
     Nan::HandleScope scope;
 
     if (jsdata->IsFunction())
@@ -431,7 +442,7 @@ System::Object^ ClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata)
     }
     else if (node::Buffer::HasInstance(jsdata))
     {
-        v8::Local<v8::Object> jsbuffer = jsdata->ToObject();
+        v8::Local<v8::Object> jsbuffer = jsdata->ToObject(context).ToLocalChecked();
         cli::array<byte>^ netbuffer = gcnew cli::array<byte>((int)node::Buffer::Length(jsbuffer));
         if (netbuffer->Length > 0)
         {
@@ -455,7 +466,7 @@ System::Object^ ClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata)
     else if (jsdata->IsDate())
     {
         v8::Local<v8::Date> jsdate = v8::Local<v8::Date>::Cast(jsdata);
-        long long  ticks = (long long)jsdate->NumberValue();
+        long long  ticks = (long long)jsdate->NumberValue(context).FromJust();
         long long MinDateTimeTicks = 621355968000000000;// (new DateTime(1970, 1, 1, 0, 0, 0)).Ticks;
         System::DateTime ^netobject = gcnew System::DateTime(ticks * 10000 + MinDateTimeTicks, System::DateTimeKind::Utc);
         return netobject;
@@ -482,19 +493,19 @@ System::Object^ ClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata)
     }
     else if (jsdata->IsBoolean())
     {
-        return jsdata->BooleanValue();
+        return jsdata->BooleanValue(context).FromJust();
     }
     else if (jsdata->IsInt32())
     {
-        return jsdata->Int32Value();
+        return jsdata->Int32Value(context).FromJust();
     }
     else if (jsdata->IsUint32())
     {
-        return jsdata->Uint32Value();
+        return jsdata->Uint32Value(context).FromJust();
     }
     else if (jsdata->IsNumber())
     {
-        return jsdata->NumberValue();
+        return jsdata->NumberValue(context).FromJust();
     }
     else if (jsdata->IsUndefined() || jsdata->IsNull())
     {
