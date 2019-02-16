@@ -123,8 +123,8 @@
               'AdditionalOptions': [
                 '/ignore:4248',
                 'shlwapi.lib',
-				'/DELAYLOAD:"iojs.exe"',
-				'/DELAYLOAD:"node.exe"' 
+                '/DELAYLOAD:"iojs.exe"',
+                '/DELAYLOAD:"node.exe"' 
               ]
             }
           }
