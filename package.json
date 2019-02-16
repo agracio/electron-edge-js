@@ -42,6 +42,7 @@
     "nan": "^2.10.0"
   },
   "devDependencies": {
+    "electron-rebuild": "^1.8.4",
     "mocha": "5.1.1",
     "mocha-junit-reporter": "^1.17.0"
   },

@@ -122,7 +122,9 @@
             'VCLinkerTool': {
               'AdditionalOptions': [
                 '/ignore:4248',
-                'shlwapi.lib'
+                'shlwapi.lib',
+				'/DELAYLOAD:"iojs.exe"',
+				'/DELAYLOAD:"node.exe"' 
               ]
             }
           }
@@ -147,7 +149,9 @@
             'VCLinkerTool': {
               'AdditionalOptions': [
                 '/ignore:4248',
-                'shlwapi.lib'
+                'shlwapi.lib',
+                '/DELAYLOAD:"iojs.exe"',
+                '/DELAYLOAD:"node.exe"'
               ]
             }
           }
@@ -242,7 +246,9 @@
             },
             'VCLinkerTool': {
               'AdditionalOptions': [
-                '/ignore:4248'
+                '/ignore:4248',
+                '/DELAYLOAD:"iojs.exe"',
+                '/DELAYLOAD:"node.exe"' 
               ]
             }
           }
@@ -264,7 +270,9 @@
             },
             'VCLinkerTool': {
               'AdditionalOptions': [
-                '/ignore:4248'
+                '/ignore:4248',
+                '/DELAYLOAD:"iojs.exe"',
+                '/DELAYLOAD:"node.exe"' 
               ]
             }
           }

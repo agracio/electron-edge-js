@@ -4,6 +4,11 @@
 
 #include "edge_common.h"
 
+#include <windows.h>
+
+#include <delayimp.h>
+#include <string.h>  
+
 #ifdef HAVE_CORECLR
 #include "../CoreCLREmbedding/edge.h"
 #endif
@@ -85,5 +90,20 @@ NODE_MODULE(edge_coreclr, init);
 #else
 NODE_MODULE(edge_nativeclr, init);
 #endif
+
+static FARPROC WINAPI load_exe_hook(unsigned int event, DelayLoadInfo* info) {
+    HMODULE m;
+    if (event != dliNotePreLoadLibrary)
+        return NULL;
+
+    if (_stricmp(info->szDll, "iojs.exe") != 0 &&
+        _stricmp(info->szDll, "node.exe") != 0)
+        return NULL;
+
+    m = GetModuleHandle(NULL);
+    return (FARPROC)m;
+}
+
+decltype(__pfnDliNotifyHook2) __pfnDliNotifyHook2 = load_exe_hook;
 
 // vim: ts=4 sw=4 et:
