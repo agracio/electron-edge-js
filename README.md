@@ -5,13 +5,12 @@
 This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/).
 
 Compatible with
- * Electron 1.4.x - Node.js v6.5.0.
  * Electron 1.6.x - Node.js v7.4.0.
  * Electron 1.7.x - Node.js v7.9.0.
  * Electron 1.8.x - Node.js v8.2.1.
  * Electron 2.0.x - Node.js v8.9.3.
  * Electron 3.0.x - Node.js v10.2.0.
- * ~~Electron 4.0.x - Node.js v10.11.0.~~
+ * Electron 4.0.4+ - Node.js v10.11.0.
 
 Usage is the same as edge or edge-js, replace `require('edge')` or `require('edge-js')` with `require('electron-edge-js')`:
 
@@ -20,7 +19,7 @@ npm install electron-edge-js
 ```
 
 ```diff
--var edge = require('edge');
+-var edge = require('edge-js');
 +var edge = require('electron-edge-js');
 
 var helloWorld = edge.func(function () {/*
@@ -41,3 +40,7 @@ Electron is built using specific version of Node.js. In order to use `edge` in E
 
 * Uses same codebase as `edge-js` that comes with both latest code changes from `edge` project and additional fixes and improvements available in `edge-js` project.
 * Supports majority of Electron versions.
+
+## Quick start
+
+Simple app that shows how to work with .NET Core and .NET Standard using compiled C# libraries. https://github.com/agracio/electron-edge-js-quick-start
