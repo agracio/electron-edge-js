@@ -18,7 +18,8 @@
   'targets': [
     {
       'target_name': 'edge_coreclr',
-      'win_delay_load_hook': 'false',
+      # Electron 4.x requires this to be true
+      'win_delay_load_hook': 'true',
       'include_dirs': [
         "<!(node -e \"require('nan')\")"
       ],
@@ -156,7 +157,8 @@
     },
     {
       'target_name': 'edge_nativeclr',
-      'win_delay_load_hook': 'false',
+      # Electron 4.x requires this to be true
+      'win_delay_load_hook': 'true',
       'include_dirs': [
         "<!(node -e \"require('nan')\")"
       ],
