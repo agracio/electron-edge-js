@@ -15,6 +15,9 @@ ClrFuncInvokeContext::ClrFuncInvokeContext(v8::Local<v8::Value> callbackOrSync) 
     static MonoClassField* field;
     static MonoClassField* syncField;
 
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+
     if (!field)
         field = mono_class_get_field_from_name(GetClrFuncInvokeContextClass(), "native");
     if (!syncField)
@@ -35,7 +38,7 @@ ClrFuncInvokeContext::ClrFuncInvokeContext(v8::Local<v8::Value> callbackOrSync) 
     }
     else 
     {
-        this->Sync(callbackOrSync->BooleanValue());
+        this->Sync(callbackOrSync->BooleanValue(context).FromJust());
     }
 }
 
@@ -132,7 +135,9 @@ v8::Local<v8::Value> ClrFuncInvokeContext::CompleteOnV8Thread(bool completedSync
         // complete the asynchronous call to C# by invoking a callback in JavaScript
         Nan::TryCatch try_catch;
         DBG("ClrFuncInvokeContext::CompleteOnV8Thread - calling JS callback");
-        this->callback->Call(argc, argv);
+
+        Nan::AsyncResource resource("ClrFuncInvokeContext::CompleteOnV8Thread");
+        this->callback->Call(argc, argv, &resource);
         delete this;
         if (try_catch.HasCaught())
         {

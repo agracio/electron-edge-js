@@ -53,7 +53,7 @@ v8::Local<v8::Function> CoreClrFunc::InitializeInstance(CoreClrGcHandle function
     {
     	DBG("CoreClrFunc::InitializeInstance - Creating proxy factory");
 
-		v8::Local<v8::Function> clrFuncProxyFunction = Nan::New<v8::FunctionTemplate>(coreClrFuncProxy)->GetFunction();
+		v8::Local<v8::Function> clrFuncProxyFunction = Nan::GetFunction(Nan::New<v8::FunctionTemplate>(coreClrFuncProxy)).ToLocalChecked();
 		proxyFunction.Reset(clrFuncProxyFunction);
 		v8::Local<v8::String> code = Nan::New<v8::String>(
 			"(function (f, ctx) { return function (d, cb) { return f(d, cb, ctx); }; })").ToLocalChecked();
@@ -165,16 +165,16 @@ NAN_METHOD(CoreClrFunc::Initialize)
 	DBG("CoreClrFunc::Initialize - Starting");
 
 	Nan::EscapableHandleScope scope;
-	v8::Local<v8::Object> options = info[0]->ToObject();
+	v8::Local<v8::Object> options = info[0]->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
 	v8::Local<v8::Function> result;
 
 	v8::Local<v8::Value> assemblyFileArgument = options->Get(Nan::New<v8::String>("assemblyFile").ToLocalChecked());
 
 	if (assemblyFileArgument->IsString())
 	{
-		v8::String::Utf8Value assemblyFile(assemblyFileArgument);
-		v8::String::Utf8Value typeName(options->Get(Nan::New<v8::String>("typeName").ToLocalChecked()));
-		v8::String::Utf8Value methodName(options->Get(Nan::New<v8::String>("methodName").ToLocalChecked()));
+		Nan::Utf8String assemblyFile(assemblyFileArgument);
+		Nan::Utf8String typeName(options->Get(Nan::New<v8::String>("typeName").ToLocalChecked()));
+		Nan::Utf8String methodName(options->Get(Nan::New<v8::String>("methodName").ToLocalChecked()));
 		v8::Local<v8::Value> exception;
 
 		DBG("CoreClrFunc::Initialize - Loading %s.%s() from %s", *typeName, *methodName, *assemblyFile);
@@ -270,7 +270,7 @@ void CoreClrFunc::FreeMarshalData(void* marshalData, int payloadType)
 
 char* CoreClrFunc::CopyV8StringBytes(v8::Local<v8::String> v8String)
 {
-	String::Utf8Value utf8String(v8String);
+	Nan::Utf8String utf8String(v8String);
 	char* sourceBytes = *utf8String;
 #ifdef EDGE_PLATFORM_WINDOWS
 	size_t sourceLength = strlen(sourceBytes);
@@ -293,7 +293,7 @@ void CoreClrFunc::MarshalV8ExceptionToCLR(v8::Local<v8::Value> exception, void**
 
     if (exception->IsObject())
     {
-        v8::Local<Value> stack = exception->ToObject()->Get(Nan::New<v8::String>("stack").ToLocalChecked());
+        v8::Local<Value> stack = exception->ToObject(Nan::GetCurrentContext()).ToLocalChecked()->Get(Nan::New<v8::String>("stack").ToLocalChecked());
 
         if (stack->IsString())
         {
@@ -307,6 +307,9 @@ void CoreClrFunc::MarshalV8ExceptionToCLR(v8::Local<v8::Value> exception, void**
 
 void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData, int* payloadType)
 {
+	v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+
 	if (jsdata->IsString())
 	{
 		*marshalData = CopyV8StringBytes(v8::Local<v8::String>::Cast(jsdata));
@@ -321,7 +324,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 
 	else if (node::Buffer::HasInstance(jsdata))
 	{
-		v8::Local<v8::Object> jsBuffer = jsdata->ToObject();
+		v8::Local<v8::Object> jsBuffer = jsdata->ToObject(Nan::GetCurrentContext()).ToLocalChecked();
 		V8BufferData* bufferData = new V8BufferData();
 
 		bufferData->bufferLength = (int)node::Buffer::Length(jsBuffer);
@@ -356,7 +359,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 		v8::Local<v8::Date> jsdate = v8::Local<v8::Date>::Cast(jsdata);
 		double* ticks = new double();
 
-		*ticks = jsdate->NumberValue();
+		*ticks = jsdate->NumberValue(context).FromJust();
 		*marshalData = ticks;
 		*payloadType = V8TypeDate;
 	}
@@ -364,7 +367,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 	else if (jsdata->IsBoolean())
 	{
 		bool* value = new bool();
-		*value = jsdata->BooleanValue();
+		*value = jsdata->BooleanValue(context).FromJust();
 
 		*marshalData = value;
 		*payloadType = V8TypeBoolean;
@@ -373,7 +376,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 	else if (jsdata->IsInt32())
 	{
 		int32_t* value = new int32_t();
-		*value = jsdata->Int32Value();
+		*value = jsdata->Int32Value(context).FromJust();
 
 		*marshalData = value;
 		*payloadType = V8TypeInt32;
@@ -382,7 +385,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 	else if (jsdata->IsUint32())
 	{
 		uint32_t* value = new uint32_t();
-		*value = jsdata->Uint32Value();
+		*value = jsdata->Uint32Value(context).FromJust();
 
 		*marshalData = value;
 		*payloadType = V8TypeUInt32;
@@ -391,7 +394,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 	else if (jsdata->IsNumber())
 	{
 		double* value = new double();
-		*value = jsdata->NumberValue();
+		*value = jsdata->NumberValue(context).FromJust();
 
 		*marshalData = value;
 		*payloadType = V8TypeNumber;
@@ -407,7 +410,7 @@ void CoreClrFunc::MarshalV8ToCLR(v8::Local<v8::Value> jsdata, void** marshalData
 		V8ObjectData* objectData = new V8ObjectData();
 
 		v8::Local<v8::Object> jsobject = v8::Local<v8::Object>::Cast(jsdata);
-		v8::Local<v8::Array> propertyNames = jsobject->GetPropertyNames();
+		v8::Local<v8::Array> propertyNames = Nan::GetPropertyNames(jsobject).ToLocalChecked();
 
 		objectData->propertiesCount = propertyNames->Length();
 		objectData->propertyData = new void*[objectData->propertiesCount];

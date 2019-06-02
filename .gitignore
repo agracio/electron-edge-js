@@ -52,6 +52,10 @@ package/
 tools/build
 /src/double/Edge.js/obj/
 /src/double/Edge.js/bin/
+/src/double/Edge.js.CSharp/obj/
+/src/double/Edge.js.CSharp/bin/
+/src/double/Edge.js/*.sln
+/src/double/Edge.js.CSharp/*.sln
 /src/Debug/
 /test/obj/
 /test/bin/
@@ -64,7 +68,8 @@ tools/nuget/content
 tools/nuget/lib
 tools/nuget/*.nupkg
 tools/nuget/*.zip
-
+tools/*.nupkg
+tools/*.zip
 
 test-results*.*
 TemporaryGeneratedFile*.*

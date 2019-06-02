@@ -57,7 +57,7 @@ void NodejsFuncInvokeContext::CallFuncOnV8Thread(MonoObject* _this, NodejsFunc* 
         
         if (callbackFactory.IsEmpty())
         {
-            v8::Local<v8::Function> v8FuncCallbackFunction = Nan::New<v8::FunctionTemplate>(v8FuncCallback)->GetFunction();
+            v8::Local<v8::Function> v8FuncCallbackFunction = Nan::GetFunction(Nan::New<v8::FunctionTemplate>(v8FuncCallback)).ToLocalChecked();
             callbackFunction.Reset(v8FuncCallbackFunction);
             v8::Local<v8::String> code = Nan::New<v8::String>(
                 "(function (cb, ctx) { return function (e, d) { return cb(e, d, ctx); }; })").ToLocalChecked();
@@ -70,7 +70,7 @@ void NodejsFuncInvokeContext::CallFuncOnV8Thread(MonoObject* _this, NodejsFunc* 
 
         v8::Local<v8::Value> factoryArgv[] = { Nan::New(callbackFunction), Nan::New<v8::External>((void*)ctx) };
         v8::Local<v8::Function> callback = v8::Local<v8::Function>::Cast(
-            Nan::New(callbackFactory)->Call(Nan::GetCurrentContext()->Global(), 2, factoryArgv));
+            Nan::Call(Nan::New(callbackFactory), Nan::GetCurrentContext()->Global(), 2, factoryArgv).ToLocalChecked());
 
         v8::Local<v8::Value> argv[] = { jspayload, callback };
         Nan::TryCatch tryCatch;
