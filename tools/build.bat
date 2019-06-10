@@ -60,6 +60,8 @@ if "%3" equ "7.9.0" (
     SET target=3.0.10
 ) else if "%3" equ "10.11.0" (
     SET target=v4.0.4
+) else if "%3" equ "12.0.0" (
+    SET target=v5.0.3
 ) else (
     echo edge-electron-js does not support Node.js %3.
     exit /b -1
