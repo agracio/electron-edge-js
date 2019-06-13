@@ -30,6 +30,10 @@ var helloWorld = edge.func(function () {/*
 */});
 ```
 
+## Requirements (Windows)
+
+You must install [Microsoft Visual C++ Redistributable (x86)](https://www.microsoft.com/en-us/download/details.aspx?id=52685)
+
 
 ## Why use `electron-edge-js`?
 
