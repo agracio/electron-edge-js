@@ -12,6 +12,7 @@ Compatible with
  * Electron 3.0.x - Node.js v10.2.0.
  * Electron 4.0.4+ - Node.js v10.11.0.
  * Electron 5.0.x - Node.js v12.0.0.
+ * Electron 6.0.x - Node.js v12.4.0.
  
 Usage is the same as edge or edge-js, replace `require('edge')` or `require('edge-js')` with `require('electron-edge-js')`:
 
@@ -33,9 +34,9 @@ var helloWorld = edge.func(function () {/*
 
 ## Why use `electron-edge-js`?
 
-Electron is built using specific version of Node.js. In order to use `edge` in Electron project you would need to recompile it using the same Node.js version.
+Electron is built using specific version of Node.js. In order to use `edge` in Electron project you would need to recompile it using the same Node.js version and Electron headers.
 
-`electron-edge-js` comes precompiled with correct Node.js versions.
+`electron-edge-js` comes precompiled with correct Node.js versions and headers.
 
 ## Differences from `electron-edge`
 
@@ -44,4 +45,4 @@ Electron is built using specific version of Node.js. In order to use `edge` in E
 
 ## Quick start
 
-Simple app that shows how to work with .NET Core and .NET Standard using compiled C# libraries. https://github.com/agracio/electron-edge-js-quick-start
+Simple app that shows how to work with .NET Core using compiled C# libraries. https://github.com/agracio/electron-edge-js-quick-start
