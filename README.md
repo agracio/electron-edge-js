@@ -56,4 +56,4 @@ Simple app that shows how to work with .NET Core using compiled C# libraries. ht
 
 ## Documentation
 
-For full documentation please see see original https://github.com/agracio/edge-js repo.
+For full documentation please see see original [edge-js](https://github.com/agracio/edge-js) repo.
