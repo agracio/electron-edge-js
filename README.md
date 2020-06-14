@@ -53,3 +53,7 @@ Electron is built using specific version of Node.js. In order to use `edge` in E
 ## Quick start
 
 Simple app that shows how to work with .NET Core using compiled C# libraries. https://github.com/agracio/electron-edge-js-quick-start
+
+## Documentation
+
+For full documentation please see see original https://github.com/agracio/edge-js repo.
