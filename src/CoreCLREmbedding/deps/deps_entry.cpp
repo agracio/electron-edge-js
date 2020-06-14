@@ -4,6 +4,7 @@
 #include "../pal/pal.h"
 #include "../pal/pal_utils.h"
 #include "deps_entry.h"
+#include "deps_format.h"
 #include "../pal/trace.h"
 
 
@@ -118,11 +119,7 @@ bool deps_entry_t::to_full_path(const pal::string_t& base, pal::string_t* str) c
     }
 
     pal::string_t new_base = base;
-#if EDGE_PLATFORM_NIX
     append_path(&new_base, pal::to_lower(library_name).c_str());
-#else
-    append_path(&new_base, library_name.c_str());
-#endif
 
     append_path(&new_base, library_version.c_str());
 
@@ -169,6 +166,52 @@ bool deps_entry_t::to_hash_matched_path(const pal::string_t& base, pal::string_t
         trace::verbose(_X("Invalid hash %s value for deps file entry: %s"), library_hash.c_str(), library_name.c_str());
         return false;
     }
+    pal::string_t entry_hash = library_hash.substr(pos + 1);
+
+    // If downloaded from NuGet.com, package will be signed, so need to get the original hash from the metadata file    
+    const pal::string_t nupkg_metadata_filename = _X(".nupkg.metadata");
+    pal::string_t nupkg_metadata_file;
+    nupkg_metadata_file.reserve(base.length() + library_name.length() + library_version.length() + nupkg_metadata_filename.length() + 3);
+    nupkg_metadata_file.assign(base);
+    append_path(&nupkg_metadata_file, pal::to_lower(library_name).c_str());
+    append_path(&nupkg_metadata_file, library_version.c_str());
+    append_path(&nupkg_metadata_file, nupkg_metadata_filename.c_str());
+
+    if (pal::file_exists(nupkg_metadata_file))
+    {
+        // Read the contents of the metadata file.
+        pal::ifstream_t nupkg_metadata_fs(nupkg_metadata_file);
+        if (!nupkg_metadata_fs.good())
+        {
+            trace::verbose(_X("The hash metadata file is invalid [%s]"), nupkg_metadata_file.c_str());
+            return false;
+        }
+        else
+        {
+            try
+            {
+                // Get the "contentHash" value for the pre-signed hash value
+                const auto metadata_json = web::json::value::parse(nupkg_metadata_fs);
+                const auto& content_hash = metadata_json.at(_X("contentHash")).as_string();
+                if(content_hash != entry_hash)            
+                {
+                    trace::verbose(_X("The metadata hash [%s][%d] did not match entry hash [%s][%d]"),
+                        content_hash.c_str(), content_hash.length(), entry_hash.c_str(), entry_hash.length());
+                }
+                else
+                {          
+                    // All good, just append the relative dir to base.
+                    return to_full_path(base, &candidate);
+                }
+            }
+            catch (const std::exception& je)
+            {
+                pal::string_t jes;
+                (void) pal::utf8_palstring(je.what(), &jes);
+                trace::error(_X("A JSON parsing exception occurred in [%s]: %s"), nupkg_metadata_file.c_str(), jes.c_str());
+            }
+        }
+    }
 
     // Build the nupkg file name. Just reserve approx 8 char_t's for the algorithm name.
     pal::string_t nupkg_filename;
@@ -183,15 +226,9 @@ bool deps_entry_t::to_hash_matched_path(const pal::string_t& base, pal::string_t
     pal::string_t hash_file;
     hash_file.reserve(base.length() + library_name.length() + library_version.length() + nupkg_filename.length() + 3);
     hash_file.assign(base);
-#if EDGE_PLATFORM_NIX
     append_path(&hash_file, pal::to_lower(library_name).c_str());
     append_path(&hash_file, library_version.c_str());
     append_path(&hash_file, pal::to_lower(nupkg_filename).c_str());
-#else
-    append_path(&hash_file, library_name.c_str());
-    append_path(&hash_file, library_version.c_str());
-    append_path(&hash_file, nupkg_filename.c_str());
-#endif
 
     // Read the contents of the hash file.
     pal::ifstream_t fstream(hash_file);
@@ -210,9 +247,8 @@ bool deps_entry_t::to_hash_matched_path(const pal::string_t& base, pal::string_t
     {
         return false;
     }
-
-    // Check if contents match deps entry.
-    pal::string_t entry_hash = library_hash.substr(pos + 1);
+    
+    // Check if contents match deps entry. 
     if (entry_hash != pal_hash)
     {
         trace::verbose(_X("The file hash [%s][%d] did not match entry hash [%s][%d]"),
