@@ -81,9 +81,16 @@ bool HasEnvironmentVariable(const char* variableName)
 #pragma unmanaged
 #endif
 #ifdef HAVE_CORECLR
-NODE_MODULE(edge_coreclr, init);
+	#if NODE_MAJOR_VERSION >= 10
+		NAN_MODULE_WORKER_ENABLED(edge_coreclr, init)
+	#else
+		NODE_MODULE(edge_coreclr, init)
+	#endif
 #else
-NODE_MODULE(edge_nativeclr, init);
+	#if NODE_MAJOR_VERSION >= 10
+		NAN_MODULE_WORKER_ENABLED(edge_nativeclr, init)
+	#else
+		NODE_MODULE(edge_nativeclr, init)
+	#endif
 #endif
-
 // vim: ts=4 sw=4 et:
