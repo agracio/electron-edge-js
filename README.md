@@ -17,8 +17,9 @@ Compatible with
  * Electron 8.x - Node.js v12.13.0
  * Electron 9.x - Node.js v12.14.1
  * Electron 10.x - Node.js v12.16.3
+ * Electron 11.x - Node.js v12.18.3
  
-Usage is the same as edge or edge-js, replace `require('edge')` or `require('edge-js')` with `require('electron-edge-js')`:
+Usage is the same as edge or edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
 ```bash
 npm install electron-edge-js
@@ -39,21 +40,20 @@ var helloWorld = edge.func(function () {/*
 
 You must install [Microsoft Visual C++ Redistributable (x86)](https://www.microsoft.com/en-us/download/details.aspx?id=52685)
 
-
 ## Why use `electron-edge-js`?
 
 Electron is built using specific version of Node.js. In order to use `edge` in Electron project you would need to recompile it using the same Node.js version and Electron headers.
 
 `electron-edge-js` comes precompiled with correct Node.js versions and headers.
 
-## Differences from `electron-edge`
-
-* Uses same codebase as `edge-js` that comes with both latest code changes from `edge` project and additional fixes and improvements available in `edge-js` project.
-* Supports majority of Electron versions.
-
 ## Quick start
 
 Simple app that shows how to work with .NET Core using compiled C# libraries. https://github.com/agracio/electron-edge-js-quick-start
+
+## Packaging Electron application
+
+Packaging example based on the app above. https://github.com/zenb/electron-edge-js-quick-start
+Related issues to use for troubleshooting: https://github.com/agracio/electron-edge-js/issues/39 https://github.com/agracio/electron-edge-js/issues/74
 
 ## Documentation
 
