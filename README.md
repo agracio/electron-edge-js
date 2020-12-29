@@ -52,7 +52,8 @@ Simple app that shows how to work with .NET Core using compiled C# libraries. ht
 
 ## Packaging Electron application
 
-Packaging example based on the app above. https://github.com/zenb/electron-edge-js-quick-start
+Packaging example based on the app above. https://github.com/zenb/electron-edge-js-quick-start    
+
 Related issues to use for troubleshooting: https://github.com/agracio/electron-edge-js/issues/39 https://github.com/agracio/electron-edge-js/issues/74
 
 ## Documentation
