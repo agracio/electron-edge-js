@@ -60,6 +60,11 @@ Related issues to use for troubleshooting:
 https://github.com/agracio/electron-edge-js/issues/39  
 https://github.com/agracio/electron-edge-js/issues/74
 
+## Async execution
+
+Underlying 'edge' component is written as synchronous C++ Node.js module and will cause Electron app to freeze when executing long running .NET code.  
+For workaround refer to this issue: https://github.com/agracio/electron-edge-js/issues/97
+
 ## Documentation
 
 For full documentation please see see original [edge-js](https://github.com/agracio/edge-js) repo.
