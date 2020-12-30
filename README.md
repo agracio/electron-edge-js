@@ -58,7 +58,8 @@ https://github.com/zenb/electron-edge-js-quick-start
 
 Related issues to use for troubleshooting:  
 https://github.com/agracio/electron-edge-js/issues/39  
-https://github.com/agracio/electron-edge-js/issues/74
+https://github.com/agracio/electron-edge-js/issues/74  
+https://github.com/agracio/electron-edge-js/issues/21
 
 ## Async execution
 
