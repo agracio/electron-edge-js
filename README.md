@@ -52,6 +52,11 @@ Electron is built using specific version of Node.js. In order to use `edge` in E
 Simple app that shows how to work with .NET Core using compiled C# libraries.  
 https://github.com/agracio/electron-edge-js-quick-start
 
+## MacOS
+
+`edge-js` and `electron-edge-js` will fail to build on MacOS if Visual Studion for mac is installed. 
+VS installs Mono runtimes that `edge-js` fails to access durring `nmp-install`.  
+
 ## Packaging Electron application
 
 Packaging example based on the app above.  
