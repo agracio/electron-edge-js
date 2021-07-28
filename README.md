@@ -19,6 +19,7 @@ Compatible with
  * Electron 10.x - Node.js v12.16.3
  * Electron 11.x - Node.js v12.18.3
  * Electron 12.x - Node.js v14.16.0
+ * Electron 13.x - Node.js v14.16.0
  
 Usage is the same as edge or edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
@@ -75,3 +76,7 @@ For workaround refer to this issue: https://github.com/agracio/electron-edge-js/
 ## Documentation
 
 For full documentation please see see original [edge-js](https://github.com/agracio/edge-js) repo.
+
+## Build
+
+Build.bat supports only Electron major versions.
