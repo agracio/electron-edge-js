@@ -5,9 +5,6 @@
 This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/).
 
 Compatible with
- * Electron 1.6.x - Node.js v7.4.0.
- * Electron 1.7.x - Node.js v7.9.0.
- * Electron 1.8.x - Node.js v8.2.1.
  * Electron 2.x - Node.js v8.9.3.
  * Electron 3.x - Node.js v10.2.0.
  * Electron 4.0.4+ - Node.js v10.11.0.
@@ -56,7 +53,7 @@ https://github.com/agracio/electron-edge-js-quick-start
 ## MacOS
 
 `edge-js` and `electron-edge-js` will fail to build on MacOS if Visual Studion for mac is installed. 
-VS installs Mono runtimes that `edge-js` fails to access durring `nmp-install`.  
+VS installs Mono runtimes that `edge-js` fails to access durring `nmp install`.  
 
 ## Packaging Electron application
 
