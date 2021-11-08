@@ -17,6 +17,7 @@ Compatible with
  * Electron 11.x - Node.js v12.18.3
  * Electron 12.x - Node.js v14.16.0
  * Electron 13.x - Node.js v14.16.0
+ * Electron 15.x - Node.js v16.5.0
  
 Usage is the same as edge or edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
