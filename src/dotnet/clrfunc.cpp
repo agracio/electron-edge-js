@@ -108,13 +108,15 @@ NAN_METHOD(ClrFunc::Initialize)
         else {
             // reference .NET code throgh embedded source code that needs to be compiled
             Nan::Utf8String compilerFile(options->Get(Nan::GetCurrentContext(), Nan::New<v8::String>("compiler").ToLocalChecked()).ToLocalChecked());
-            cli::array<unsigned char>^ buffer = gcnew cli::array<unsigned char>(compilerFile.length() * 2);
+            /*cli::array<unsigned char>^ buffer = gcnew cli::array<unsigned char>(compilerFile.length() * 2);
             for (int k = 0; k < compilerFile.length(); k++)
             {
                 buffer[k * 2] = (*compilerFile)[k] & 255;
                 buffer[k * 2 + 1] = (*compilerFile)[k] >> 8;
             }
-            assembly = Assembly::UnsafeLoadFrom(System::Text::Encoding::Unicode->GetString(buffer));
+            assembly = Assembly::UnsafeLoadFrom(System::Text::Encoding::Unicode->GetString(buffer));*/
+	    // secadm: fix for issue with loading edge-cs.dll from paths containing umlauts
+            assembly = Assembly::UnsafeLoadFrom(stringV82CLR(compilerFile));
             System::Type^ compilerType = assembly->GetType("EdgeCompiler", true, true);
             System::Object^ compilerInstance = System::Activator::CreateInstance(compilerType, false);
             MethodInfo^ compileFunc = compilerType->GetMethod("CompileFunc", BindingFlags::Instance | BindingFlags::Public);
