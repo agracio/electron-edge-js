@@ -34,15 +34,7 @@ exit /b 0
 
 :build
 
-if "%3" equ "2.0.0" (
-    SET target=8.9.3
-) else if "%3" equ "3.0.0" (
-    SET target=10.2.0
-) else if "%3" equ "4.0.0" (
-    SET target=10.11.0
-) else if "%3" equ "5.0.0" (
-    SET target=12.0.0
-) else if "%3" equ "6.0.0" (
+if "%3" equ "6.0.0" (
     SET target=12.4.0
 ) else if "%3" equ "7.0.0" (
     SET target=12.8.1
@@ -67,7 +59,9 @@ if "%3" equ "2.0.0" (
 ) else if "%3" equ "17.0.0" (
     SET target=16.13.0
 ) else if "%3" equ "18.0.0" (
-    SET target=16.15.1
+    SET target=16.13.2
+) else if "%3" equ "19.0.0" (
+    SET target=16.14.2
 )else (
     echo edge-electron-js does not support Electron %3.
     exit /b -1
@@ -96,7 +90,7 @@ if not exist "%GYP%" (
     exit /b -1
 )
 
-"%NODEEXE%" "%GYP%" configure build --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR%
+"%NODEEXE%" "%GYP%" configure build --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR% --openssl_fips=''
 if %ERRORLEVEL% neq 0 (
     echo Error building edge.node %FLAVOR% for node.js %2 v%target%
     exit /b -1
