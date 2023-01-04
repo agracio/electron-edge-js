@@ -135,7 +135,7 @@ else {
 		}
 		if (version !== null)
 		{
-			spawn('node-gyp', ['configure', 'build', '--target='+version, '--disturl=https://atom.io/download/atom-shell'], { stdio: 'inherit' });
+			spawn('node-gyp', ['configure', 'build', '--target='+version, '--disturl=https://electronjs.org/headers'], { stdio: 'inherit' });
 		}
 		else
 			spawn('node-gyp', ['configure', 'build'], { stdio: 'inherit' });
