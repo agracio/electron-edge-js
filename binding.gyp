@@ -56,7 +56,7 @@
         'GCC_ENABLE_CPP_RTTI': 'YES',
         'CLANG_CXX_LANGUAGE_STANDARD': 'c++17',
         'CLANG_CXX_LIBRARY': 'libc++',
-        'MACOSX_DEPLOYMENT_TARGET': '12.0'
+        'MACOSX_DEPLOYMENT_TARGET': '13.2.1'
       },
       'sources+': [
         'src/common/v8synchronizationcontext.cpp',
