@@ -85,7 +85,7 @@ pal::string_t GetOSArchitecture()
 	return _X("x86");
 #elif defined __ia64 || defined _M_IA64 || defined __ia64__ || defined __x86_64__ || defined _M_X64
 	return _X("x64");
-#elif defined ARM || defined __arm__ || defined _ARM || defined __aarch64__
+#elif defined ARM || defined __arm__ || defined _ARM
 	return _X("arm");
 #endif
 }
