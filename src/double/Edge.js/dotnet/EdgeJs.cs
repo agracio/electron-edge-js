@@ -27,7 +27,9 @@ namespace EdgeJs
             // at the original location. Calling back into EdgeJs.dll from node hangs if the shadow 
             // copy path is specified instead of the original path.
             var asm = typeof(Edge).Assembly;
-            edgeDirectory = string.IsNullOrWhiteSpace(asm.CodeBase) || !Uri.TryCreate(asm.CodeBase, UriKind.Absolute, out var codeBase) || !codeBase.IsFile
+
+            Uri codeBase;
+            edgeDirectory = string.IsNullOrWhiteSpace(asm.CodeBase) || !Uri.TryCreate(asm.CodeBase, UriKind.Absolute, out codeBase) || !codeBase.IsFile
                 ? Path.GetDirectoryName(asm.Location)
                 : Path.GetDirectoryName(codeBase.LocalPath);
         }
@@ -126,10 +128,10 @@ namespace EdgeJs
                             argv.Add(shortPath.ToString());
                             // End workaround for unicode characters in path
                             
-                            argv.Add($"-EdgeJs:{Path.Combine(edgeDirectory, "EdgeJs.dll")}");
+                            argv.Add(string.Format("-EdgeJs:{0}", Path.Combine(edgeDirectory, "EdgeJs.dll")));
                             nodeStart(argv.Count, argv.ToArray());
                             waitHandle.Set();
-                        });
+                        }, 1048576); // Force typical Windows stack size because less is liable to break
 
                         v8Thread.IsBackground = true;
                         v8Thread.Start();

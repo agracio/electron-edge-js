@@ -70,6 +70,16 @@ tools/nuget/*.nupkg
 tools/nuget/*.zip
 tools/*.nupkg
 tools/*.zip
+tools/nuget.exe
 
 test-results*.*
 TemporaryGeneratedFile*.*
+/lib/native/win32/ia32/*/concrt140.dll
+/lib/native/win32/ia32/*/msvcp140.dll
+/lib/native/win32/ia32/*/vccorlib140.dll
+/lib/native/win32/ia32/*/vcruntime140.dll
+
+/lib/native/win32/x64/*/concrt140.dll
+/lib/native/win32/x64/*/msvcp140.dll
+/lib/native/win32/x64/*/vccorlib140.dll
+/lib/native/win32/x64/*/vcruntime140.dll
