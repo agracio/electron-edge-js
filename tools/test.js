@@ -6,7 +6,6 @@ var output = path.resolve(testDir, 'Edge.Tests.dll');
 var buildParameters = ['-target:library', '/debug', '-out:' + output, input];
 
 var electron = require('electron')
-var fs = require('fs');
 
 if (!process.env.EDGE_USE_CORECLR) {
 	if (process.platform !== 'win32') {
