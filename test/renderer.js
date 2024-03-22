@@ -1,40 +1,21 @@
-const path = require('path');
-const Mocha = require('mocha');
-const merge  = require('mochawesome-merge');
+// const params = new URLSearchParams(document.location.search);
+// const platform =  params.get('platform');
+// const useClr = params.get('useClr');
 
-//var frameworks = process.platform === 'win32' ? ['', '1'] : ['1']
+// console.log(platform)
+// console.log(useClr)
+//var frameworks = platform === 'win32' ? ['', '1'] : ['1']
 
-const baseNetAppPath = path.join(__dirname, '/bin/Debug/netcoreapp3.1/');
+var suitesDoc = document.getElementById("suites")
+window.api.run();
 
-process.env.EDGE_APP_ROOT = baseNetAppPath;
-
-function createMocha (reportFilename, version) {
-  return new Mocha({
-    reporter: 'mochawesome',
-    reporterOptions: {
-      reportFilename: reportFilename,
-      reportDir: path.join(__dirname, 'mochawesome-report'),
-      quiet: false,
-      consoleReporter: 'none',
-      showSkipped: true,
-      json: false,
-      reportTitle: 'electron-edge-js ' + version
-    },
-    timeout:10000,
-  });
-};
-
-function addFiles(mocha){
-  mocha.addFile(path.join(__dirname, '101_edge_func.js'))
-  mocha.addFile(path.join(__dirname, '102_node2net.js'))
-  mocha.addFile(path.join(__dirname, '103_net2node.js'))
-  mocha.addFile(path.join(__dirname, '104_csx.js'))
-  mocha.addFile(path.join(__dirname, '105_node2net_sync.js'))
-  mocha.addFile(path.join(__dirname, '201_patterns.js'))
-  mocha.addFile(path.join(__dirname, '202_serialization.js'))
-
-}
-
+window.api.receive("fromMain", (documentId, data, suiteName, suiteFile, testNumber, margin, prefix) => {
+  if(suiteName){
+    document.getElementById(documentId).innerHTML += addTestSuite(suiteName, suiteFile, testNumber, margin, prefix);
+  }else{
+    document.getElementById(documentId).innerHTML = data;
+  }
+});
 
 function addTestSuite(suiteName, suiteFile, testNumber, margin, prefix){
     var html= `
@@ -49,69 +30,4 @@ function addTestSuite(suiteName, suiteFile, testNumber, margin, prefix){
     `;
 
     return html;
-  }
-
-  window.onload = function() {
-
-    // var framework = frameworks.shift();
-    // runTests(framework);
-    runTests(process.env.EDGE_USE_CORECLR);
-    function runTests(framework){
-
-      //if (typeof framework === "undefined") return;
-
-      //process.env.EDGE_USE_CORECLR = framework;
-      var version = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : process.platform === 'win32' ? '.NET Framework 4.5' : 'Mono Framework';
-      //var prefix = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : 'NET';
-      var prefix = '';
-
-      document.getElementById("title").innerHTML = `Running ${version} tests on Electron ${process.versions.electron}`;
-    
-      var reportFilename = `${prefix}test-results.html`;
-      var mocha = createMocha(reportFilename, version);
-      addFiles(mocha);
-    
-      var suitesDoc = document.getElementById("suites")
-  
-      var run = mocha.run();
-      document.getElementById("testsNumber").innerHTML = run.total;
-    
-      var margin = 0;
-      run.on('suite', function(suite){
-        if(suite.file){
-          suitesDoc.innerHTML += addTestSuite(suite.title, suite.file.replace(/^.*[\\/]/, ''), suite.tests.length, margin, prefix)
-          margin = 10;
-        }
-      });
-  
-      run.on('end', function(){
-          setTimeout(function(){
-            console.log('end');
-            mocha.dispose();
-            //window.location.reload()
-            window.location.replace(`mochawesome-report/${reportFilename}`);
-
-            //window.location.href = 'mochawesome-report/testResults.html';
-
-            // var val = frameworks.shift()
-            // if (typeof val === "undefined"){
-
-            // }
-            // else{
-            //   
-            //     delete require.cache[require.resolve('../lib/edge.js')]
-            //     runTests(val);
-
-              
-            // }
-          }, 1000);
-      });
-
-    }
-    
-    // function mergeReports(){
-
-    // }
-
-  }
-
+ }

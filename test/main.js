@@ -1,11 +1,7 @@
-const electron = require('electron');
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS']=true
 
-//var version = process.argv[1].replace('--', '');
-
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
+const {app, BrowserWindow, ipcMain} = require("electron");
+const main = require('./app.js')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -17,18 +13,18 @@ function createWindow () {
     width: 1280,
     height: 900,
     webPreferences:{
-      nodeIntegration: true,
-      nodeIntegrationInWorker: true,
-      contextIsolation: false,
-      webSecurity: false
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      contextIsolation: true,
+      preload: `${__dirname}/preload.js`,
     }
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html?version`);
+  mainWindow.loadURL(`file://${__dirname}/index.html?platform=${process.platform}&useClr=${process.env.EDGE_USE_CORECLR}`);
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -42,7 +38,10 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', ()=>{
+  createWindow();
+  main.run(mainWindow);
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
