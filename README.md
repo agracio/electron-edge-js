@@ -2,23 +2,28 @@
 
 This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/).
 
-Compatible with
+Windows binaries pre-compiled for 
 
-- Electron 17.x - Node.js v16.13.0
-- Electron 18.x - Node.js v16.13.2
-- Electron 19.x - Node.js v16.14.2
-- Electron 20.x - Node.js v16.15.0
-- Electron 21.x - Node.js v16.16.0
-- Electron 22.x - Node.js v16.17.1
-- Electron 23.x - Node.js v18.12.1
-- Electron 24.x - Node.js v18.14.0
-- Electron 25.x - Node.js v18.15.0
-- Electron 26.x - Node.js v18.16.1
-- Electron 27.x - Node.js v18.17.1
-- Electron 28.x - Node.js v18.18.2
-- Electron 29.x - Node.js v20.9.0
+| Electron      | Node.Js Version  |
+| ------------- | ---------------- |
+| Electron 17.x | v16.13.0         |
+| Electron 18.x | v16.13.2         |
+| Electron 19.x | v16.14.2         |
+| Electron 20.x | v16.15.0         |
+| Electron 21.x | v16.16.0         |
+| Electron 22.x | v16.17.1         |
+| Electron 23.x | v18.12.1         |
+| Electron 24.x | v18.14.0         |
+| Electron 25.x | v18.15.0         |
+| Electron 26.x | v18.16.1         |
+| Electron 27.x | v18.17.1         |
+| Electron 28.x | v18.18.2         |
+| Electron 29.x | v20.9.0          |
 
-Usage is the same as edge or edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
+- You do not need to use same version of Node.js in your project as Electron Node.js version
+- On Linux and MacOS `npm install` will compile binaries with correct Node.Js headers for given Electron version.
+
+#### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
 ```bash
 npm install electron-edge-js
@@ -47,7 +52,7 @@ Electron is built using specific version of Node.js. In order to use `edge-js` i
 
 ## Quick start
 
-Simple app that shows how to work with .NET Core using compiled C# libraries.  
+Sample app that shows how to work with .NET Core using inline code and compiled C# libraries.  
 https://github.com/agracio/electron-edge-js-quick-start
 
 ## MacOS
