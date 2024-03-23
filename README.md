@@ -2,7 +2,7 @@
 
 This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/).
 
-Windows binaries pre-compiled for 
+### Windows binaries pre-compiled for 
 
 | Electron      | Node.Js Version  |
 | ------------- | ---------------- |
