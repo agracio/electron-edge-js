@@ -39,6 +39,14 @@ var helloWorld = edge.func(function () {/*
     }
 */});
 ```
+## Migration to .NET Core 3.1 :exclamation: 
+
+Edge.Js C# code has been migrated to .NET 3.1. If your project is referencing `EdgeJs.dll` and/or `Edge.js.CSharp.dll` file locations have changed.
+
+```bash
+node_modules/electron-edge-js/lib/bootstrap/bin/Release/netcoreapp3.1/EdgeJs.dll
+node_modules/electron-edge-js/lib/bootstrap/bin/Release/netcoreapp3.1/Edge.js.CSharp.dll
+```
 
 ## Requirements (Windows)
 
