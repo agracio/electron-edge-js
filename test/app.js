@@ -2,7 +2,7 @@
 const { ipcMain, ipcRenderer} = require("electron");
 const path = require('path');
 const Mocha = require('mocha');
-const merge  = require('mochawesome-merge');
+//const merge  = require('mochawesome-merge');
 
 const baseNetAppPath = path.join(__dirname, '/bin/Debug/netcoreapp3.1/');
 
