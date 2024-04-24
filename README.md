@@ -6,8 +6,6 @@ This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to suppo
 
 | Electron      | Node.Js Version  |
 | ------------- | ---------------- |
-| Electron 17.x | v16.13.0         |
-| Electron 18.x | v16.13.2         |
 | Electron 19.x | v16.14.2         |
 | Electron 20.x | v16.15.0         |
 | Electron 21.x | v16.16.0         |
@@ -19,9 +17,10 @@ This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to suppo
 | Electron 27.x | v18.17.1         |
 | Electron 28.x | v18.18.2         |
 | Electron 29.x | v20.9.0          |
+| Electron 30.x | v20.11.1         |
 
 - You do not need to use same version of Node.js in your project as Electron Node.js version
-- On Linux and MacOS `npm install` will compile binaries with correct Node.Js headers for given Electron version.
+- On Linux and MacOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
@@ -39,13 +38,13 @@ var helloWorld = edge.func(function () {/*
     }
 */});
 ```
-## Migration to .NET Core 3.1 :exclamation: 
+## Migration to .NET 6 :exclamation: 
 
-Edge.Js C# code has been migrated to .NET 3.1. If your project is referencing `EdgeJs.dll` and/or `Edge.js.CSharp.dll` file locations have changed.
+Edge.Js C# code has been migrated to .NET 6.  
+If your project is referencing `EdgeJs.dll` file locations have changed.
 
 ```bash
-node_modules/electron-edge-js/lib/bootstrap/bin/Release/netcoreapp3.1/EdgeJs.dll
-node_modules/electron-edge-js/lib/bootstrap/bin/Release/netcoreapp3.1/Edge.js.CSharp.dll
+node_modules/electron-edge-js/lib/bootstrap/bin/Release/net6.0/EdgeJs.dll
 ```
 
 ## Requirements (Windows)
@@ -65,9 +64,9 @@ https://github.com/agracio/electron-edge-js-quick-start
 
 ## MacOS
 
-`edge-js` and `electron-edge-js` will fail to build on MacOS if Visual Studion for mac is installed.
-VS installs Mono runtimes that `edge-js` fails to access durring `nmp install`. 
-Removing VS does not remove Mono fully and leaves behind incomplete Mono install.
+`edge-js` and `electron-edge-js` will fail to build on MacOS if Visual Studio for Mac is installed.
+VS installs Mono runtimes that `edge-js` fails to access during `nmp install`. 
+Removing VS does not remove Mono fully and leaves behind an incomplete Mono install.
 To remove Mono from macOS use this script
 
 ```bash
