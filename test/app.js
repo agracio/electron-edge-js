@@ -4,7 +4,7 @@ const path = require('path');
 const Mocha = require('mocha');
 //const merge  = require('mochawesome-merge');
 
-const baseNetAppPath = path.join(__dirname, '/bin/Debug/netcoreapp3.1/');
+const baseNetAppPath = path.join(__dirname, '/bin/Debug/net6.0/');
 
 process.env.EDGE_APP_ROOT = baseNetAppPath;
 
