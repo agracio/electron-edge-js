@@ -65,7 +65,7 @@ https://github.com/agracio/electron-edge-js-quick-start
 ## MacOS
 
 `edge-js` and `electron-edge-js` will fail to build on MacOS if Visual Studio for Mac is installed.
-VS installs Mono runtimes that `edge-js` fails to access during `nmp install`. 
+VS installs incomplete Mono runtimes that `edge-js` fails to access during `nmp install`. 
 Removing VS does not remove Mono fully and leaves behind an incomplete Mono install.
 To remove Mono from macOS use this script
 
@@ -77,7 +77,7 @@ sudo rm /etc/paths.d/mono-commands
 
 ## Packaging Electron application
 
-'electron-edge-js' needs to be specified as external module, some examples<br/>  
+`electron-edge-js` needs to be specified as an external module, some examples<br/>  
 ``webpack.config.js ``
 ```js
      externals: {
@@ -106,17 +106,19 @@ https://github.com/agracio/electron-edge-js/issues/39
 https://github.com/agracio/electron-edge-js/issues/74  
 https://github.com/agracio/electron-edge-js/issues/21
 
-
-
 ## Async execution
 
-Underlying 'edge' component is written as synchronous C++ Node.js module and will cause Electron app to freeze when executing long running .NET code.  
-For workaround refer to this issue: https://github.com/agracio/electron-edge-js/issues/97
+If `electron-edge-js` module is used on main Electron thread it will cause Electron app to freeze when executing long running .NET code even if your C# code is fully async.  
+For a workaround refer to this issue: https://github.com/agracio/electron-edge-js/issues/97
+
+This issue is not present when using Electron [IPC](https://www.electronjs.org/docs/latest/tutorial/ipc)
+
+## Build
+
+build.bat supports only Electron major versions.
 
 ## Documentation
 
 For full documentation see [edge-js](https://github.com/agracio/edge-js) repo.
 
-## Build
 
-Build.bat supports only Electron major versions.
