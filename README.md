@@ -80,38 +80,85 @@ sudo rm /etc/paths.d/mono-commands
 `electron-edge-js` needs to be specified as an external module, some examples<br/>  
 ``webpack.config.js ``
 ```js
-     externals: {
+externals: {
     'electron-edge-js': 'commonjs2 electron-edge-js',
-    },
-    node: {
-        __dirname: false,
-        __filename: false,
-    },
+},
+node: {
+    __dirname: false,
+    __filename: false,
+},
 ```  
 ``vue.config.js``
 ```js
-    module.export = {
-        pluginOptions: {
-            electronBuilder: {
-            externals:["electron-edge-js"]
-        }
+module.export = {
+    pluginOptions: {
+        electronBuilder: {
+        externals:["electron-edge-js"]
     }
+}
 ```  
+
+### From [#138](https://github.com/agracio/electron-edge-js/issues/138)
+
+``webpack.config.js ``
+```js
+externals: {
+    'electron-edge-js': 'commonjs2 electron-edge-js',
+},
+node: {
+    __dirname: false,
+    __filename: false,
+},
+extraResources:[
+    "./node_modules/electron-edge-js/**",
+]
+```
+
+Electron `main.js` 
+
+```js
+// https://github.com/ScottJMarshall/electron-webpack-module-resolution
+require("module").globalPaths.push(process.cwd()+'/node_modules');
+var edge = require('electron-edge-js');
+```
+
 Packaging example based on `electron-edge-js-quick-start`.  
 https://github.com/zenb/electron-edge-js-quick-start  
   
 Related issues to use for troubleshooting:  
-https://github.com/agracio/electron-edge-js/issues/138  
 https://github.com/agracio/electron-edge-js/issues/39  
 https://github.com/agracio/electron-edge-js/issues/74  
 https://github.com/agracio/electron-edge-js/issues/21
 
 ## Async execution
 
-If `electron-edge-js` module is used on main Electron thread it will cause Electron app to freeze when executing long running .NET code even if your C# code is fully async.  
-For a workaround refer to this issue: https://github.com/agracio/electron-edge-js/issues/97
+If `electron-edge-js` module is used on main Electron thread it will cause Electron app to freeze when executing long-running .NET code even if your C# code is fully async.  
+To avoid this you can use worker thread packages such as **[threads.js](https://www.npmjs.com/package/threads)** or **[piscina](https://www.npmjs.com/package/piscina)**  
+
 
 This issue is not present when using Electron [IPC](https://www.electronjs.org/docs/latest/tutorial/ipc)
+
+### Workaround from [#97]( https://github.com/agracio/electron-edge-js/issues/97)
+
+`main.js`
+```js
+const { fork } = require("child_process"); fork("../child.js", [], { env: {file: 'filename'}, })
+```
+
+`child.js`
+```js
+const path = require('path');
+const powerpoint = require('office-script').powerpoint;
+const filePath = '../../directory/';
+
+powerpoint.open(path.join(${remotePath}${process.env.file}.pptx), function(err) {
+    if(err) throw err;
+});
+```
+
+
+
+
 
 ## Build
 
