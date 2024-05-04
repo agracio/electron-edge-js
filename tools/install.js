@@ -73,13 +73,13 @@ if (process.platform === 'win32') {
 			.on('close', function() {
 				spawn(dotnetPath, ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
 					.on('close', function() {
-						require('./checkplatform');
+						//require('./checkplatform');
 					});
 			});
 	}
 
 	else {
-		require('./checkplatform');
+		//require('./checkplatform');
 	}
 } 
 

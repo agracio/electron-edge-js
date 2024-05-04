@@ -1,9 +1,5 @@
 /*jshint esversion: 6 */
 const params = new URLSearchParams(document.location.search);
-//const platform =  params.get('platform');
-
-//var frameworks = platform === 'win32' ? ['', '1'] : ['1']
-//var framework = frameworks.shift();
 
 var suitesDoc = document.getElementById("suites");
 
