@@ -19,7 +19,7 @@ This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to suppo
 | Electron 29.x | v20.9.0          |
 | Electron 30.x | v20.11.1         |
 
-- You do not need to use same version of Node.js in your project as Electron Node.js version
+- You do not need to use the same version of Node.js in your project as Electron Node.js version
 - On Linux and MacOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
@@ -38,14 +38,6 @@ var helloWorld = edge.func(function () {/*
     }
 */});
 ```
-## Migration to .NET 6 :exclamation: 
-
-Edge.Js C# code has been migrated to .NET 6.  
-If your project is referencing `EdgeJs.dll` file locations have changed.
-
-```bash
-node_modules/electron-edge-js/lib/bootstrap/bin/Release/net6.0/EdgeJs.dll
-```
 
 ## Requirements (Windows)
 
@@ -61,19 +53,6 @@ Electron is built using specific version of Node.js. In order to use `edge-js` i
 
 Sample app that shows how to work with .NET Core using inline code and compiled C# libraries.  
 https://github.com/agracio/electron-edge-js-quick-start
-
-## MacOS
-
-`edge-js` and `electron-edge-js` will fail to build on MacOS if Visual Studio for Mac is installed.
-VS installs incomplete Mono runtimes that `edge-js` fails to access during `nmp install`. 
-Removing VS does not remove Mono fully and leaves behind an incomplete Mono install.
-To remove Mono from macOS use this script
-
-```bash
-sudo rm -rf /Library/Frameworks/Mono.framework
-sudo pkgutil --forget com.xamarin.mono-MDK.pkg
-sudo rm /etc/paths.d/mono-commands
-```
 
 ## Packaging Electron application
 
@@ -155,10 +134,6 @@ powerpoint.open(path.join(${remotePath}${process.env.file}.pptx), function(err) 
     if(err) throw err;
 });
 ```
-
-
-
-
 
 ## Build
 

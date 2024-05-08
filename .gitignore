@@ -50,6 +50,7 @@ adhoc/
 
 package/
 tools/build
+
 /src/double/Edge.js/obj/
 /src/double/Edge.js/bin/
 /src/double/Edge.js.CSharp/obj/
@@ -57,12 +58,11 @@ tools/build
 /src/double/Edge.js/*.sln
 /src/double/Edge.js.CSharp/*.sln
 /src/Debug/
+
 /test/obj/
 /test/bin/
 /test/Properties/
 /test/test.nuget.cache
-
-package-lock.json
 
 tools/nuget/content
 tools/nuget/lib
@@ -83,3 +83,8 @@ TemporaryGeneratedFile*.*
 /lib/native/win32/x64/*/msvcp140.dll
 /lib/native/win32/x64/*/vccorlib140.dll
 /lib/native/win32/x64/*/vcruntime140.dll
+
+test/mochawesome-report
+mochawesome-report
+mochawesome.json
+
