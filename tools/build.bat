@@ -24,10 +24,16 @@ if "%1" neq "" (
     shift
     goto :harvestVersions
 )
-if "%VERSIONS%" equ "" set VERSIONS=0.10.0
+if "%VERSIONS%" equ "" set VERSIONS=20.14.0
 pushd %SELF%\..
-for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
-for %%V in (%VERSIONS%) do call :build x64 x64 %%V 
+
+if "%PROCESSOR_ARCHITECTURE%" == "ARM64" (
+    for %%V in (%VERSIONS%) do call :build arm64 arm64 %%V 
+) else (
+    for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
+    for %%V in (%VERSIONS%) do call :build x64 x64 %%V 
+
+)
 popd
 
 exit /b 0
@@ -83,7 +89,7 @@ if "%3" equ "6.0.0" (
 ) else if "%3" equ "29.0.0" (
     SET target=20.9.0
 ) else if "%3" equ "30.0.0" (
-    SET target=20.11.1
+    SET target=20.14.0
 ) else (
     echo edge-electron-js does not support Electron %3.
     exit /b -1
@@ -112,11 +118,21 @@ if not exist "%GYP%" (
     exit /b -1
 )
 
-"%NODEEXE%" "%GYP%" configure build --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR% --openssl_fips=''
+"%NODEEXE%" "%GYP%" configure --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR% --openssl_fips=''
 if %ERRORLEVEL% neq 0 (
     echo Error building edge.node %FLAVOR% for node.js %2 v%target%
     exit /b -1
 )
+
+REM Conflict when building arm64 binaries
+if "%PROCESSOR_ARCHITECTURE%" == "ARM64" (
+    FOR %%F IN (build\*.vcxproj) DO (
+    echo Patch /fp:strict in %%F
+    powershell -Command "(Get-Content -Raw %%F) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 %%F"
+    )
+)
+
+"%NODEEXE%" "%GYP%" build
 
 echo %DESTDIR%
 copy /y .\build\%FLAVOR%\edge_*.node "%DESTDIR%"
