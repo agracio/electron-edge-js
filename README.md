@@ -4,23 +4,19 @@ This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to suppo
 
 ### Windows binaries pre-compiled for 
 
-| Electron      | Node.Js Version  |
-| ------------- | ---------------- |
-| Electron 19.x | v16.14.2         |
-| Electron 20.x | v16.15.0         |
-| Electron 21.x | v16.16.0         |
-| Electron 22.x | v16.17.1         |
-| Electron 23.x | v18.12.1         |
-| Electron 24.x | v18.14.0         |
-| Electron 25.x | v18.15.0         |
-| Electron 26.x | v18.16.1         |
-| Electron 27.x | v18.17.1         |
-| Electron 28.x | v18.18.2         |
-| Electron 29.x | v20.9.0          |
-| Electron 30.x | v20.11.1         |
+| Electron        | Node.Js          | x86/x64            | arm64              |
+| --------------- | ---------------- | ------------------ | ------------------ |
+| Electron 23.x   | v18.12.1         | :heavy_check_mark: | :x:                |
+| Electron 24.x   | v18.14.0         | :heavy_check_mark: | :x:                |
+| Electron 25.x   | v18.15.0         | :heavy_check_mark: | :x:                |
+| Electron 26.x   | v18.16.1         | :heavy_check_mark: | :x:                |
+| Electron 27.x   | v18.17.1         | :heavy_check_mark: | :x:                |
+| Electron 28.x   | v18.18.2         | :heavy_check_mark: | :x:                |
+| Electron 29.x   | v20.9.0          | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 30.1.x | v20.14.0         | :heavy_check_mark: | :heavy_check_mark: |
 
 - You do not need to use the same version of Node.js in your project as Electron Node.js version
-- On Linux and MacOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
+- On Linux and macOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 

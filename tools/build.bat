@@ -40,41 +40,7 @@ exit /b 0
 
 :build
 
-if "%3" equ "6.0.0" (
-    SET target=12.4.0
-) else if "%3" equ "7.0.0" (
-    SET target=12.8.1
-) else if "%3" equ "8.0.0" (
-    SET target=12.13.0
-) else if "%3" equ "9.0.0" (
-    SET target=12.14.1
-) else if "%3" equ "10.0.0" (
-    SET target=12.16.3
-) else if "%3" equ "11.0.0" (
-    SET target=12.18.3
-) else if "%3" equ "12.0.0" (
-    SET target=14.16.0
-) else if "%3" equ "13.0.0" (
-    SET target=14.16.0
-) else if "%3" equ "14.0.0" (
-    SET target=14.17.0
-) else if "%3" equ "15.0.0" (
-    SET target=16.5.0
-) else if "%3" equ "16.0.0" (
-    SET target=16.9.1 
-) else if "%3" equ "17.0.0" (
-    SET target=16.13.0
-) else if "%3" equ "18.0.0" (
-    SET target=16.13.2
-) else if "%3" equ "19.0.0" (
-    SET target=16.14.2
-) else if "%3" equ "20.0.0" (
-    SET target=16.15.0
-) else if "%3" equ "21.0.0" (
-    SET target=16.16.0
-) else if "%3" equ "22.0.0" (
-    SET target=16.17.1
-) else if "%3" equ "23.0.0" (
+if "%3" equ "23.0.0" (
     SET target=18.12.1
 ) else if "%3" equ "24.0.0" (
     SET target=18.14.0
