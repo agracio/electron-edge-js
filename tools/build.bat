@@ -1,10 +1,11 @@
 @echo off
 set SELF=%~dp0
 if "%1" equ "" (
-    echo Usage: build.bat debug^|release "{version} {version}" ...
-    echo e.g. build.bat release "0.8.22 0.10.0"
+    echo Usage: build.bat debug^|release "{version}"
+    echo e.g. build.bat release "30.0.0"
     exit /b -1
 )
+FOR /F "tokens=* USEBACKQ" %%F IN (`node -p process.arch`) DO (SET ARCH=%%F)
 
 SET FLAVOR=%1
 shift
@@ -27,7 +28,7 @@ if "%1" neq "" (
 if "%VERSIONS%" equ "" set VERSIONS=20.14.0
 pushd %SELF%\..
 
-if "%PROCESSOR_ARCHITECTURE%" == "ARM64" (
+if "%ARCH%" == "arm64" (
     for %%V in (%VERSIONS%) do call :build arm64 arm64 %%V 
 ) else (
     for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
@@ -91,7 +92,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 REM Conflict when building arm64 binaries
-if "%PROCESSOR_ARCHITECTURE%" == "ARM64" (
+if "%ARCH%" == "arm64" (
     FOR %%F IN (build\*.vcxproj) DO (
     echo Patch /fp:strict in %%F
     powershell -Command "(Get-Content -Raw %%F) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 %%F"
