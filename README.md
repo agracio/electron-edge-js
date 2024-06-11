@@ -1,6 +1,6 @@
 # .NET and Node.js in-process on Electron
 
-This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/).
+**This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/)**
 
 ### Windows binaries pre-compiled for 
 
@@ -14,6 +14,7 @@ This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to suppo
 | Electron 28.x   | v18.18.2         | :heavy_check_mark: | :x:                |
 | Electron 29.x   | v20.9.0          | :heavy_check_mark: | :heavy_check_mark: |
 | Electron 30.1.x | v20.14.0         | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 31.x   | v20.14.0         | :heavy_check_mark: | :heavy_check_mark: |
 
 - You do not need to use the same version of Node.js in your project as Electron Node.js version
 - On Linux and macOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
@@ -37,7 +38,7 @@ var helloWorld = edge.func(function () {/*
 
 ## Why use `electron-edge-js`?
 
-Electron is built using specific version of Node.js. In order to use `edge-js` in Electron project you would need to recompile it using the same Node.js version and Electron headers.
+Electron is built using specific version of Node.js. To use `edge-js` in Electron project you would need to recompile it using the same Node.js version and Electron headers.
 
 `electron-edge-js` comes precompiled with correct Node.js versions and headers.
 
@@ -64,7 +65,8 @@ node: {
 module.export = {
     pluginOptions: {
         electronBuilder: {
-        externals:["electron-edge-js"]
+            externals:["electron-edge-js"]
+        }
     }
 }
 ```  
