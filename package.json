@@ -5,7 +5,7 @@
     "url": "http://tomasz.janczuk.org",
     "twitter": "tjanczuk"
   },
-  "version": "31.0.0",
+  "version": "31.1.0",
   "description": "Edge.js: run .NET and Node.js in-process on Electron",
   "tags": [
     "owin",
@@ -46,14 +46,14 @@
     "nan": "^2.20.0"
   },
   "devDependencies": {
-    "electron": "^31.0.0",
-    "mocha": "10.4.0",
+    "electron": "^31.2.1",
+    "mocha": "10.6.0",
     "mochawesome": "^7.1.3"
   },
   "homepage": "https://github.com/agracio/electron-edge-js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:agracio/electron-edge-js.git"
+    "url": "git+ssh://git@github.com/agracio/electron-edge-js.git"
   },
   "bugs": {
     "url": "http://github.com/agracio/electron-edge-js/issues"
