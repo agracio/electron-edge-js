@@ -58,13 +58,17 @@ if "%3" equ "23.0.0" (
 ) else if "%3" equ "30.0.0" (
     SET target=20.15.1
 ) else if "%3" equ "31.0.0" (
-    SET target=20.15.1
+    SET target=20.16.0
+) else if "%3" equ "32.0.0" (
+    SET target=20.16.0
 ) else (
     echo edge-electron-js does not support Electron %3.
     exit /b -1
 )
-echo %1
-echo %3
+set ELECTRONV=%3
+set "ELECTRONV=%ELECTRONV:~,2%"
+set NODEV=%target%
+set "NODEV=%NODEV:~,2%"
 
 set DESTDIR=%DESTDIRROOT%\%1\%3
 if exist "%DESTDIR%\node.exe" goto gyp
@@ -87,7 +91,7 @@ if not exist "%GYP%" (
     exit /b -1
 )
 
-"%NODEEXE%" "%GYP%" configure --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR% --openssl_fips=''
+"%NODEEXE%" "%GYP%" configure --msvs_version=2022 --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR% --openssl_fips=''
 if %ERRORLEVEL% neq 0 (
     echo Error building edge.node %FLAVOR% for node.js %2 v%target%
     exit /b -1
@@ -98,6 +102,15 @@ if "%ARCH%" == "arm64" (
     FOR %%F IN (build\*.vcxproj) DO (
     echo Patch /fp:strict in %%F
     powershell -Command "(Get-Content -Raw %%F) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 %%F"
+    )
+)
+
+if %ELECTRONV% GEQ 32 (
+    if %NODEV% LSS 22 (
+        FOR %%F IN (build\*.vcxproj) DO (
+            echo Replace std:c++17 with std:c++20 in %%F
+            powershell -Command "(Get-Content -Raw %%F) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 %%F"
+        )
     )
 )
 
