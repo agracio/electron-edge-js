@@ -50,7 +50,9 @@ https://github.com/agracio/electron-edge-js-quick-start
 ## Packaging Electron application
 
 `electron-edge-js` needs to be specified as an external module, some examples<br/>  
+
 ``webpack.config.js ``
+
 ```js
 externals: {
     'electron-edge-js': 'commonjs2 electron-edge-js',
@@ -60,7 +62,9 @@ node: {
     __filename: false,
 },
 ```  
+
 ``vue.config.js``
+
 ```js
 module.export = {
     pluginOptions: {
@@ -74,6 +78,7 @@ module.export = {
 ### From [#138](https://github.com/agracio/electron-edge-js/issues/138)
 
 ``webpack.config.js ``
+
 ```js
 externals: {
     'electron-edge-js': 'commonjs2 electron-edge-js',
@@ -94,14 +99,18 @@ Electron `main.js`
 require("module").globalPaths.push(process.cwd()+'/node_modules');
 var edge = require('electron-edge-js');
 ```
-
-Packaging example based on `electron-edge-js-quick-start`.  
-https://github.com/zenb/electron-edge-js-quick-start  
-  
+ 
 Related issues to use for troubleshooting:  
 https://github.com/agracio/electron-edge-js/issues/39  
 https://github.com/agracio/electron-edge-js/issues/74  
 https://github.com/agracio/electron-edge-js/issues/21
+
+## Packaging standalone .NET Core app
+
+Packaged Electron app does not require .NET Core to be istalled on a client.  
+Packaging  example based on `electron-edge-js-quick-start`. 
+
+https://github.com/zenb/electron-edge-js-quick-start  
 
 ## Async execution
 
@@ -128,6 +137,11 @@ powerpoint.open(path.join(${remotePath}${process.env.file}.pptx), function(err) 
     if(err) throw err;
 });
 ```
+
+## Window refresh issue
+
+If `electron-edge-js` module is used on main Electron thread refreshing the window (F5, Ctrl+R, Command+R etc) will cause a hard crash in `electron-edge-js` module and Electron app.  
+Currently there is no solution to this issue other than using Electron [IPC](https://www.electronjs.org/docs/latest/tutorial/ipc).
 
 ## Build
 
