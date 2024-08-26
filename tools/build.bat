@@ -71,7 +71,7 @@ set NODEV=%target%
 set "NODEV=%NODEV:~,2%"
 
 set DESTDIR=%DESTDIRROOT%\%1\%3
-if exist "%DESTDIR%\node.exe" goto gyp
+@REM if exist "%DESTDIR%\node.exe" goto gyp
 if not exist "%DESTDIR%\NUL" mkdir "%DESTDIR%"
 echo Downloading node.exe %2 %target%...
 node "%SELF%\download.js" %2 %target% "%DESTDIR%"
