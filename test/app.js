@@ -68,6 +68,7 @@ exports.runTests = function (framework, window){
     run.on('end', function(){
         setTimeout(function(){
           mocha.dispose();
+          console.log('runComplete')
           window.webContents.send("runComplete", reportFilename);
           console.log('run end')
           if(runner === 'CI'){

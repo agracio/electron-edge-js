@@ -42,7 +42,7 @@ jobs:
     strategy:
       matrix:
         # os: [macos-latest, ubuntu-latest, windows-2019]
-        os: [macos-14]
+        os: [macos-14, windows-2019]
         electron: [31.6.0]
     steps:
       - name: Checkout code
@@ -84,9 +84,9 @@ jobs:
       - name: electron install
         run: npm i electron@${{ matrix.electron }}
 
-      # - if: runner.os == 'Windows'
-      #   name: Run .NET 4.5 tests
-      #   run: node tools/test.js CI
+      - if: runner.os == 'Windows'
+        name: Run .NET 4.5 tests
+        run: node tools/test.js CI
 
       - name: "Run .net core tests"
         run: node tools/test.js CI
