@@ -6,6 +6,7 @@ var output = path.resolve(testDir, 'Edge.Tests.dll');
 var buildParameters = ['-target:library', '/debug', '-out:' + output, input];
 
 var electron = require('electron')
+var runner = process.argv[2];
 
 if (!process.env.EDGE_USE_CORECLR) {
 	if (process.platform !== 'win32') {
@@ -51,7 +52,7 @@ function runOnSuccess(code, signal) {
 	if (code === 0) {
 		process.env['EDGE_APP_ROOT'] = path.join(testDir, 'bin', 'Debug');
 		var electronPath = path.resolve(__dirname, '../test/main.js')
-		spawn(electron, [electronPath], { 
+		spawn(electron, [electronPath, runner], { 
 			stdio: 'inherit' 
 		}).on('error', function(err) {
 			console.log(err); 

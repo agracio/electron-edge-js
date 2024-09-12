@@ -1,0 +1,113 @@
+name: Build and Test
+
+on: 
+  push:
+    branches-ignore:
+      - 'circleci'
+    paths-ignore:
+      - 'samples/*'
+      - 'stress/*'
+      - 'performance/*'
+      - '.github/FUNDING.YML'
+      - '**/*.md'
+      - '**/*.d.ts'
+      - '**/*.bat'
+      - '.travis.yml'
+      - 'Dockerfile'
+      - '.gitconfig'
+      - '.gitignore'
+      - 'appveyor*.*'
+      - 'LICENSE*'
+      - '.idea/**'
+      - '.vscode/**'
+      - '*.bat'
+      - '*.nuspec'
+      - 'tools/nuget/*'
+      - '.npmignore'
+      - 'test/config.json'
+      - 'test/double'
+      - '.circleci'
+      - '.circleci/*'
+      - 'README.md'
+
+
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1 
+
+jobs:
+  build-test:
+    runs-on: ${{ matrix.os }}
+    name: build-test-${{ matrix.os }}-electron-${{ matrix.electron }}
+    strategy:
+      matrix:
+        # os: [macos-latest, ubuntu-latest, windows-2019]
+        os: [macos-14]
+        electron: [31.6.0]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
+
+      # - if: runner.os == 'Windows'  
+      #   name: Setup CSC for Windows
+      #   uses: yoavain/Setup-CSC@v5
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
+
+      - name: Versions
+        run: node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
+
+      - name: npm install
+        run: npm i --no-audit
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+      - name: electron install
+        run: npm i electron@${{ matrix.electron }}
+
+      # - if: runner.os == 'Windows'
+      #   name: Run .NET 4.5 tests
+      #   run: node tools/test.js CI
+
+      - name: "Run .net core tests"
+        run: node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4.3.3
+      #   if: success()
+      #   with:
+      #     name: ${{ matrix.os }}-${{ matrix.node }}
+      #     path: |
+      #       test-results.xml
+      #       mochawesome.json
+
+      # - name: Test Report
+      #   uses: phoenix-actions/test-reporting@v15
+      #   if: success()
+      #   with:
+      #     name: test-results-${{ matrix.os }}-node-${{ matrix.node }}
+      #     fail-on-error: true
+      #     path: mochawesome.json   # Path to test results
+      #     reporter: mochawesome-json 
+

@@ -9,6 +9,7 @@
     <PackageId>test</PackageId>
     <LangVersion>default</LangVersion>
     <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

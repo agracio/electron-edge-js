@@ -42,13 +42,15 @@
   "license": "MIT",
   "dependencies": {
     "edge-cs": "npm:@agracio/edge-cs@^1.3.7",
-    "follow-redirects": "^1.15.6",
+    "follow-redirects": "^1.15.9",
     "nan": "^2.20.0"
   },
   "devDependencies": {
-    "electron": "^31.3.0",
-    "mocha": "10.7.0",
-    "mochawesome": "^7.1.3"
+    "electron": "=31.6.0",
+    "mocha": "10.7.3",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^4.3.0",
+    "mochawesome-report-generator": "^6.2.0"
   },
   "homepage": "https://github.com/agracio/electron-edge-js",
   "repository": {

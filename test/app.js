@@ -4,9 +4,10 @@ const path = require('path');
 const Mocha = require('mocha');
 //const merge  = require('mochawesome-merge');
 
-const baseNetAppPath = path.join(__dirname, '/bin/Debug/net6.0/');
+const baseNetAppPath = path.join(__dirname, '/bin/Debug/');
 
 process.env.EDGE_APP_ROOT = baseNetAppPath;
+var runner = process.argv[2].replace('--', '');
 
 function createMocha (reportFilename, version) {
   return new Mocha({
@@ -17,7 +18,7 @@ function createMocha (reportFilename, version) {
       quiet: false,
       consoleReporter: 'none',
       showSkipped: true,
-      json: false,
+      json: true,
       reportTitle: 'electron-edge-js ' + version
     },
     timeout:10000,
@@ -43,11 +44,12 @@ exports.runTests = function (framework, window){
     var version = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : process.platform === 'win32' ? '.NET Framework 4.5' : 'Mono Framework';
     //var prefix = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : 'NET';
     var prefix = '';
+    var suffix = process.env.EDGE_USE_CORECLR ? 'coreclr' :'net';
 
     //ipcRenderer.send("testResult", 'title', `Running ${version} tests on Electron ${process.versions.electron}`);
     window.webContents.send("testResult", 'title', `Running ${version} tests on Electron ${process.versions.electron}`);
   
-    var reportFilename = `${prefix}test-results.html`;
+    var reportFilename = `test-results-${suffix}.html`;
     var mocha = createMocha(reportFilename, version);
     addFiles(mocha);
   
@@ -64,9 +66,11 @@ exports.runTests = function (framework, window){
 
     run.on('end', function(){
         setTimeout(function(){
-          console.log('end');
           mocha.dispose();
           window.webContents.send("runComplete", reportFilename);
+          if(runner === 'CI'){
+            window.close();
+          }
         }, 1000);
     });
 
