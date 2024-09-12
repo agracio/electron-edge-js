@@ -41,9 +41,9 @@ jobs:
     name: build-test-${{ matrix.os }}-electron-${{ matrix.electron }}
     strategy:
       matrix:
-        # os: [macos-latest, ubuntu-latest, windows-2019]
-        os: [macos-14, windows-2019]
-        electron: [31.6.0]
+        # os: [macos-14,macos-latest, ubuntu-latest, windows-2019]
+        os: [ windows-2019, macos-14, macos-latest, ubuntu-latest]
+        electron: [30.5.0, 31.6.0]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,10 +64,6 @@ jobs:
           path: node_modules
           key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
 
-      # - if: runner.os == 'Windows'  
-      #   name: Setup CSC for Windows
-      #   uses: yoavain/Setup-CSC@v5
-
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
@@ -76,13 +72,15 @@ jobs:
       - name: Versions
         run: node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
 
+      - name: setup electorn version
+        run: |
+          sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
+
       - name: npm install
         run: npm i --no-audit
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-      - name: electron install
-        run: npm i electron@${{ matrix.electron }}
 
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
