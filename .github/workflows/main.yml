@@ -68,7 +68,7 @@ jobs:
         name: Setup xvfb
           # Xvfb :99 &
         run: |
-          sudo apt-get install -y xvfb
+          # sudo apt-get install -y xvfb
           export DISPLAY=:99
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
@@ -94,8 +94,20 @@ jobs:
         name: Run .NET 4.5 tests
         run: node tools/test.js CI
 
-      - name: "Run .net core tests"
+      - if: runner.os == 'macOS'
+        name: "Run .net core tests"
         run: node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
+
+      - if: runner.os == 'Linux'
+        name: "Run .net core tests"
+        run: |
+          export DISPLAY=:99.0
+          echo "DISPLAY=:99.0" >> $GITHUB_ENV
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+          node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
 
