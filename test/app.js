@@ -77,6 +77,18 @@ exports.runTests = function (framework, window){
           }
         }, 1000);
     });
+    run.on('fail', function(){
+        setTimeout(function(){
+          mocha.dispose();
+          console.log('run failed')
+          window.webContents.send("runComplete", reportFilename);
+          console.log('run fail')
+          if(runner === 'CI'){
+            console.log('window.close()')
+            window.close();
+          }
+        }, 1000);
+    });
 
   };
 
