@@ -44,7 +44,7 @@ jobs:
         # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
         os: [ ubuntu-latest]
         # electron: [30.5.0, 31.6.0]
-        electron: [30.5.0]
+        electron: [30.5.0, 31.6.0]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,14 +65,6 @@ jobs:
           path: node_modules
           key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
 
-      # - if: runner.os == 'Linux'  
-      #   name: Setup xvfb
-      #     # Xvfb :99 &
-      #   run: |
-      #     # sudo apt-get install -y xvfb
-      #     export DISPLAY=:99
-      #     sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
-
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
@@ -90,19 +82,35 @@ jobs:
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
+      - if: runner.os == 'macOS' || runner.os == 'Linux'
+        name: Check electron-edge-js build
+        id: check_build
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "build/Release/edge_coreclr.node"
+
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
         run: node tools/test.js CI
 
       - if: runner.os == 'macOS'
         name: "Run .net core tests"
-        run: node tools/test.js CI
+        run: |
+          if: steps.check_build.outputs.files_exists == 'false'
+          echo "Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
+          exit 1
+          if: steps.check_build.outputs.files_exists == 'true'
+          node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'Linux'
         name: "Run .net core tests"
         run: |
+          if: steps.check_build.outputs.files_exists == 'false'
+          echo "Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
+          exit 1
+          if: steps.check_build.outputs.files_exists == 'true'
           export DISPLAY=:99
           echo "DISPLAY=:99" >> $GITHUB_ENV
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
