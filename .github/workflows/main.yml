@@ -41,8 +41,8 @@ jobs:
     name: build-test-${{ matrix.os }}-electron-${{ matrix.electron }}
     strategy:
       matrix:
-        # os: [macos-14,macos-latest, ubuntu-latest, windows-2019]
-        os: [ windows-2019, macos-14, macos-latest, ubuntu-latest]
+        # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
+        os: [ ubuntu-latest]
         electron: [30.5.0, 31.6.0]
     steps:
       - name: Checkout code
@@ -63,6 +63,14 @@ jobs:
         with:
           path: node_modules
           key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
+
+      - if: runner.os == 'Linux'  
+        name: Setup xvfb
+          # Xvfb :99 &
+        run: |
+          apt-get install -y xvfb
+          export DISPLAY=:99
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
