@@ -43,7 +43,8 @@ jobs:
       matrix:
         # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
         os: [ ubuntu-latest]
-        electron: [30.5.0, 31.6.0]
+        # electron: [30.5.0, 31.6.0]
+        electron: [30.5.0]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -89,7 +90,6 @@ jobs:
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
         run: node tools/test.js CI
@@ -111,6 +111,15 @@ jobs:
         env:
           EDGE_USE_CORECLR: 1
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4.3.3
+        if: success()
+        with:
+          name: ${{ matrix.os }}-${{ matrix.electron }}
+          path: |
+            test/mochawesome-report/test-results-coreclr.json
+            test/mochawesome-report/test-results-coreclr.html
+
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v4.3.3
       #   if: success()
@@ -119,7 +128,6 @@ jobs:
       #     path: |
       #       test-results.xml
       #       mochawesome.json
-
       # - name: Test Report
       #   uses: phoenix-actions/test-reporting@v15
       #   if: success()
