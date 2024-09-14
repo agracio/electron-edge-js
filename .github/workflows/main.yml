@@ -38,7 +38,7 @@ env:
 jobs:
   build-test:
     runs-on: ${{ matrix.os }}
-    name: build-test-${{ matrix.os }}-electron-${{ matrix.electron }}
+    name: build-test-${{ matrix.os }}-${{ matrix.electron }}
     strategy:
       matrix:
         # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
@@ -123,29 +123,25 @@ jobs:
         env:
           EDGE_USE_CORECLR: 1
 
+      - if: steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows'
+        name: "Merge test files"
+        run: node tools/mergeTests.js
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
-        if: success()
+        if: success() && (steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows')
         with:
           name: ${{ matrix.os }}-${{ matrix.electron }}
           path: |
-            test/mochawesome-report/test-results-coreclr.json
-            test/mochawesome-report/test-results-coreclr.html
+            test/mochawesome-report/mochawesome.json
+            test/mochawesome-report/mochawesome.html
 
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4.3.3
-      #   if: success()
-      #   with:
-      #     name: ${{ matrix.os }}-${{ matrix.node }}
-      #     path: |
-      #       test-results.xml
-      #       mochawesome.json
-      # - name: Test Report
-      #   uses: phoenix-actions/test-reporting@v15
-      #   if: success()
-      #   with:
-      #     name: test-results-${{ matrix.os }}-node-${{ matrix.node }}
-      #     fail-on-error: true
-      #     path: mochawesome.json   # Path to test results
-      #     reporter: mochawesome-json 
+      - name: Test Report
+        uses: phoenix-actions/test-reporting@v15
+        if: success() && (steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows')
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.electron }}
+          fail-on-error: true
+          path: test/mochawesome-report/mochawesome.json   # Path to test results
+          reporter: mochawesome-json 
 
