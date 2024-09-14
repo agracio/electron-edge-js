@@ -44,7 +44,8 @@ jobs:
       matrix:
         os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
         # os: [ ubuntu-latest]
-        electron: [29.4.6, 30.5.1, 31.6.0]
+        # electron: [29.4.6, 30.5.1, 31.6.0]
+        electron: [30.5.1, 32.1.0]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
