@@ -83,34 +83,37 @@ jobs:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
       - if: runner.os == 'macOS' || runner.os == 'Linux'
-        name: Check electron-edge-js build
+        name: Check electron-edge-js build file
         id: check_build
         uses: andstor/file-existence-action@v3
         with:
           files: "build/Release/edge_coreclr.node"
 
+      - if: (runner.os == 'macOS' || runner.os == 'Linux') && steps.check_build.outputs.files_exists == 'false'
+        name: Check electron-edge-js build file
+        run: |
+          echo "Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
+          exit 1
+
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
         run: node tools/test.js CI
 
-      - if: runner.os == 'macOS'
-        name: "Run .net core tests"
-        run: |
-          if: steps.check_build.outputs.files_exists == 'false'
-          echo "Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
-          exit 1
-          if: steps.check_build.outputs.files_exists == 'true'
-          node tools/test.js CI
+      - if: runner.os == 'Windows'
+        name: "Run .net core tests ${{ matrix.os }}"
+        run: node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
 
-      - if: runner.os == 'Linux'
-        name: "Run .net core tests"
+      - if: runner.os == 'macOS' && steps.check_build.outputs.files_exists == 'true'
+        name: "Run .net core tests ${{ matrix.os }}"
+        run: node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
+
+      - if: runner.os == 'Linux' && steps.check_build.outputs.files_exists == 'true'
+        name: "Run .net core tests ${{ matrix.os }}"
         run: |
-          message="Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
-          if: steps.check_build.outputs.files_exists == 'false'
-          echo "::error file=app.js::$message"
-          if: steps.check_build.outputs.files_exists == 'true'
           export DISPLAY=:99
           echo "DISPLAY=:99" >> $GITHUB_ENV
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
@@ -121,7 +124,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
-        if: success()
+        if: success() && steps.check_build.outputs.files_exists == 'true'
         with:
           name: ${{ matrix.os }}-${{ matrix.electron }}
           path: |
