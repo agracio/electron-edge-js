@@ -14,7 +14,7 @@ const margeOptions = {
     reportDir: './test/mochawesome-report'
 }
   
-marge.merge(options).then(report => {
+merge.merge(options).then(report => {
     var file = './test/mochawesome-report/mochawesome.json';
     fs.writeFileSync(file, JSON.stringify(report, null, 2))
     console.log(`Mochawesome json created: ${file}`);
