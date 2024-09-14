@@ -43,8 +43,7 @@ jobs:
       matrix:
         # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
         os: [ ubuntu-latest]
-        # electron: [30.5.0, 31.6.0]
-        electron: [30.5.0, 31.3.0]
+        electron: [30.5.0, 31.6.0, 32.1.0]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,17 +52,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # cache: 'npm'
-          # cache-dependency-path: package-lock.json
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       
-      # - name: Cache node modules
-      #   id: cache-nodemodules
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: node_modules
-      #     key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
@@ -73,7 +72,7 @@ jobs:
       - name: Versions
         run: node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
 
-      - name: setup electorn version
+      - name: setup electron version
         run: |
           sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
 
@@ -88,20 +87,21 @@ jobs:
         uses: andstor/file-existence-action@v3
         with:
           files: "build/Release/edge_coreclr.node"
-
-      - if: (runner.os == 'macOS' || runner.os == 'Linux') && steps.check_build.outputs.files_exists == 'false'
-        name: Check electron-edge-js build file
-        run: |
-          echo "::error file=app.js::Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
-          exit 1
+          fail: true
         continue-on-error: true
+
+      # - if: (runner.os == 'macOS' || runner.os == 'Linux') && steps.check_build.outputs.files_exists == 'false'
+      #   name: electron-edge-js build failed
+      #   run: |
+      #     echo "::error file=app.js::Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
+      #     exit 1
+      #   continue-on-error: true
 
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
         run: node tools/test.js CI
 
-      - if: runner.os == 'Windows'
-        name: "Run .net core tests Windows"
+      - name: "Run .net core tests Windows"
         run: node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
