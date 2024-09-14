@@ -92,8 +92,7 @@ jobs:
       - if: (runner.os == 'macOS' || runner.os == 'Linux') && steps.check_build.outputs.files_exists == 'false'
         name: Check electron-edge-js build file
         run: |
-          echo "Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
-          exit 1
+          echo "::error file=app.js::Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
 
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
