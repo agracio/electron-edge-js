@@ -108,8 +108,7 @@ jobs:
         name: "Run .net core tests"
         run: |
           if: steps.check_build.outputs.files_exists == 'false'
-          echo "Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
-          exit 1
+          echo "::error::Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
           if: steps.check_build.outputs.files_exists == 'true'
           export DISPLAY=:99
           echo "DISPLAY=:99" >> $GITHUB_ENV
