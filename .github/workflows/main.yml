@@ -93,6 +93,8 @@ jobs:
         name: Check electron-edge-js build file
         run: |
           echo "::error file=app.js::Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
+          exit 1
+        continue-on-error: true
 
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests
@@ -123,7 +125,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
-        if: success() && steps.check_build.outputs.files_exists == 'true'
+        if: success()
         with:
           name: ${{ matrix.os }}-${{ matrix.electron }}
           path: |
