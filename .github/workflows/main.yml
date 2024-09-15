@@ -46,7 +46,7 @@ jobs:
         electron: [29.4.6, 30.5.1, 31.6.0]
         # electron: [31.6.0, 32.1.0]
         
-    name: test-${{ matrix.os }}-${{ matrix.electron }}
+    name: test-${{ matrix.os }}-v${{ matrix.electron }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -80,7 +80,8 @@ jobs:
         run: |
           sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
       
-      - uses: bhowell2/github-substring-action@1.0.2
+      - if: runner.os == 'Windows'
+        uses: bhowell2/github-substring-action@1.0.2
         id: electron_version
         with:
           value: "${{ matrix.electron }}"
@@ -93,6 +94,7 @@ jobs:
         with:
           files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_nativeclr.node"
           fail: true
+          ignore_case: true
   
       - name: npm install
         run: npm i --no-audit
@@ -106,6 +108,7 @@ jobs:
         with:
           files: "build/Release/edge_coreclr.node"
           fail: true
+          ignore_case: true
 
       # - if: (runner.os == 'macOS' || runner.os == 'Linux') && steps.check_build.outputs.files_exists == 'false'
       #   name: electron-edge-js build failed
@@ -114,23 +117,23 @@ jobs:
       #     exit 1
       #   continue-on-error: true
 
-      - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
+      - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests Windows
         run: node tools/test.js CI
 
-      - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
+      - if: runner.os == 'Windows'
         name: "Run .net core tests Windows"
         run: node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
 
-      - if: runner.os == 'macOS' && steps.check_build.outputs.files_exists == 'true'
+      - if: runner.os == 'macOS'
         name: "Run .net core tests macOS"
         run: node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
 
-      - if: runner.os == 'Linux' && steps.check_build.outputs.files_exists == 'true'
+      - if: runner.os == 'Linux'
         name: "Run .net core tests Linux"
         run: |
           export DISPLAY=:99
@@ -141,13 +144,12 @@ jobs:
         env:
           EDGE_USE_CORECLR: 1
 
-      - if: steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows'
-        name: "Merge test files"
+      - name: "Merge test files"
         run: node tools/mergeTests.js
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
-        if: success() && (steps.check_build.outputs.files_exists == 'true' || steps.check_windows_build.outputs.files_exists == 'true')
+        if: success()
         with:
           name: ${{ matrix.os }}-${{ matrix.electron }}
           path: |
@@ -156,9 +158,9 @@ jobs:
 
       - name: Create test report
         uses: phoenix-actions/test-reporting@v15
-        if: success() && (steps.check_build.outputs.files_exists == 'true' || steps.check_windows_build.outputs.files_exists == 'true')
+        if: success()
         with:
-          name: test-results-${{ matrix.os }}-${{ matrix.electron }}
+          name: test-results-${{ matrix.os }}-v${{ matrix.electron }}
           fail-on-error: true
           path: test/mochawesome-report/mochawesome.json   # Path to test results
           reporter: mochawesome-json 
