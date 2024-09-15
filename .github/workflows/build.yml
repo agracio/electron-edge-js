@@ -51,7 +51,9 @@ jobs:
           node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
 
       - name: npm install
-        run: npm i --no-audit
+        run: |
+            npm i
+            npm i -g node-gyp
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
@@ -85,9 +87,6 @@ jobs:
             node-gyp build
             copy /y .\build\Release\edge_*.node "release\arm64\${{ matrix.electron }}"
             rmdir /S /Q build
-        
-      - name: "Merge test files"
-        run: node tools/mergeTests.js
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
