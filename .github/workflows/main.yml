@@ -41,10 +41,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
-        os: [ windows-2019]
-        # electron: [29.4.6, 30.5.1, 31.6.0]
-        electron: [31.6.0, 32.1.0]
+        os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
+        # os: [ windows-2019]
+        electron: [29.4.6, 30.5.1, 31.6.0]
+        # electron: [31.6.0, 32.1.0]
         
     name: test-${{ matrix.os }}-${{ matrix.electron }}
     steps:
@@ -116,17 +116,13 @@ jobs:
 
       - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
         name: Run .NET 4.5 tests Windows
-        run: |
-          node tools/test.js CI
-          set EDGE_USE_CORECLR=1
-          echo "EDGE_USE_CORECLR=1" >> $GITHUB_ENV
-          node tools/test.js CI
+        run: node tools/test.js CI
 
-      # - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
-      #   name: "Run .net core tests Windows"
-      #   run: node tools/test.js CI
-      #   env:
-      #     EDGE_USE_CORECLR: 1
+      - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
+        name: "Run .net core tests Windows"
+        run: node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'macOS' && steps.check_build.outputs.files_exists == 'true'
         name: "Run .net core tests macOS"
@@ -151,7 +147,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
-        if: success() && (steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows')
+        if: success() && (steps.check_build.outputs.files_exists == 'true' || steps.check_windows_build.outputs.files_exists == 'true')
         with:
           name: ${{ matrix.os }}-${{ matrix.electron }}
           path: |
@@ -160,7 +156,7 @@ jobs:
 
       - name: Create test report
         uses: phoenix-actions/test-reporting@v15
-        if: success() && (steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows')
+        if: success() && (steps.check_build.outputs.files_exists == 'true' || steps.check_windows_build.outputs.files_exists == 'true')
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.electron }}
           fail-on-error: true

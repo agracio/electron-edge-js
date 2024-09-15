@@ -41,7 +41,7 @@ exports.runTests = function (framework, window){
     //if (typeof framework === "undefined") return;
 
     //process.env.EDGE_USE_CORECLR = framework;
-    console.log(`runner: ${runner}`);
+    // console.log(`runner: ${runner}`);
     var version = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : process.platform === 'win32' ? '.NET Framework 4.5' : 'Mono Framework';
     //var prefix = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : 'NET';
     var prefix = '';
@@ -68,11 +68,11 @@ exports.runTests = function (framework, window){
     run.on('end', function(){
         setTimeout(function(){
           mocha.dispose();
-          console.log('runComplete')
+          // console.log('runComplete')
           window.webContents.send("runComplete", reportFilename);
-          console.log('run end')
+          // console.log('run end')
           if(runner === 'CI'){
-            console.log('window.close()')
+            // console.log('window.close()')
             window.close();
           }
         }, 1000);
