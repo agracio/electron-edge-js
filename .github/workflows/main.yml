@@ -119,10 +119,12 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Run .NET 4.5 tests Windows
+        timeout-minutes: 10
         run: node tools/test.js CI
 
       - if: runner.os == 'Windows'
         name: "Run .net core tests Windows"
+        timeout-minutes: 10
         run: node tools/test.js CI
         env:
           EDGE_USE_CORECLR: 1
@@ -130,11 +132,13 @@ jobs:
       - if: runner.os == 'macOS'
         name: "Run .net core tests macOS"
         run: node tools/test.js CI
+        timeout-minutes: 10
         # env:
         #   EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'Linux'
         name: "Run .net core tests Linux"
+        timeout-minutes: 10
         run: |
           export DISPLAY=:99
           echo "DISPLAY=:99" >> $GITHUB_ENV

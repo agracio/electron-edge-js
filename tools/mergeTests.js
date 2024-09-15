@@ -18,6 +18,15 @@ merge.merge(options).then(report => {
     var file = './test/mochawesome-report/mochawesome.json';
     fs.writeFileSync(file, JSON.stringify(report, null, 2))
     console.log(`Mochawesome json created: ${file}`);
-    marge.create(report, margeOptions).then(() => console.log(`Mochawesome report created: ${margeOptions.reportDir}/${margeOptions.reportFilename}`))
-
+    marge.create(report, margeOptions).then(() => 
+        {
+            console.log(`Mochawesome report created: ${margeOptions.reportDir}/${margeOptions.reportFilename}`)
+            let stats = {
+                passing: report.stats.passes,
+                skipped: report.stats.pending,
+                failures: report.stats.failures
+            };
+            console.log(JSON.stringify(stats));
+        }
+    );
 })

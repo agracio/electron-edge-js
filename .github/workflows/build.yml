@@ -1,0 +1,99 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+      # node-gyp configure build --target=31.6.0 --disturl=https://electronjs.org/headers --runtime=electron --release --arch=arm64
+
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1 
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022]
+        # os: [ windows-2019]
+        # arch: [ia32, x64, arm64]
+        electron: [29.4.6, 30.5.1, 31.6.0]
+        
+    name: build-${{ matrix.os }}-v${{ matrix.electron }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
+
+      - name: Versions
+        run: |
+          node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
+
+      - name: npm install
+        run: npm i --no-audit
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+      - name: Create release folder
+        run: |
+            mkdir "release\ia32\${{ matrix.electron }}"
+            mkdir "release\x64\${{ matrix.electron }}"
+            mkdir "release\arm64\${{ matrix.electron }}"
+
+      - name: Build is32
+        timeout-minutes: 30
+        run: |
+            node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
+            copy /y .\build\Release\edge_*.node "release\ia32\${{ matrix.electron }}"
+            rmdir /S /Q build
+
+      - name: Build x64
+        timeout-minutes: 30
+        run: |
+            node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
+            copy /y .\build\Release\edge_*.node "release\x64\${{ matrix.electron }}"
+            rmdir /S /Q build
+
+      - name: Build arm64
+        timeout-minutes: 30
+        run: |
+            node-gyp configure --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=arm64
+            sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/build_managed.vcxproj
+            sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/edge_coreclr.vcxproj
+            sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/edge_nativeclr.vcxproj
+            node-gyp build
+            copy /y .\build\Release\edge_*.node "release\arm64\${{ matrix.electron }}"
+            rmdir /S /Q build
+        
+      - name: "Merge test files"
+        run: node tools/mergeTests.js
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4.3.3
+        if: success()
+        with:
+          name: ${{ matrix.os }}-${{ matrix.electron }}
+          path: |
+            release
+
