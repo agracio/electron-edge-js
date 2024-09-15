@@ -44,7 +44,7 @@ jobs:
         # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
         os: [ windows-2019]
         # electron: [29.4.6, 30.5.1, 31.6.0]
-        electron: [32.1.0]
+        electron: [31.6.0, 32.1.0]
         
     name: test-${{ matrix.os }}-${{ matrix.electron }}
     steps:
@@ -75,13 +75,10 @@ jobs:
       - name: Versions
         run: |
           node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
-          echo "GITHUB_ARCH=$(echo node -p process.arch)" >> $GITHUB_ENV
-          
 
       - name: setup electron version
         run: |
           sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
-          echo $GITHUB_ARCH
       
       - uses: bhowell2/github-substring-action@1.0.2
         id: electron_version
@@ -94,7 +91,7 @@ jobs:
         id: check_windows_build
         uses: andstor/file-existence-action@v3
         with:
-          files: "lib/native/win32/${{ env.GITHUB_ARCH }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_coreclr.node, lib/native/win32/${{ env.GITHUB_ARCH }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_nativeclr.node"
+          files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_nativeclr.node"
           fail: true
   
       - name: npm install
