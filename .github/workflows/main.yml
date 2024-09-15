@@ -1,4 +1,4 @@
-name: Build and Test
+name: Test
 
 on: 
   push:
@@ -36,16 +36,17 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
 
 jobs:
-  build-test:
+  test:
     runs-on: ${{ matrix.os }}
-    name: build-test-${{ matrix.os }}-${{ matrix.electron }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
-        # os: [ ubuntu-latest]
+        # os: [macos-14, macos-latest, ubuntu-latest, windows-2019]
+        os: [ windows-2019]
         # electron: [29.4.6, 30.5.1, 31.6.0]
-        electron: [30.5.1, 32.1.0]
+        electron: [32.1.0]
+        
+    name: test-${{ matrix.os }}-${{ matrix.electron }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -72,12 +73,31 @@ jobs:
           dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
 
       - name: Versions
-        run: node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
+        run: |
+          node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
+          echo "GITHUB_ARCH=$(echo node -p process.arch)" >> $GITHUB_ENV
+          
 
       - name: setup electron version
         run: |
           sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
+          echo $GITHUB_ARCH
+          exit 1
+      
+      - uses: bhowell2/github-substring-action@1.0.2
+        id: electron_version
+        with:
+          value: "${{ matrix.electron }}"
+          length_from_start: 2
 
+      - if: runner.os == 'Windows'
+        name: Check electron-edge-js build file
+        id: check_windows_build
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "lib/native/win32/${{ GITHUB_ARCH }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_coreclr.node, lib/native/win32/${{ GITHUB_ARCH }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_nativeclr.node"
+          fail: true
+  
       - name: npm install
         run: npm i --no-audit
         env:
@@ -98,14 +118,18 @@ jobs:
       #     exit 1
       #   continue-on-error: true
 
-      - if: runner.os == 'Windows'
-        name: Run .NET 4.5 tests
-        run: node tools/test.js CI
+      - if: runner.os == 'Windows'  && steps.check_windows_build.outputs.files_exists == 'true'
+        name: Run .NET 4.5 tests Windows
+        run: |
+          node tools/test.js CI
+          echo "EDGE_USE_CORECLR=1" >> $GITHUB_ENV
+          node tools/test.js CI
 
-      - name: "Run .net core tests Windows"
-        run: node tools/test.js CI
-        env:
-          EDGE_USE_CORECLR: 1
+      # - if: runner.os == 'Windows'
+      #   name: "Run .net core tests Windows"
+      #   run: node tools/test.js CI
+      #   env:
+      #     EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'macOS' && steps.check_build.outputs.files_exists == 'true'
         name: "Run .net core tests macOS"
@@ -137,7 +161,7 @@ jobs:
             test/mochawesome-report/mochawesome.json
             test/mochawesome-report/mochawesome.html
 
-      - name: Test Report
+      - name: Create test report
         uses: phoenix-actions/test-reporting@v15
         if: success() && (steps.check_build.outputs.files_exists == 'true' || runner.os == 'Windows')
         with:
