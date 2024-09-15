@@ -9,6 +9,7 @@ on:
       - 'stress/*'
       - 'performance/*'
       - '.github/FUNDING.YML'
+      - '.github/build.yml'
       - '**/*.md'
       - '**/*.d.ts'
       - '**/*.bat'

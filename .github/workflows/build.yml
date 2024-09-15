@@ -67,26 +67,31 @@ jobs:
     #     timeout-minutes: 30
     #     run: |
     #         node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
-    #         copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
-    #         rmdir /S /Q build
+    #         cmd /c copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
+    #         cmd /c rmdir /S /Q build
 
     #   - name: Build x64
     #     timeout-minutes: 30
     #     run: |
     #         node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
-    #         copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
-    #         rmdir /S /Q build
+    #         cmd /c copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
+    #         cmd /c rmdir /S /Q build
 
       - name: Build arm64
         timeout-minutes: 30
+        shell: pwsh
         run: |
             node-gyp configure --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=arm64
-            sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/build_managed.vcxproj
-            sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/edge_coreclr.vcxproj
-            sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/edge_nativeclr.vcxproj
+
+            (Get-Content -Raw build/build_managed.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/build_managed.vcxproj
+            (Get-Content -Raw build/edge_coreclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
+            (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
+
             node-gyp build
-            copy /y build\Release\edge_*.node release\arm64\${{ matrix.electron }}
-            rmdir /S /Q build
+
+            cmd /c copy /y build\Release\edge_*.node release\arm64\${{ matrix.electron }}
+            cmd /c rmdir /S /Q build
+
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
