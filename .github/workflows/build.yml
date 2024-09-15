@@ -118,11 +118,11 @@ jobs:
     strategy:
       fail-fast: false
 
-    name: test Electron-${{ matrix.electron1 }}
+    name: test Electron
     steps:
       - uses: bhowell2/github-substring-action@1.0.2
         id: electron_version
         with:
-            value: "${{ matrix.electron }}"
+            value: "test"
             length_from_start: 2
     
