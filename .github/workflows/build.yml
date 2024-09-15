@@ -16,8 +16,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-2022]
-        # os: [ windows-2019]
-        # arch: [ia32, x64, arm64]
         electron: [29.4.6, 30.5.1, 31.6.0]
         
     name: build-${{ matrix.os }}-v${{ matrix.electron }}
@@ -63,19 +61,19 @@ jobs:
             mkdir "release\x64\${{ matrix.electron }}"
             mkdir "release\arm64\${{ matrix.electron }}"
 
-    #   - name: Build is32
-    #     timeout-minutes: 30
-    #     run: |
-    #         node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
-    #         cmd /c copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
-    #         cmd /c rmdir /S /Q build
+      - name: Build is32
+        timeout-minutes: 30
+        run: |
+            node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
+            cmd /c copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
+            cmd /c rmdir /S /Q build
 
-    #   - name: Build x64
-    #     timeout-minutes: 30
-    #     run: |
-    #         node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
-    #         cmd /c copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
-    #         cmd /c rmdir /S /Q build
+      - name: Build x64
+        timeout-minutes: 30
+        run: |
+            node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
+            cmd /c copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
+            cmd /c rmdir /S /Q build
 
       - name: Build arm64
         timeout-minutes: 30
