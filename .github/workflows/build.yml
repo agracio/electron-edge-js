@@ -76,7 +76,7 @@ jobs:
         timeout-minutes: 30
         run: |
             node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
-            cmd /c copy /y build\Release\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0
+            # cmd /c copy /y build\Release\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0
             cmd /c copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
             cmd /c rmdir /S /Q build
 
@@ -84,7 +84,7 @@ jobs:
         timeout-minutes: 30
         run: |
             node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
-            cmd /c copy /y build\Release\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
+            # cmd /c copy /y build\Release\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
             cmd /c copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
             cmd /c rmdir /S /Q build
 
@@ -99,7 +99,7 @@ jobs:
             (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
 
             node-gyp build
-            cmd /c copy /y build\Release\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0
+            # cmd /c copy /y build\Release\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0
             cmd /c copy /y build\Release\edge_*.node release\arm64\${{ matrix.electron }}
             cmd /c rmdir /S /Q build
 
@@ -111,7 +111,4 @@ jobs:
           name: ${{ matrix.electron }}
           path: |
             release
- 
-  test:
-    needs: build
-    runs-on: windows-2022
+
