@@ -6,7 +6,8 @@ var fs = require('fs')
 if (process.platform === 'win32') {
 	var libroot = path.resolve(__dirname, '../lib/native/win32')
 		, lib32bit = path.resolve(libroot, 'ia32')
-		, lib64bit = path.resolve(libroot, 'x64');
+		, lib64bit = path.resolve(libroot, 'x64')
+		, libarm64 = path.resolve(libroot, 'arm64');
 
 	function copyFile(filePath, filename) {
 		return function(copyToDir) {
@@ -39,10 +40,12 @@ if (process.platform === 'win32') {
 		return info.path;
 	}
 
-	var dest32dirs = fs.readdirSync(lib32bit)
-		.map(getInfo(lib32bit))
+	function getDestDirs(basedir){
+		return fs.readdirSync(basedir)
+		.map(getInfo(basedir))
 		.filter(isDirectory)
 		.map(getPath);
+	}
 
 	var redist = [
         'concrt140.dll',
@@ -51,20 +54,20 @@ if (process.platform === 'win32') {
         'vcruntime140.dll',
 	];
 
-	redist.forEach(function (dllname) {
-		var dll32bit = path.resolve(lib32bit, dllname);
-		dest32dirs.forEach(copyFile(dll32bit, dllname));
-	});
-		
-	var dest64dirs = fs.readdirSync(lib64bit)
-		.map(getInfo(lib64bit))
-		.filter(isDirectory)
-		.map(getPath);
+	var dest32dirs = getDestDirs(lib32bit);
+	var dest64dirs = getDestDirs(lib64bit);
+	var destarmdirs = getDestDirs(libarm64);
 
-	redist.forEach(function (dllname) {
-		var dll64bit = path.resolve(lib64bit, dllname);
-		dest64dirs.forEach(copyFile(dll64bit, dllname));
-	});
+	function copyRedist(lib, destDirs){
+		redist.forEach(function (dllname) {
+			var dll = path.resolve(lib, dllname);
+			destDirs.forEach(copyFile(dll, dllname));
+		});
+	}
+
+	copyRedist(lib32bit, dest32dirs);
+	copyRedist(lib64bit, dest64dirs);
+	copyRedist(libarm64, destarmdirs);
 
 	var dotnetPath = whereis('dotnet', 'dotnet.exe');
 
