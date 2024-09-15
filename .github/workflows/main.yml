@@ -87,7 +87,7 @@ jobs:
           length_from_start: 2
 
       - if: runner.os == 'Windows'
-        name: Check electron-edge-js build file
+        name: Check electron-edge-js Windows pre-built files
         id: check_windows_build
         uses: andstor/file-existence-action@v3
         with:
@@ -114,14 +114,15 @@ jobs:
       #     exit 1
       #   continue-on-error: true
 
-      - if: runner.os == 'Windows'  && steps.check_windows_build.outputs.files_exists == 'true'
+      - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
         name: Run .NET 4.5 tests Windows
         run: |
           node tools/test.js CI
+          set EDGE_USE_CORECLR=1
           echo "EDGE_USE_CORECLR=1" >> $GITHUB_ENV
           node tools/test.js CI
 
-      # - if: runner.os == 'Windows'
+      # - if: runner.os == 'Windows' && steps.check_windows_build.outputs.files_exists == 'true'
       #   name: "Run .net core tests Windows"
       #   run: node tools/test.js CI
       #   env:
