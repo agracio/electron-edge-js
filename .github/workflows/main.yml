@@ -130,8 +130,8 @@ jobs:
       - if: runner.os == 'macOS'
         name: "Run .net core tests macOS"
         run: node tools/test.js CI
-        env:
-          EDGE_USE_CORECLR: 1
+        # env:
+        #   EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'Linux'
         name: "Run .net core tests Linux"
@@ -141,8 +141,8 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 3
           node tools/test.js CI
-        env:
-          EDGE_USE_CORECLR: 1
+        # env:
+        #   EDGE_USE_CORECLR: 1
 
       - name: "Merge test files"
         run: node tools/mergeTests.js

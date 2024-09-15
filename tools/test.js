@@ -8,6 +8,10 @@ var buildParameters = ['-target:library', '/debug', '-out:' + output, input];
 var electron = require('electron')
 var runner = process.argv[2];
 
+if (process.platform !== 'win32') {
+    process.env.EDGE_USE_CORECLR = 1
+}
+
 if (!process.env.EDGE_USE_CORECLR) {
 	if (process.platform !== 'win32') {
 		buildParameters = buildParameters.concat(['-sdk:4.5']);
