@@ -63,19 +63,19 @@ jobs:
             mkdir "release\x64\${{ matrix.electron }}"
             mkdir "release\arm64\${{ matrix.electron }}"
 
-      - name: Build is32
-        timeout-minutes: 30
-        run: |
-            node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
-            copy /y .\build\Release\edge_*.node "release\ia32\${{ matrix.electron }}"
-            rmdir /S /Q build
+    #   - name: Build is32
+    #     timeout-minutes: 30
+    #     run: |
+    #         node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
+    #         copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
+    #         rmdir /S /Q build
 
-      - name: Build x64
-        timeout-minutes: 30
-        run: |
-            node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
-            copy /y .\build\Release\edge_*.node "release\x64\${{ matrix.electron }}"
-            rmdir /S /Q build
+    #   - name: Build x64
+    #     timeout-minutes: 30
+    #     run: |
+    #         node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
+    #         copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
+    #         rmdir /S /Q build
 
       - name: Build arm64
         timeout-minutes: 30
@@ -85,7 +85,7 @@ jobs:
             sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/edge_coreclr.vcxproj
             sed -i -e 's/<FloatingPointModel>Strict</FloatingPointModel>/<!-- <FloatingPointModel>Strict</FloatingPointModel> -->/g' build/edge_nativeclr.vcxproj
             node-gyp build
-            copy /y .\build\Release\edge_*.node "release\arm64\${{ matrix.electron }}"
+            copy /y build\Release\edge_*.node release\arm64\${{ matrix.electron }}
             rmdir /S /Q build
 
       - name: Upload artifacts
