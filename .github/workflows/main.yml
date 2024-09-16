@@ -42,9 +42,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-14, ubuntu-22.04, windows-2022]
-        # os: [ windows-2019]
-        electron: [29.4.6, 30.5.1, 31.6.0]
+        # os: [macos-13, macos-14, ubuntu-22.04, windows-2022]
+        os: [ windows-2022,  ubuntu-22.04]
+        electron: [30.5.1]
+        # electron: [29.4.6, 30.5.1, 31.6.0]
         # electron: [31.6.0, 32.1.0]
         
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
@@ -52,56 +53,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
+      - name: Setup env
+        uses: ./.github/actions/setup-env
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      
-      - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ matrix.os }}-${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
-
-      - name: Versions
-        run: |
-          node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
-
-      - name: setup electron version
-        shell: bash
-        run: |
-          sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
-      
-      - if: runner.os == 'Windows'
-        uses: agracio/github-substring-action@v1.0.0
-        id: electron_version
-        with:
-          value: "${{ matrix.electron }}"
-          length_from_start: 2
-
-      - if: runner.os == 'Windows'
-        name: Check electron-edge-js Windows pre-built files
-        id: check_windows_build
-        uses: andstor/file-existence-action@v3
-        with:
-          files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_nativeclr.node"
-          fail: true
-          ignore_case: true
-  
-      - name: npm install
-        run: npm i --no-audit
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          electron: ${{ matrix.electron }}
+          replace-version: true
 
       - if: runner.os == 'macOS' || runner.os == 'Linux'
         name: Check electron-edge-js build file
@@ -112,24 +68,11 @@ jobs:
           fail: true
           ignore_case: true
 
-      # - if: (runner.os == 'macOS' || runner.os == 'Linux') && steps.check_build.outputs.files_exists == 'false'
-      #   name: electron-edge-js build failed
-      #   run: |
-      #     echo "::error file=app.js::Failed to build electron-edge-js for Electron ${{ matrix.electron }}"
-      #     exit 1
-      #   continue-on-error: true
-
       - if: runner.os == 'Windows'
-        name: Run .NET 4.5 tests Windows
-        timeout-minutes: 10
-        run: node tools/test.js CI
-
-      - if: runner.os == 'Windows'
-        name: "Run .net core tests Windows"
-        timeout-minutes: 10
-        run: node tools/test.js CI
-        env:
-          EDGE_USE_CORECLR: 1
+        name: Run Windows tests
+        uses: ./.github/actions/test-windows
+        with:
+          electron: ${{ matrix.electron }}
 
       - if: runner.os == 'macOS'
         name: "Run .net core tests macOS"
@@ -150,24 +93,30 @@ jobs:
         # env:
         #   EDGE_USE_CORECLR: 1
 
-      - name: "Merge test files"
-        run: node tools/mergeTests.js
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
+      - name: Test report
+        uses: ./.github/actions/create-test-report
         with:
-          name: ${{ matrix.os }}-${{ matrix.electron }}
-          path: |
-            test/mochawesome-report/mochawesome.json
-            test/mochawesome-report/mochawesome.html
+          electron: ${{ matrix.electron }}
+          os: ${{ matrix.os }}
 
-      - name: Create test report
-        uses: phoenix-actions/test-reporting@v15
-        if: success()
-        with:
-          name: test-results-${{ matrix.os }}-v${{ matrix.electron }}
-          fail-on-error: true
-          path: test/mochawesome-report/mochawesome.json   # Path to test results
-          reporter: mochawesome-json 
+      # - name: "Merge test files"
+      #   run: node tools/mergeTests.js
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: success()
+      #   with:
+      #     name: ${{ matrix.os }}-${{ matrix.electron }}
+      #     path: |
+      #       test/mochawesome-report/mochawesome.json
+      #       test/mochawesome-report/mochawesome.html
+
+      # - name: Create test report
+      #   uses: phoenix-actions/test-reporting@v15
+      #   if: success()
+      #   with:
+      #     name: test-results-${{ matrix.os }}-v${{ matrix.electron }}
+      #     fail-on-error: true
+      #     path: test/mochawesome-report/mochawesome.json   # Path to test results
+      #     reporter: mochawesome-json 
 

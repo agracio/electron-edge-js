@@ -1,0 +1,34 @@
+name: 'Test report'
+description: 'Create test report'
+inputs:
+  electron:
+    description: 'Electron version'
+    required: true
+  os:
+    description: 'runs-on'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Merge test files"
+      shell: bash
+      run: node tools/mergeTests.js
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: ${{ inputs.os }}-${{ inputs.electron }}
+        path: |
+          test/mochawesome-report/mochawesome.json
+          test/mochawesome-report/mochawesome.html
+
+    - name: Create test report
+      uses: phoenix-actions/test-reporting@v15
+      if: success()
+      with:
+        name: test-results-${{ inputs.os }}-v${{ inputs.electron }}
+        fail-on-error: true
+        path: test/mochawesome-report/mochawesome.json   # Path to test results
+        reporter: mochawesome-json 
