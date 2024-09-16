@@ -13,8 +13,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        electron: [29.0.0, 30.0.0, 31.0.0]
-        
+        # electron: [29.0.0, 30.0.0, 31.0.0]
+        electron: [29.0.0]
+       
     name: build Electron-${{ matrix.electron }}
     steps:
       - name: Checkout code
@@ -137,7 +138,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: release
-          pattern: my-artifact-*
-      - run: ls -R my-artifact
+          pattern: windows-2022-${{ steps.electron_version.outputs.substring }}.0.0
+      - run: ls -R release
     
     
