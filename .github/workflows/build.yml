@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup env
-        uses: ./.github/action/setup-env
+        uses: ./.github/actions/setup-env
         with:
           electron: ${{ matrix.electron }}
 
