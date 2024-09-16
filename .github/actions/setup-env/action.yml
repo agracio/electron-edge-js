@@ -69,7 +69,7 @@ runs:
       shell: bash
       if: ${{ inputs.replace-version == 'true' }}
       run: |
-        sed -i -e 's/${{ env.json_electron_version}}/${{ inputs.electron }}/g' package.json
+        sed -i -e 's/${{ env.json_electron_version}}/=${{ inputs.electron }}/g' package.json
 
     # - if: runner.os == 'Windows'
     #   uses: agracio/github-substring-action@v1.0.0
