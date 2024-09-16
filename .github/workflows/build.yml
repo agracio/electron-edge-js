@@ -125,7 +125,7 @@ jobs:
       - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
         with:
-            value: "test"
+            value: ${{ matrix.electron }}
             length_from_start: 2
 
       - name: Create release folder
