@@ -120,7 +120,7 @@ jobs:
         os: [windows-2022]
       fail-fast: false
 
-    name: test Electron
+    name: test
     steps:
       - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
@@ -138,7 +138,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: release
-          pattern: windows-2022-${{ steps.electron_version.outputs.substring }}.0.0
+          pattern: ${{ steps.electron_version.outputs.substring }}.0.0*
       - run: ls -R release
+      - run: ls -R 
     
     
