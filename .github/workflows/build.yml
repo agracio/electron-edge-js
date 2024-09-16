@@ -18,62 +18,50 @@ jobs:
        
     name: build Electron-${{ matrix.electron }}
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: "Read JSON"
-        uses: actions/github-script@v7
-        id: check-env
-        with:
-          result-encoding: string
-          script: |
-            try {
-              const fs = require('fs')
-              const jsonString = fs.readFileSync('package.json')
-              var json = JSON.parse(jsonString);
-              core.setFailed(json.devDependencies.electron)
-            } catch(err) {
-              core.error("Error while reading or parsing the JSON")
-              core.setFailed(err)
-            }
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
+      - name: Setup env
+        uses: ./github/action/setup-env
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
+          electron: ${{ matrix.electron }}
+
+      - name: Exit
+        run: exit 1
+      # - name: Setup NodeJS
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: '20'
+      #     cache: 'npm'
+      #     cache-dependency-path: package-lock.json
       
-      - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
+      # - name: Cache node modules
+      #   id: cache-nodemodules
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-modules
+      #   with:
+      #     path: node_modules
+      #     key: ${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
 
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
+      # - name: Setup dotnet
+      #   uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
 
-      - name: Versions
-        run: |
-          node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
+      # - name: Versions
+      #   run: |
+      #     node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
 
-      - name: setup electron version
-        shell: bash
-        run: |
-          sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
+      # - name: setup electron version
+      #   shell: bash
+      #   run: |
+      #     sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
   
-      - name: npm install
-        run: |
-            npm i
-            npm i -g node-gyp
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      - name: install node-gyp
+        run: npm i -g node-gyp
 
       - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
@@ -86,9 +74,6 @@ jobs:
             mkdir "release\ia32\${{ matrix.electron }}"
             mkdir "release\x64\${{ matrix.electron }}"
             mkdir "release\arm64\${{ matrix.electron }}"
-            cmd /c if not exist "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0"
-            cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0"
-            cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0"
 
       - name: Build ia32
         timeout-minutes: 30
