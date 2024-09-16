@@ -78,11 +78,12 @@ jobs:
           node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
 
       - name: setup electron version
+        shell: bash
         run: |
           sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
       
       - if: runner.os == 'Windows'
-        uses: bhowell2/github-substring-action@1.0.2
+        uses: agracio/github-substring-action@v1.0.0
         id: electron_version
         with:
           value: "${{ matrix.electron }}"
@@ -153,7 +154,7 @@ jobs:
         run: node tools/mergeTests.js
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           name: ${{ matrix.os }}-${{ matrix.electron }}

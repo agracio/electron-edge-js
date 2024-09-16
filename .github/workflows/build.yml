@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        electron: [29.4.6, 30.5.1, 31.6.0]
+        electron: [29.0.0, 30.0.0, 31.0.0]
         
     name: build Electron-${{ matrix.electron }}
     steps:
@@ -57,7 +57,7 @@ jobs:
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-      - uses: bhowell2/github-substring-action@1.0.2
+      - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
         with:
           value: "${{ matrix.electron }}"
@@ -76,7 +76,6 @@ jobs:
         timeout-minutes: 30
         run: |
             node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
-            # cmd /c copy /y build\Release\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0
             cmd /c copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
             cmd /c rmdir /S /Q build
 
@@ -84,7 +83,6 @@ jobs:
         timeout-minutes: 30
         run: |
             node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
-            # cmd /c copy /y build\Release\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
             cmd /c copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
             cmd /c rmdir /S /Q build
 
@@ -99,13 +97,12 @@ jobs:
             (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
 
             node-gyp build
-            # cmd /c copy /y build\Release\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0
             cmd /c copy /y build\Release\edge_*.node release\arm64\${{ matrix.electron }}
             cmd /c rmdir /S /Q build
 
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           name: ${{ matrix.electron }}
@@ -113,16 +110,34 @@ jobs:
             release
 
   test:
-    runs-on: windows-2022
+    runs-on: ${{ matrix.os }}
     needs: build
     strategy:
+      matrix:
+        # electron: [29.4.6, 30.5.1, 31.6.0]
+        electron: [29.4.6]
+        os: [windows-2022]
       fail-fast: false
 
     name: test Electron
     steps:
-      - uses: bhowell2/github-substring-action@1.0.2
+      - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
         with:
             value: "test"
             length_from_start: 2
+
+      - name: Create release folder
+        run: |
+          cmd /c if not exist "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0"
+          cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0"
+          cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0"
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: my-artifact-*
+      - run: ls -R my-artifact
+    
     
