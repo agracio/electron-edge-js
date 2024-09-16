@@ -16,7 +16,7 @@ jobs:
         # electron: [29.0.0, 30.0.0, 31.0.0]
         electron: [29.0.0]
        
-    name: build Electron-${{ matrix.electron }}
+    name: build electron-${{ matrix.electron }}
     steps:
 
       - name: Checkout code
@@ -26,40 +26,23 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           electron: ${{ matrix.electron }}
-
-      - name: Exit
-        run: exit 1
-      # - name: Setup NodeJS
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: '20'
-      #     cache: 'npm'
-      #     cache-dependency-path: package-lock.json
-      
-      # - name: Cache node modules
-      #   id: cache-nodemodules
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-modules
-      #   with:
-      #     path: node_modules
-      #     key: ${{ matrix.electron }}-${{ hashFiles('package-lock.json') }}
-
-
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
-
-      # - name: Versions
-      #   run: |
-      #     node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
-
-      # - name: setup electron version
-      #   shell: bash
-      #   run: |
-      #     sed -i -e 's/"electron": "=31.6.0"/"electron": "=${{ matrix.electron }}"/g' package.json
+          replace-version: true
   
+      - name: Read package.json
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              const jsonString = fs.readFileSync('package.json')
+              var json = JSON.parse(jsonString);
+              core.setFailed(json.devDependencies.electron.toString())
+            } catch(err) {
+              core.error("Error while reading or parsing package.json")
+              core.setFailed(err)
+            }
+    
       - name: install node-gyp
         run: npm i -g node-gyp
 
@@ -122,8 +105,17 @@ jobs:
         os: [windows-2022]
       fail-fast: false
 
-    name: test
+    name: test electron-${{ matrix.electron }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: ${{ matrix.electron }}
+          replace-version: true
+
       - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
         with:
@@ -136,7 +128,7 @@ jobs:
           cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0"
           cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0"
 
-      - name: Download All Artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: release
