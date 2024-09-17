@@ -109,10 +109,15 @@ https://github.com/agracio/electron-edge-js/issues/39
 https://github.com/agracio/electron-edge-js/issues/74  
 https://github.com/agracio/electron-edge-js/issues/21
 
+## electron-forge
+
+electron-forge example based on `electron-edge-js-quick-start`  
+https://github.com/agracio/electron-edge-js-quick-start-forge
+
 ## Packaging standalone .NET Core app
 
 Packaged Electron app does not require .NET Core to be istalled on a client.  
-Packaging  example based on `electron-edge-js-quick-start`. 
+Packaging example based on `electron-edge-js-quick-start`. 
 
 https://github.com/zenb/electron-edge-js-quick-start  
 
