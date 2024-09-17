@@ -34,6 +34,7 @@ on:
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
+  DOTNET_NOLOGO: 1 
 
 jobs:
   test:
@@ -41,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-14, ubuntu-22.04, windows-2022]
+        os: [macos-14, ubuntu-22.04, windows-2022]
         # os: [ windows-2022,  ubuntu-22.04]
         electron: [30.5.1]
         # electron: [29.4.6, 30.5.1, 31.6.0]
@@ -67,6 +68,21 @@ jobs:
           fail: true
           ignore_case: true
 
+      - name: Read package.json
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              const jsonString = fs.readFileSync('package.json')
+              var json = JSON.parse(jsonString);
+              console.log(json.devDependencies)
+            } catch(err) {
+              core.error("Error while reading or parsing package.json")
+              core.setFailed(err)
+            }
+    
       - if: runner.os == 'Windows'
         name: Run Windows tests
         uses: ./.github/actions/test-windows
