@@ -57,6 +57,7 @@ jobs:
         uses: ./.github/actions/setup-env
         with:
           electron: ${{ matrix.electron }}
+          os: ${{ matrix.os }}
           replace-version: true
 
       - if: runner.os == 'macOS' || runner.os == 'Linux'
