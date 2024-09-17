@@ -9,14 +9,15 @@ env:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        # electron: [29.0.0, 30.0.0, 31.0.0]
-        electron: [29.0.0]
+        electron: [29.0.0, 30.0.0, 31.0.0]
+        # electron: [29.0.0]
+        os: [windows-2022]
        
-    name: build electron-${{ matrix.electron }}
+    name: build ${{ matrix.os }}-v${{ matrix.electron }}
     steps:
 
       - name: Checkout code
@@ -84,12 +85,12 @@ jobs:
     needs: build
     strategy:
       matrix:
-        # electron: [29.4.6, 30.5.1, 31.6.0]
-        electron: [29.4.6]
+        electron: [29.4.6, 30.5.1, 31.6.0]
+        # electron: [29.4.6]
         os: [windows-2022]
       fail-fast: false
 
-    name: test electron-${{ matrix.electron }}
+    name: test ${{ matrix.os }}-v${{ matrix.electron }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -134,5 +135,6 @@ jobs:
         uses: ./.github/actions/create-test-report
         with:
           electron: ${{ matrix.electron }}
+          os: ${{ matrix.os }}
   
     
