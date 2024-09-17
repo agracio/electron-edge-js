@@ -44,19 +44,17 @@ jobs:
 
       - name: Build ia32
         timeout-minutes: 30
-        shell: cmd
         run: |
             node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=ia32
-            copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
-            rmdir /S /Q build
+            cmd /c copy /y build\Release\edge_*.node release\ia32\${{ matrix.electron }}
+            cmd /c rmdir /S /Q build
 
       - name: Build x64
         timeout-minutes: 30
-        shell: cmd
         run: |
             node-gyp configure build --target=${{ matrix.electron }} --disturl=https://electronjs.org/headers --runtime=electron --release --arch=x64
-            copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
-            rmdir /S /Q build
+            cmd /c copy /y build\Release\edge_*.node release\x64\${{ matrix.electron }}
+            cmd /c rmdir /S /Q build
 
       - name: Build arm64
         timeout-minutes: 30
@@ -126,7 +124,7 @@ jobs:
       - name: Copy artifacts
         shell: cmd
         run: |
-          copy /y release\${{ steps.electron_version.outputs.substring }}.0.0\x64\${{ steps.electron_version.outputs.substring }}.0.0\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0
+          copy /y release\${{ steps.electron_version.outputs.substring }}.0.0\x64\${{ steps.electron_version.outputs.substring }}.0.0\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
 
       - name: Test
         timeout-minutes: 10
