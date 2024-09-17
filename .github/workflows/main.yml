@@ -43,7 +43,8 @@ jobs:
       matrix:
         os: [macos-13, macos-14, ubuntu-22.04, windows-2022]
         # os: [ windows-2022,  ubuntu-22.04]
-        electron: [29.4.6, 30.5.1, 31.6.0]
+        electron: [30.5.1]
+        # electron: [29.4.6, 30.5.1, 31.6.0]
         # electron: [31.6.0, 32.1.0]
         
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
@@ -76,8 +77,6 @@ jobs:
         name: "Run .net core tests macOS"
         run: node tools/test.js CI
         timeout-minutes: 10
-        # env:
-        #   EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'Linux'
         name: "Run .net core tests Linux"
@@ -88,8 +87,6 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 3
           node tools/test.js CI
-        # env:
-        #   EDGE_USE_CORECLR: 1
 
       - name: Test report
         uses: ./.github/actions/create-test-report

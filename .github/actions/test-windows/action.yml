@@ -25,9 +25,8 @@ runs:
       shell: bash
       run: node tools/test.js CI
 
-    - if: runner.os == 'Windows'
+    - name: "Run .net core tests Windows"
       shell: bash
-      name: "Run .net core tests Windows"
       run: node tools/test.js CI
       env:
         EDGE_USE_CORECLR: 1
