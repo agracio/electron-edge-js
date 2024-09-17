@@ -19,6 +19,26 @@ runs:
       shell: bash
       run: node tools/mergeTests.js
 
+    - name: Read mochawesome.json
+      uses: actions/github-script@v7
+      with:
+        result-encoding: string
+        script: |
+          try {
+            const fs = require('fs')
+            const jsonString = fs.readFileSync('test/mochawesome-report/mochawesome.json')
+            var report = JSON.parse(jsonString);
+            let stats = {
+                passing: report.stats.passes,
+                skipped: report.stats.pending,
+                failures: report.stats.failures
+            };
+            core.notice(JSON.stringify(stats));
+          } catch(err) {
+            core.error("Error while reading or parsing test/mochawesome-report/mochawesome.json")
+            core.setFailed(err)
+          }
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       if: success()
