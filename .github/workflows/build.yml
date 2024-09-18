@@ -30,6 +30,8 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    outputs:
+      test-version: ${{ steps.electron-test-version.outputs.test-version }}
     strategy:
       # fail-fast: false
       matrix:
@@ -57,7 +59,7 @@ jobs:
           #  else
           #   core.setFailed("Unable to resolve Electron version for testing")
           #  fi
-          
+
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
