@@ -57,12 +57,7 @@ jobs:
           #  else
           #   core.setFailed("Unable to resolve Electron version for testing")
           #  fi
-
-      - name: Test resolved electron version 
-        run: |
-          echo "electron version is ${{ steps.electron-test-version.outputs.test-version }}"
-          exit 1
-
+          
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
