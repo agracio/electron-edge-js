@@ -42,16 +42,19 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Resolve Electron version for test
         id: electron-test-version
         shell: bash
         run: |
            if [ '${{ inputs.build-version }}' == '29.0.0' ]; then
+            echo "Electron: 29.4.6"
             echo "test-version=29.4.6" >> $GITHUB_OUTPUT
            elif [ '${{ inputs.build-version }}' == '30.0.0' ]; then
+            echo "Electron: 30.5.1"
             echo "test-version=30.5.1" >> $GITHUB_OUTPUT
            elif [ '${{ inputs.build-version }}' == '31.0.0' ]; then
+            echo "Electron: 31.6.0"
             echo "test-version=31.6.0" >> $GITHUB_OUTPUT
            else
             core.setFailed("Unable to resolve Electron version for testing")
