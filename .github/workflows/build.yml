@@ -12,15 +12,15 @@ on:
         - 29.0.0
         - 30.0.0
         - 31.0.0
-      test-version:
-        description: 'Electron version to test build'
-        required: true
-        default: '31.6.0'
-        type: choice
-        options:
-        - 29.4.6
-        - 30.5.1
-        - 31.6.0
+      # test-version:
+      #   description: 'Electron version to test build'
+      #   required: true
+      #   default: '31.6.0'
+      #   type: choice
+      #   options:
+      #   - 29.4.6
+      #   - 30.5.1
+      #   - 31.6.0
 
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
@@ -52,11 +52,24 @@ jobs:
       - name: install node-gyp
         run: npm i -g node-gyp
 
-      - uses: agracio/github-substring-action@v1.0.0
-        id: electron_version
-        with:
-          value: "${{ inputs.build-version }}"
-          length_from_start: 2
+      - name: Resolve Electron version for test
+        id: electron-test-version
+        shell: bash
+        run: |
+           if [ ${{ inputs.build-version }} == '29.0.0' ]; then
+            echo "test-version=29.4.6" >> $GITHUB_OUTPUT
+           elif [ ${{ inputs.build-version }} == '30.0.0' ]; then
+            echo "test-version=30.5.1" >> $GITHUB_OUTPUT
+           elif [ ${{ inputs.build-version }} == '31.0.0' ]; then
+            echo "test-version=31.6.0" >> $GITHUB_OUTPUT
+           else
+            core.setFailed("Unable to resolve Electron version for testing")
+           fi
+
+      - name: Test resolved electron version 
+        run: |
+          echo "the secret number is ${{ steps.electron-test-version.outputs.test-version }}"
+          exit 1
 
       - name: Create release folder
         run: |
@@ -111,7 +124,7 @@ jobs:
         os: [windows-2022]
       # fail-fast: false
 
-    name: test ${{ matrix.os }}-v${{ inputs.test-version }}
+    name: test ${{ matrix.os }}-v${{ needs.build.outputs.test-version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -119,14 +132,14 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
-          electron: ${{ inputs.test-version }}
+          electron: ${{ needs.build.outputs.test-version }}
           os: ${{ matrix.os }}
           replace-version: true
 
       - uses: agracio/github-substring-action@v1.0.0
         id: electron_version
         with:
-            value: ${{ inputs.test-version }}
+            value: ${{ needs.build.outputs.test-version }}
             length_from_start: 2
 
       - name: Create release folder
@@ -151,12 +164,12 @@ jobs:
         timeout-minutes: 10
         uses: ./.github/actions/test-windows
         with:
-          electron: ${{ inputs.test-version }}
+          electron: ${{ needs.build.outputs.test-version }}
     
       - name: Test report
         uses: ./.github/actions/create-test-report
         with:
-          electron: ${{ inputs.test-version }}
+          electron: ${{ needs.build.outputs.test-version }}
           os: ${{ matrix.os }}
           name: 'build-tests'
   
