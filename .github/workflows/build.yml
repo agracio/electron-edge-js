@@ -109,7 +109,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: ${{ inputs.build-version }}
+          name: electron-edge-js-${{ inputs.build-version }}
           path: |
             release
 
@@ -151,13 +151,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: release
-          pattern: ${{ steps.electron_version.outputs.substring }}.0.0*
+          pattern: electron-edge-js-${{ steps.electron_version.outputs.substring }}.0.0*
 
       - run: ls -R release
 
       - name: Copy artifacts
         run: |
-          cmd /c copy /y release\${{ steps.electron_version.outputs.substring }}.0.0\x64\${{ steps.electron_version.outputs.substring }}.0.0\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
+          cmd /c copy /y release\electron-edge-js-${{ steps.electron_version.outputs.substring }}.0.0\x64\${{ steps.electron_version.outputs.substring }}.0.0\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
 
       - name: Test
         timeout-minutes: 10
