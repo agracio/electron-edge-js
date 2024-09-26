@@ -6,12 +6,13 @@ on:
       build-version:
         description: 'Electron version to build'
         required: true
-        default: '31.0.0'
+        default: '29.0.0'
         type: choice
         options:
         - 29.0.0
         - 30.0.0
         - 31.0.0
+        - 32.0.0
       # test-version:
       #   description: 'Electron version to test build'
       #   required: true
@@ -55,6 +56,8 @@ jobs:
              echo "test-version=30.5.1" >> $GITHUB_OUTPUT
            elif [[ ${{ inputs.build-version }} == '31.0.0' ]]; then
              echo "test-version=31.6.0" >> $GITHUB_OUTPUT
+           elif [[ ${{ inputs.build-version }} == '32.0.0' ]]; then
+             echo "test-version=32.1.2" >> $GITHUB_OUTPUT
            fi 
           #  else
           #   core.setFailed("Unable to resolve Electron version for testing")

@@ -21,12 +21,6 @@ merge.merge(options).then(report => {
     marge.create(report, margeOptions).then(() => 
         {
             console.log(`Mochawesome report created: ${margeOptions.reportDir}/${margeOptions.reportFilename}`)
-            let stats = {
-                passing: report.stats.passes,
-                skipped: report.stats.pending,
-                failures: report.stats.failures
-            };
-            console.log(JSON.stringify(stats));
         }
     );
 })
