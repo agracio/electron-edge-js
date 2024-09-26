@@ -60,20 +60,6 @@ jobs:
              echo "test-version=32.1.2" >> $GITHUB_OUTPUT
            fi 
 
-      # - name: Resolve Node.js version
-      #   id: node-version
-      #   shell: bash
-      #   run: |
-      #      if [[ ${{ inputs.build-version }} == '29.0.0' ]]; then
-      #        echo "node=20" >> $GITHUB_OUTPUT
-      #      elif [[ ${{ inputs.build-version }} == '30.0.0' ]]; then
-      #        echo "node=20" >> $GITHUB_OUTPUT
-      #      elif [[ ${{ inputs.build-version }} == '31.0.0' ]]; then
-      #        echo "node=20" >> $GITHUB_OUTPUT
-      #      elif [[ ${{ inputs.build-version }} == '32.0.0' ]]; then
-      #        echo "node=20" >> $GITHUB_OUTPUT
-      #      fi 
-
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
@@ -101,7 +87,7 @@ jobs:
                 (Get-Content -Raw build/edge_coreclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
                 (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
             }
-                
+
             node-gyp build
             cmd /c copy /y build\Release\edge_*.node release\ia32\${{ inputs.build-version }}
             cmd /c rmdir /S /Q build

@@ -136,7 +136,14 @@ else {
 	}
 	if (version !== null)
 	{
-		spawn('node-gyp', ['configure', 'build', '--target='+version, '--disturl=https://electronjs.org/headers'], { stdio: 'inherit' });
+		spawn('node-gyp', ['configure', '--target='+version, '--runtime=electron', '--disturl=https://electronjs.org/headers'], { stdio: 'inherit' });
+
+		if(version.startsWith('32')){
+			spawn("sed -i -e 's/std:c++17/std:c++20/g' build/build_managed.vcxproj", { stdio: 'inherit' });
+			spawn("sed -i -e 's/std:c++17/std:c++20/g' build/edge_coreclr.vcxproj", { stdio: 'inherit' });
+			spawn("sed -i -e 's/std:c++17/std:c++20/g' build/edge_nativeclr.vcxproj", { stdio: 'inherit' });
+		}
+		spawn('node-gyp', ['build'], { stdio: 'inherit' });
 	}
 	else
 		spawn('node-gyp', ['configure', 'build'], { stdio: 'inherit' });
