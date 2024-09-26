@@ -158,9 +158,11 @@ else {
 
 		if(version.startsWith('32')){
 			configure.on('close', (code) => {
-				Promise.all(replaceCppRuntime()).then((code) => {
-					spawn('node-gyp', ['build'], { stdio: 'inherit' });
-				});
+					spawn('ls', ['-R', 'build'], { stdio: 'inherit' });
+				
+				// Promise.all(replaceCppRuntime()).then((code) => {
+				// 	spawn('node-gyp', ['build'], { stdio: 'inherit' });
+				// });
 			});
 		}else{
 			configure.on('close', (code) => {
