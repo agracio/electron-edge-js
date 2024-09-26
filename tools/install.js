@@ -3,7 +3,7 @@ var fs = require('fs')
 	, spawn = require('child_process').spawn
 	, whereis = require('./whereis');
 
-if (process.platform === 'win322') {
+if (process.platform === 'win32') {
 	var libroot = path.resolve(__dirname, '../lib/native/win32')
 		, lib32bit = path.resolve(libroot, 'ia32')
 		, lib64bit = path.resolve(libroot, 'x64')
@@ -136,7 +136,6 @@ else {
 	}
 	if (version !== null)
 	{
-		const configure = spawn('node-gyp', ['configure', '--target='+version, '--runtime=electron', '--disturl=https://electronjs.org/headers', '--release'], { stdio: 'inherit' });
 		var files = ['build/build_managed.vcxproj','build/edge_coreclr.vcxproj', 'build/edge_nativeclr.vcxproj'];
 
 		const processPromises = files.map(file => {
@@ -144,7 +143,7 @@ else {
 		  
 			return new Promise((resolve, reject) => {
 			  res.on("close", code => {
-				if (code === successCode) {
+				if (code === 0) {
 				  resolve(code)
 				} else {
 				  reject(code)
@@ -153,15 +152,15 @@ else {
 			});
 		  });
 
-		// if(version.startsWith('32')){
-		// 	configure.on('close', (code) => {
-		// 			spawn('sed', ['-i', '-e', 's/std:c++17/std:c++20/g', 'build/build_managed.vcxproj'], { stdio: 'inherit' });
-		// 			spawn('sed', ['-i', '-e', 's/std:c++17/std:c++20/g', 'build/edge_coreclr.vcxproj'], { stdio: 'inherit' });
-		// 			spawn('sed', ['-i', '-e', 's/std:c++17/std:c++20/g', 'build/edge_nativeclr.vcxproj'], { stdio: 'inherit' });
-		// 	});
-		// }
-		if(version.startsWith('32')){
+	  
+		const configure = spawn('node-gyp', ['configure', '--target='+version, '--runtime=electron', '--disturl=https://electronjs.org/headers', '--release'], { stdio: 'inherit' });
 
+		if(version.startsWith('32')){
+			configure.on('close', (code) => {
+				Promise.all(processPromises).then((code) => {
+					spawn('node-gyp', ['build'], { stdio: 'inherit' });
+				  });
+			});
 		}else{
 			configure.on('close', (code) => {
 				spawn('node-gyp', ['build'], { stdio: 'inherit' });
