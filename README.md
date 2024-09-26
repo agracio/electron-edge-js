@@ -159,7 +159,7 @@ build.bat supports only Electron major versions.
 For full documentation see [edge-js](https://github.com/agracio/edge-js) repo.
 
 
-[issues-img]: https://img.shields.io/github/issues/agracio/edge-js.svg?style=flat-square
-[issues-url]: https://github.com/agracio/edge-js/issues
-[closed-issues-img]: https://img.shields.io/github/issues-closed-raw/agracio/edge-js.svg?style=flat-square&color=brightgreen
-[closed-issues-url]: https://github.com/agracio/edge-js/issues?q=is%3Aissue+is%3Aclosed
+[issues-img]: https://img.shields.io/github/issues/agracio/electron-edge-js.svg?style=flat-square
+[issues-url]: https://github.com/agracio/electron-edge-js/issues
+[closed-issues-img]: https://img.shields.io/github/issues-closed-raw/agracio/electron-edge-js.svg?style=flat-square&color=brightgreen
+[closed-issues-url]: https://github.com/agracio/electron-edge-js/issues?q=is%3Aissue+is%3Aclosed
