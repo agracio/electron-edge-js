@@ -117,6 +117,24 @@ else {
 		return null;
 	}
 
+	function replaceCppRuntime(){
+		var files = ['build/build_managed.vcxproj','build/edge_coreclr.vcxproj', 'build/edge_nativeclr.vcxproj'];
+
+		files.map(file => {
+			const res = spawn('sed', ['-i', '-e', 's/std:c++17/std:c++20/g', file], { stdio: 'inherit' });
+			
+			return new Promise((resolve, reject) => {
+				res.on("close", code => {
+					if (code === 0) {
+						resolve(code)
+					} else {
+						reject(code)
+					}
+				});
+			});
+		});
+	}
+
 	location = locateElectronPrebuilt();
 	version = null;
 	electronPath = null;
@@ -136,28 +154,12 @@ else {
 	}
 	if (version !== null)
 	{
-		var files = ['build/build_managed.vcxproj','build/edge_coreclr.vcxproj', 'build/edge_nativeclr.vcxproj'];
-
-		const processPromises = files.map(file => {
-			const res = spawn('sed', ['-i', '-e', 's/std:c++17/std:c++20/g', file], { stdio: 'inherit' });
-		  
-			return new Promise((resolve, reject) => {
-			  res.on("close", code => {
-				if (code === 0) {
-				  resolve(code)
-				} else {
-				  reject(code)
-				}
-			  });
-			});
-		  });
-
 	  
 		const configure = spawn('node-gyp', ['configure', '--target='+version, '--runtime=electron', '--disturl=https://electronjs.org/headers', '--release'], { stdio: 'inherit' });
 
 		if(version.startsWith('32')){
 			configure.on('close', (code) => {
-				Promise.all(processPromises).then((code) => {
+				Promise.all(replaceCppRuntime()).then((code) => {
 					spawn('node-gyp', ['build'], { stdio: 'inherit' });
 				  });
 			});
