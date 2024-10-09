@@ -6,13 +6,14 @@ on:
       build-version:
         description: 'Electron version to build'
         required: true
-        default: '29.0.0'
+        default: '30.0.0'
         type: choice
         options:
         - 29.0.0
         - 30.0.0
         - 31.0.0
         - 32.0.0
+        - 33.0.0
       # test-version:
       #   description: 'Electron version to test build'
       #   required: true

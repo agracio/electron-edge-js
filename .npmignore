@@ -104,3 +104,4 @@ test/mochawesome-report
 mochawesome-report
 mochawesome.json
 *.zip
+*.sln
