@@ -1,6 +1,33 @@
 name: Test
 
 on: 
+  pull_request:
+    paths-ignore:
+      - 'samples/*'
+      - 'stress/*'
+      - 'performance/*'
+      - '.github/FUNDING.YML'
+      - '.github/workflows/build.yml'
+      - '**/*.md'
+      - '**/*.d.ts'
+      - '**/*.bat'
+      - '.travis.yml'
+      - 'Dockerfile'
+      - '.gitconfig'
+      - '.gitignore'
+      - 'appveyor*.*'
+      - 'LICENSE*'
+      - '.idea/**'
+      - '.vscode/**'
+      - '*.bat'
+      - '*.nuspec'
+      - 'tools/nuget/*'
+      - '.npmignore'
+      - 'test/config.json'
+      - 'test/double'
+      - '.circleci'
+      - '.circleci/*'
+      - 'README.md'
   push:
     branches-ignore:
       - 'circleci'
@@ -45,7 +72,7 @@ jobs:
         os: [macos-13, macos-14, ubuntu-22.04, windows-2022]
         # os: [ macos-14,  ubuntu-22.04]
         # electron: [32.1.2]
-        electron: [29.4.6, 30.5.1, 31.6.0, 32.2.0]
+        electron: [29.4.6, 30.5.1, 31.7.2, 32.2.2, 33.0.2]
         # electron: [31.6.0, 32.1.0]
         
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
