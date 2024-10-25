@@ -145,8 +145,6 @@ jobs:
     needs: build
     strategy:
       matrix:
-        # electron: [29.4.6, 30.5.1, 31.6.0]
-        # electron: [29.4.6]
         os: [windows-2022]
       # fail-fast: false
 

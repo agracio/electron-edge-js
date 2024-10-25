@@ -28,6 +28,8 @@ on:
       - '.circleci'
       - '.circleci/*'
       - 'README.md'
+      - '*.sln'
+      - '*.vcxproj'
   push:
     branches-ignore:
       - 'circleci'
@@ -57,6 +59,8 @@ on:
       - '.circleci'
       - '.circleci/*'
       - 'README.md'
+      - '*.sln'
+      - '*.vcxproj'
 
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC

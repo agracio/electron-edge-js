@@ -93,3 +93,6 @@ test/mochawesome-report
 mochawesome-report
 mochawesome.json
 
+release
+*.zip
+

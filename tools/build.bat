@@ -5,6 +5,7 @@ if "%1" equ "" (
     echo e.g. build.bat release "30.0.0"
     exit /b -1
 )
+rmdir /S /Q ..\build\
 FOR /F "tokens=* USEBACKQ" %%F IN (`node -p process.arch`) DO (SET ARCH=%%F)
 
 SET FLAVOR=%1
