@@ -4,7 +4,7 @@ inputs:
   node:
     description: 'Node.js version'
     required: false
-    default: '20'
+    default: '22'
   os:
     description: 'runs-on'
     required: false

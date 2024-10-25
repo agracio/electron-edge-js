@@ -1,0 +1,29 @@
+name: 'Build Windows arm64'
+description: 'Build Windows arm64 binaries'
+inputs:
+  electron:
+    description: 'Electron version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Build arm64
+      shell: pwsh
+      run: |
+          node-gyp configure --target=${{ inputs.electron }}.0.0 --disturl=https://electronjs.org/headers --runtime=electron --release --arch=arm64
+
+          (Get-Content -Raw build/build_managed.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/build_managed.vcxproj
+          (Get-Content -Raw build/edge_coreclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
+          (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
+
+          if ( '${{ inputs.electron }}' -ge 32){
+              (Get-Content -Raw build/build_managed.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/build_managed.vcxproj
+              (Get-Content -Raw build/edge_coreclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
+              (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
+          }
+
+          node-gyp build
+          cmd /c copy /y build\Release\edge_*.node release\arm64\${{ inputs.electron }}.0.0
+          cmd /c rmdir /S /Q build
