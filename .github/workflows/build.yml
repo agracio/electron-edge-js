@@ -45,11 +45,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Resolve Electron version for test
+      - name: Resolve Electron version from major
         id: electron-test-version
-        uses: ./.github/actions/get-electron-version
-        with:
-          electron: '${{ inputs.build-version }}'
+        shell: bash
+        run: |
+            if [[ ${{ inputs.build-version }} == '29' ]]; then
+              echo "test-version=29.4.6" >> $GITHUB_OUTPUT
+            elif [[ ${{ inputs.build-version }} == '30' ]]; then
+              echo "test-version=30.5.1" >> $GITHUB_OUTPUT
+            elif [[ ${{ inputs.build-version }} == '31' ]]; then
+              echo "test-version=31.7.2" >> $GITHUB_OUTPUT
+            elif [[ ${{ inputs.build-version }} == '32' ]]; then
+              echo "test-version=32.2.2" >> $GITHUB_OUTPUT
+            elif [[ ${{ inputs.build-version }} == '33' ]]; then
+              echo "test-version=33.0.2" >> $GITHUB_OUTPUT
+            fi 
 
       - name: Setup env
         uses: ./.github/actions/setup-env
