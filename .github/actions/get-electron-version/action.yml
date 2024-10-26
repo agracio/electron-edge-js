@@ -10,7 +10,6 @@ runs:
   steps:
 
   - name: Resolve Electron version from major
-    id: electron-test-version
     shell: bash
     run: |
         if [[ ${{ inputs.electron }} == '29' ]]; then
