@@ -62,3 +62,4 @@ runs:
         electron: ${{ inputs.electron }}
         os: ${{ inputs.os }}
         name: 'build-tests'
+ 
