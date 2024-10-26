@@ -1,0 +1,64 @@
+name: 'Test built Windows binary'
+description: 'Test built Windows binary'
+inputs:
+  os:
+    description: 'runs-on'
+    required: false
+    default: 'windows-2022'
+  electron:
+    description: 'Electron version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup env
+      uses: ./.github/actions/setup-env
+      with:
+        electron: ${{ inputs.electron }}
+        os: ${{ inputs.os }}
+        replace-version: true
+
+    - uses: agracio/github-substring-action@v1.0.0
+      id: electron_version
+      with:
+          value: ${{ inputs.electron }}
+          length_from_start: 2
+
+    - name: Create release folder
+      shell: pwsh
+      run: |
+        cmd /c if not exist "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0"
+        cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0"
+        cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0"
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: release
+        pattern: electron-edge-js-${{ steps.electron_version.outputs.substring }}.0.0*
+
+    - name: List artifacts
+      shell: bash
+      run: ls -R release
+
+    - name: Copy artifacts
+      shell: pwsh
+      run: |
+        cmd /c copy /y release\electron-edge-js-${{ steps.electron_version.outputs.substring }}.0.0\x64\${{ steps.electron_version.outputs.substring }}.0.0\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
+
+    - name: Test
+      uses: ./.github/actions/test-windows
+      with:
+        electron: ${{ inputs.electron }}
+  
+    - name: Test report
+      uses: ./.github/actions/create-test-report
+      with:
+        electron: ${{ inputs.electron }}
+        os: ${{ inputs.os }}
+        name: 'build-tests'

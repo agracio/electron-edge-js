@@ -1,0 +1,26 @@
+name: 'Get Electron version'
+description: 'Get Electron version'
+inputs:
+  electron:
+    description: 'Electron version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+  - name: Resolve Electron version from major
+    id: electron-test-version
+    shell: bash
+    run: |
+        if [[ ${{ inputs.electron }} == '29' ]]; then
+          echo "test-version=29.4.6" >> $GITHUB_OUTPUT
+        elif [[ ${{ inputs.electron }} == '30' ]]; then
+          echo "test-version=30.5.1" >> $GITHUB_OUTPUT
+        elif [[ ${{ inputs.electron }} == '31' ]]; then
+          echo "test-version=31.7.2" >> $GITHUB_OUTPUT
+        elif [[ ${{ inputs.electron }} == '32' ]]; then
+          echo "test-version=32.2.2" >> $GITHUB_OUTPUT
+        elif [[ ${{ inputs.electron }} == '33' ]]; then
+          echo "test-version=33.0.2" >> $GITHUB_OUTPUT
+        fi 

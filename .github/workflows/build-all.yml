@@ -27,20 +27,9 @@ jobs:
 
       - name: Resolve Electron version for test
         id: electron-test-version
-        shell: bash
-        run: |
-           if [[ ${{ matrix.electron }} == '29' ]]; then
-             echo "test-version=29.4.6" >> $GITHUB_OUTPUT
-           elif [[ ${{ matrix.electron }} == '30' ]]; then
-             echo "test-version=30.5.1" >> $GITHUB_OUTPUT
-           elif [[ ${{ matrix.electron }} == '31' ]]; then
-             echo "test-version=31.7.2" >> $GITHUB_OUTPUT
-           elif [[ ${{ matrix.electron }} == '32' ]]; then
-             echo "test-version=32.2.2" >> $GITHUB_OUTPUT
-           elif [[ ${{ matrix.electron }} == '33' ]]; then
-             echo "test-version=33.0.2" >> $GITHUB_OUTPUT
-           fi 
-
+        uses: ./.github/actions/get-electron-version
+        with:
+          electron: '${{ matrix.electron }}'
 
       - name: Setup env
         uses: ./.github/actions/setup-env
@@ -93,51 +82,11 @@ jobs:
 
     name: test ${{ matrix.os }}-v${{ needs.build.outputs.test-version }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup env
-        uses: ./.github/actions/setup-env
+      
+      - name: Test build
+        uses: ./.github/actions/test-build
         with:
           electron: ${{ needs.build.outputs.test-version }}
           os: ${{ matrix.os }}
-          replace-version: true
-
-      - uses: agracio/github-substring-action@v1.0.0
-        id: electron_version
-        with:
-            value: ${{ needs.build.outputs.test-version }}
-            length_from_start: 2
-
-      - name: Create release folder
-        run: |
-          cmd /c if not exist "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}.0.0"
-          cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0"
-          cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}.0.0"
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: release
-          pattern: electron-edge-js-${{ steps.electron_version.outputs.substring }}.0.0*
-
-      - run: ls -R release
-
-      - name: Copy artifacts
-        run: |
-          cmd /c copy /y release\electron-edge-js-${{ steps.electron_version.outputs.substring }}.0.0\x64\${{ steps.electron_version.outputs.substring }}.0.0\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}.0.0
-
-      - name: Test
-        timeout-minutes: 10
-        uses: ./.github/actions/test-windows
-        with:
-          electron: ${{ needs.build.outputs.test-version }}
-    
-      - name: Test report
-        uses: ./.github/actions/create-test-report
-        with:
-          electron: ${{ needs.build.outputs.test-version }}
-          os: ${{ matrix.os }}
-          name: 'build-tests'
   
     
