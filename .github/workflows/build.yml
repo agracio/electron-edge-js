@@ -112,6 +112,10 @@ jobs:
 
     name: test ${{ matrix.os }}-v${{ needs.build.outputs.test-version }}
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Test build
         uses: ./.github/actions/test-build
         with:
