@@ -60,21 +60,21 @@ jobs:
         timeout-minutes: 30
         uses: ./.github/actions/build
         with:
-          electron: ${{ inputs.build-version }}
+          electron: ${{ matrix.electron }}
           arch: 'ia32'
 
       - name: Build x64
         timeout-minutes: 30
         uses: ./.github/actions/build
         with:
-          electron: ${{ inputs.build-version }}
+          electron: ${{ matrix.electron }}
           arch: 'x64'
 
       - name: Build arm64
         timeout-minutes: 30
         uses: ./.github/actions/build
         with:
-          electron: ${{ inputs.build-version }}
+          electron: ${{ matrix.electron }}
           arch: 'arm64'
     
       - name: Upload artifacts
