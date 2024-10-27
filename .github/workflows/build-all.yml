@@ -1,31 +1,10 @@
-name: Build
+name: Build All
 
 on:
   workflow_dispatch:
-    inputs:
-      build-version:
-        description: 'Electron version to build'
-        required: true
-        default: '30'
-        type: choice
-        options:
-        - 29
-        - 30
-        - 31
-        - 32
-        - 33
-      # test-version:
-      #   description: 'Electron version to test build'
-      #   required: true
-      #   default: '31.6.0'
-      #   type: choice
-      #   options:
-      #   - 29.4.6
-      #   - 30.5.1
-      #   - 31.6.0
 
 env:
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true 
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
   DOTNET_NOLOGO: 1
 
@@ -37,9 +16,10 @@ jobs:
     strategy:
       # fail-fast: false
       matrix:
+        electron: [29, 30, 31, 32, 33]
         os: [windows-2022]
        
-    name: build ${{ matrix.os }}-v${{ inputs.build-version }}
+    name: build ${{ matrix.os }}-v${{ matrix.electron }}
     steps:
 
       - name: Checkout code
@@ -49,22 +29,22 @@ jobs:
         id: electron-test-version
         shell: bash
         run: |
-            if [[ ${{ inputs.build-version }} == '29' ]]; then
+            if [[ ${{ matrix.electron }} == '29' ]]; then
               echo "test-version=29.4.6" >> $GITHUB_OUTPUT
-            elif [[ ${{ inputs.build-version }} == '30' ]]; then
+            elif [[ ${{ matrix.electron }} == '30' ]]; then
               echo "test-version=30.5.1" >> $GITHUB_OUTPUT
-            elif [[ ${{ inputs.build-version }} == '31' ]]; then
+            elif [[ ${{ matrix.electron }} == '31' ]]; then
               echo "test-version=31.7.2" >> $GITHUB_OUTPUT
-            elif [[ ${{ inputs.build-version }} == '32' ]]; then
+            elif [[ ${{ matrix.electron }} == '32' ]]; then
               echo "test-version=32.2.2" >> $GITHUB_OUTPUT
-            elif [[ ${{ inputs.build-version }} == '33' ]]; then
+            elif [[ ${{ matrix.electron }} == '33' ]]; then
               echo "test-version=33.0.2" >> $GITHUB_OUTPUT
             fi 
 
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
-          electron: '${{ inputs.build-version }}.0.0'
+          electron: '${{ matrix.electron }}.0.0'
           os: ${{ matrix.os }}
    
       - name: install node-gyp
@@ -72,9 +52,9 @@ jobs:
 
       - name: Create release folder
         run: |
-            mkdir "release\ia32\${{ inputs.build-version }}.0.0"
-            mkdir "release\x64\${{ inputs.build-version }}.0.0"
-            mkdir "release\arm64\${{ inputs.build-version }}.0.0"
+            mkdir "release\ia32\${{ matrix.electron }}.0.0"
+            mkdir "release\x64\${{ matrix.electron }}.0.0"
+            mkdir "release\arm64\${{ matrix.electron }}.0.0"
 
       - name: Build ia32
         timeout-minutes: 30
@@ -96,12 +76,12 @@ jobs:
         with:
           electron: ${{ inputs.build-version }}
           arch: 'arm64'
-
+    
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: electron-edge-js-${{ inputs.build-version }}.0.0
+          name: electron-edge-js-${{ matrix.electron }}.0.0
           path: |
             release
 

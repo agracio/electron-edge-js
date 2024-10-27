@@ -8,6 +8,10 @@ on:
       - 'performance/*'
       - '.github/FUNDING.YML'
       - '.github/workflows/build.yml'
+      - '.github/workflows/build*.yml'
+      - '.github/actions/test-build/action.yml'
+      - '.github/actions/build*/*.*'
+      - '.github/actions/build/*.*'
       - '**/*.md'
       - '**/*.d.ts'
       - '**/*.bat'
@@ -28,6 +32,8 @@ on:
       - '.circleci'
       - '.circleci/*'
       - 'README.md'
+      - '*.sln'
+      - '*.vcxproj'
   push:
     branches-ignore:
       - 'circleci'
@@ -37,6 +43,10 @@ on:
       - 'performance/*'
       - '.github/FUNDING.YML'
       - '.github/workflows/build.yml'
+      - '.github/workflows/build*.yml'
+      - '.github/actions/test-build/action.yml'
+      - '.github/actions/build*/*.*'
+      - '.github/actions/build/*.*'
       - '**/*.md'
       - '**/*.d.ts'
       - '**/*.bat'
@@ -57,6 +67,8 @@ on:
       - '.circleci'
       - '.circleci/*'
       - 'README.md'
+      - '*.sln'
+      - '*.vcxproj'
 
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC

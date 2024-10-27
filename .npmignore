@@ -105,3 +105,6 @@ mochawesome-report
 mochawesome.json
 *.zip
 *.sln
+xunit*.*
+getVersion*.js
+*.vcxproj
