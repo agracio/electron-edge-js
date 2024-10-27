@@ -39,7 +39,7 @@ jobs:
       matrix:
         os: [windows-2022]
        
-    name: build ${{ matrix.os }}-v${{ inputs.build-version }}
+    name: build ${{ matrix.os }}-electron-${{ inputs.build-version }}
     steps:
 
       - name: Checkout code

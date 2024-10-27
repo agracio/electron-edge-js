@@ -22,7 +22,8 @@ runs:
             (Get-Content -Raw build/edge_coreclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
             (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
           }
-          if ( '${{ inputs.electron }}' -ge 32 -And '${{ inputs.arch }}' -eq 'arm64'){
+          
+          if ( '${{ inputs.electron }}' -ge 32){
               (Get-Content -Raw build/build_managed.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/build_managed.vcxproj
               (Get-Content -Raw build/edge_coreclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
               (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj

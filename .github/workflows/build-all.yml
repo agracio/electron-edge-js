@@ -19,7 +19,7 @@ jobs:
         electron: [29, 30, 31, 32, 33]
         os: [windows-2022]
        
-    name: build ${{ matrix.os }}-v${{ matrix.electron }}
+    name: build ${{ matrix.os }}-electron-${{ matrix.electron }}
     steps:
 
       - name: Checkout code
@@ -91,9 +91,10 @@ jobs:
     strategy:
       matrix:
         os: [windows-2022]
+        electron: ['${{ needs.build.outputs.test-version }}']
       # fail-fast: false
 
-    name: test ${{ matrix.os }}-v${{ needs.build.outputs.test-version }}
+    name: test ${{ matrix.os }}-v${{ matrix.electron }}
     steps:
 
       - name: Checkout code
