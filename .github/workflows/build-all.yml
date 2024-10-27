@@ -65,9 +65,9 @@ jobs:
               if('${{ matrix.electron }}' == '33'){
                 versions.push({'electron':'33.0.2'});
               }
-              let test-versions = `"matrix={'include': ${versions}}"`;
-              console.log(test-versions)
-              core.exportVariable('test-versions', test-versions);
+              let testVersions = `"matrix={'include': ${versions}}"`;
+              console.log(testVersions)
+              core.exportVariable('test-versions', testVersions);
             } catch(err) {
               core.error("Error while resolving Electron versions")
               core.setFailed(err)
