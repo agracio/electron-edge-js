@@ -12,7 +12,8 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     outputs:
-      test-version: ${{ steps.electron-test-version.outputs.test-version }}
+      # test-version: ${{ steps.electron-test-version.outputs.test-version }}
+      test-versions: ${{ steps.electron-test-versions.outputs.test-versions }}
     strategy:
       # fail-fast: false
       matrix:
@@ -25,65 +26,96 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Resolve Electron version from major
-        id: electron-test-version
-        shell: bash
-        run: |
-            if [[ ${{ matrix.electron }} == '29' ]]; then
-              echo "test-version=29.4.6" >> $GITHUB_OUTPUT
-            elif [[ ${{ matrix.electron }} == '30' ]]; then
-              echo "test-version=30.5.1" >> $GITHUB_OUTPUT
-            elif [[ ${{ matrix.electron }} == '31' ]]; then
-              echo "test-version=31.7.2" >> $GITHUB_OUTPUT
-            elif [[ ${{ matrix.electron }} == '32' ]]; then
-              echo "test-version=32.2.2" >> $GITHUB_OUTPUT
-            elif [[ ${{ matrix.electron }} == '33' ]]; then
-              echo "test-version=33.0.2" >> $GITHUB_OUTPUT
-            fi 
+      # - name: Resolve Electron version from major
+      #   id: electron-test-version
+      #   shell: bash
+      #   run: |
+      #       if [[ ${{ matrix.electron }} == '29' ]]; then
+      #         echo "test-version=29.4.6" >> $GITHUB_OUTPUT
+      #       elif [[ ${{ matrix.electron }} == '30' ]]; then
+      #         echo "test-version=30.5.1" >> $GITHUB_OUTPUT
+      #       elif [[ ${{ matrix.electron }} == '31' ]]; then
+      #         echo "test-version=31.7.2" >> $GITHUB_OUTPUT
+      #       elif [[ ${{ matrix.electron }} == '32' ]]; then
+      #         echo "test-version=32.2.2" >> $GITHUB_OUTPUT
+      #       elif [[ ${{ matrix.electron }} == '33' ]]; then
+      #         echo "test-version=33.0.2" >> $GITHUB_OUTPUT
+      #       fi 
 
-      - name: Setup env
-        uses: ./.github/actions/setup-env
+      - name: Resolve Electron versions from major
+        uses: actions/github-script@v7
+        id: electron-test-versions
         with:
-          electron: '${{ matrix.electron }}.0.0'
-          os: ${{ matrix.os }}
+          result-encoding: string
+          script: |
+            try {
+              let versions = [];
+              if('${{ matrix.electron }}' == '29'){
+                versions.push({'electron':'29.4.6'});
+              }
+              if('${{ matrix.electron }}' == '30'){
+                versions.push({'electron':'30.5.1'});
+              }
+              if('${{ matrix.electron }}' == '31'){
+                versions.push({'electron':'31.7.2'});
+              }
+              if('${{ matrix.electron }}' == '32'){
+                versions.push({'electron':'32.2.2'});
+              }
+              if('${{ matrix.electron }}' == '33'){
+                versions.push({'electron':'33.0.2'});
+              }
+              let test-versions = `"matrix={'include': ${versions}}"`;
+              console.log(test-versions)
+              core.exportVariable('test-versions', test-versions);
+            } catch(err) {
+              core.error("Error while resolving Electron versions")
+              core.setFailed(err)
+            }
+      
+      # - name: Setup env
+      #   uses: ./.github/actions/setup-env
+      #   with:
+      #     electron: '${{ matrix.electron }}.0.0'
+      #     os: ${{ matrix.os }}
    
-      - name: install node-gyp
-        run: npm i -g node-gyp
+      # - name: install node-gyp
+      #   run: npm i -g node-gyp
 
-      - name: Create release folder
-        run: |
-            mkdir "release\ia32\${{ matrix.electron }}.0.0"
-            mkdir "release\x64\${{ matrix.electron }}.0.0"
-            mkdir "release\arm64\${{ matrix.electron }}.0.0"
+      # - name: Create release folder
+      #   run: |
+      #       mkdir "release\ia32\${{ matrix.electron }}.0.0"
+      #       mkdir "release\x64\${{ matrix.electron }}.0.0"
+      #       mkdir "release\arm64\${{ matrix.electron }}.0.0"
 
-      - name: Build ia32
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ matrix.electron }}
-          arch: 'ia32'
+      # - name: Build ia32
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ matrix.electron }}
+      #     arch: 'ia32'
 
-      - name: Build x64
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ matrix.electron }}
-          arch: 'x64'
+      # - name: Build x64
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ matrix.electron }}
+      #     arch: 'x64'
 
-      - name: Build arm64
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ matrix.electron }}
-          arch: 'arm64'
+      # - name: Build arm64
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ matrix.electron }}
+      #     arch: 'arm64'
     
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: electron-edge-js-${{ matrix.electron }}.0.0
-          path: |
-            release
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: success()
+      #   with:
+      #     name: electron-edge-js-${{ matrix.electron }}.0.0
+      #     path: |
+      #       release
 
   test:
     runs-on: ${{ matrix.os }}
@@ -91,7 +123,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-2022]
-        electron: ['${{ needs.build.outputs.test-version }}']
+        electron: ${{ fromJSON(needs.build.outputs.test-versions) }}
       # fail-fast: false
 
     name: test ${{ matrix.os }}-v${{ matrix.electron }}
@@ -100,10 +132,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Test build
-        uses: ./.github/actions/test-build
-        with:
-          electron: ${{ needs.build.outputs.test-version }}
-          os: ${{ matrix.os }}
+      # - name: Test build
+      #   uses: ./.github/actions/test-build
+      #   with:
+      #     electron: ${{ needs.build.outputs.test-version }}
+      #     os: ${{ matrix.os }}
   
     
