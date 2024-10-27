@@ -58,22 +58,25 @@ jobs:
 
       - name: Build ia32
         timeout-minutes: 30
-        uses: ./.github/actions/build-ia32
+        uses: ./.github/actions/build
         with:
-          electron: ${{ matrix.electron }}
+          electron: ${{ inputs.build-version }}
+          arch: 'ia32'
 
       - name: Build x64
         timeout-minutes: 30
-        uses: ./.github/actions/build-x64
+        uses: ./.github/actions/build
         with:
-          electron: ${{ matrix.electron }}
+          electron: ${{ inputs.build-version }}
+          arch: 'x64'
 
       - name: Build arm64
         timeout-minutes: 30
-        uses: ./.github/actions/build-arm64
+        uses: ./.github/actions/build
         with:
-          electron: ${{ matrix.electron }}
-
+          electron: ${{ inputs.build-version }}
+          arch: 'arm64'
+    
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         if: success()
