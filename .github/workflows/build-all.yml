@@ -17,7 +17,8 @@ jobs:
     strategy:
       # fail-fast: false
       matrix:
-        electron: [29, 30, 31, 32, 33]
+        # electron: [29, 30, 31, 32, 33]
+        electron: [32, 33]
         os: [windows-2022]
        
     name: build ${{ matrix.os }}-electron-${{ matrix.electron }}
@@ -66,8 +67,8 @@ jobs:
                 versions.push({'electron':'33.0.2'});
               }
               let testVersions = `"matrix={'include': ${versions}}"`;
-              console.log(testVersions)
-              core.exportVariable('test-versions', testVersions);
+              console.log(JSON.stringify(testVersions))
+              core.exportVariable('test-versions', JSON.stringify(testVersions));
             } catch(err) {
               core.error("Error while resolving Electron versions")
               core.setFailed(err)
