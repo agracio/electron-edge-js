@@ -69,15 +69,12 @@ jobs:
       #       release
 
   electron-versions:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-2022
     outputs:
       matrix: ${{ steps.electron-test-versions.outputs.matrix }}
-    strategy:
-      # fail-fast: false
-      matrix:
-        os: [windows-2022]
+
     needs: build
-    name: latest-electron-versions
+    name: electron-versions
     steps:
       - name: Electron versions
         shell: bash
