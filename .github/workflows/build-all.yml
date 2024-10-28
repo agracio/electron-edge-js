@@ -28,6 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Resolve Electron versions from major
+        shell: bash
         id: electron-test-versions
         run: echo "matrix={\"include\":[{\"electron\":\"29.4.6\", \"os\":\"windows-2022\"},{\"electron\":\"30.5.1\", \"os\":\"windows-2022\"},{\"electron\":\"31.7.2\", \"os\":\"windows-2022\"},{\"electron\":\"32.2.2\", \"os\":\"windows-2022\"},{\"electron\":\"33.0.2\", \"os\":\"windows-2022\"}]}" >> $GITHUB_OUTPUT
       
