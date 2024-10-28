@@ -27,52 +27,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Resolve Electron version from major
-      #   id: electron-test-version
-      #   shell: bash
-      #   run: |
-      #       if [[ ${{ matrix.electron }} == '29' ]]; then
-      #         echo "test-version=29.4.6" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ matrix.electron }} == '30' ]]; then
-      #         echo "test-version=30.5.1" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ matrix.electron }} == '31' ]]; then
-      #         echo "test-version=31.7.2" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ matrix.electron }} == '32' ]]; then
-      #         echo "test-version=32.2.2" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ matrix.electron }} == '33' ]]; then
-      #         echo "test-version=33.0.2" >> $GITHUB_OUTPUT
-      #       fi 
-
       - name: Resolve Electron versions from major
-        uses: actions/github-script@v7
         id: electron-test-versions
-        with:
-          result-encoding: string
-          script: |
-            try {
-              let versions = [];
-              if('${{ matrix.electron }}' == '29'){
-                versions.push({'electron':'29.4.6'});
-              }
-              if('${{ matrix.electron }}' == '30'){
-                versions.push({'electron':'30.5.1'});
-              }
-              if('${{ matrix.electron }}' == '31'){
-                versions.push({'electron':'31.7.2'});
-              }
-              if('${{ matrix.electron }}' == '32'){
-                versions.push({'electron':'32.2.2'});
-              }
-              if('${{ matrix.electron }}' == '33'){
-                versions.push({'electron':'33.0.2'});
-              }
-              let testVersions = `{'include': ${versions}}`;
-              console.log(JSON.stringify(testVersions))
-              core.exportVariable('test-versions', JSON.stringify(testVersions));
-            } catch(err) {
-              core.error("Error while resolving Electron versions")
-              core.setFailed(err)
-            }
+        run: echo "test-versions={'include':[{'electron':'29.4.6'},{'electron':'30.5.1'},{'electron':'31.7.2'},{'electron':'32.2.2'},{'electron':'33.0.2'}]}" >> $GITHUB_OUTPUT
       
       # - name: Setup env
       #   uses: ./.github/actions/setup-env
