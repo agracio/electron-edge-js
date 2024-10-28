@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     outputs:
       # test-version: ${{ steps.electron-test-version.outputs.test-version }}
-      test-versions: ${{ steps.electron-test-versions.outputs.test-versions }}
+      matrix: ${{ steps.electron-test-versions.outputs.matrix }}
     strategy:
       # fail-fast: false
       matrix:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Resolve Electron versions from major
         id: electron-test-versions
-        run: echo "test-versions={\"include\":[{\"electron\":\"29.4.6\"},{\"electron\":\"30.5.1\"},{\"electron\":\"31.7.2\"},{\"electron\":\"32.2.2\"},{\"electron\":\"33.0.2\"}]}" >> $GITHUB_OUTPUT
+        run: echo "matrix={\"include\":[{\"electron\":\"29.4.6\", \"os\":\"windows-2022\"},{\"electron\":\"30.5.1\", \"os\":\"windows-2022\"},{\"electron\":\"31.7.2\", \"os\":\"windows-2022\"},{\"electron\":\"32.2.2\", \"os\":\"windows-2022\"},{\"electron\":\"33.0.2\", \"os\":\"windows-2022\"}]}" >> $GITHUB_OUTPUT
       
       # - name: Setup env
       #   uses: ./.github/actions/setup-env
@@ -76,12 +76,10 @@ jobs:
       #       release
 
   test:
+    strategy:
+      matrix: ${{ fromJSON(needs.build.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     needs: build
-    strategy:
-      matrix:
-        os: [windows-2022]
-        electron: ${{ fromJSON(needs.build.outputs.test-versions) }}
       # fail-fast: false
 
     name: test ${{ matrix.os }}-v${{ matrix.electron }}
@@ -93,7 +91,7 @@ jobs:
       # - name: Test build
       #   uses: ./.github/actions/test-build
       #   with:
-      #     electron: ${{ needs.build.outputs.test-version }}
+      #     electron: ${{ matrix.electron }}
       #     os: ${{ matrix.os }}
   
     
