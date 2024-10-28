@@ -71,24 +71,23 @@ jobs:
   electron-versions:
     runs-on: ${{ matrix.os }}
     outputs:
-      test-versions: ${{ steps.electron-test-versions.outputs.test-versions }}
+      matrix: ${{ steps.electron-test-versions.outputs.matrix }}
     strategy:
       # fail-fast: false
       matrix:
         os: [windows-2022]
     needs: build
+    name: latest-electron-versions
     steps:
       - name: Electron versions
         shell: bash
         id: electron-test-versions
-        run: echo "test-versions={\"include\":[{\"electron\":\"29.4.6\"},{\"electron\":\"30.5.1\"},{\"electron\":\"31.7.2\"},{\"electron\":\"32.2.2\"},{\"electron\":\"33.0.2\"}]}" >> $GITHUB_OUTPUT
+        run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.2', 'os':'windows-2022'},{'electron':'32.2.2', 'os':'windows-2022'},{'electron':'33.0.2', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
 
   test:
-    runs-on: ${{ matrix.os }}
     strategy:
-      matrix: 
-        os: [windows-2022]
-        electron: ${{ fromJSON(needs.electron-versions.outputs.test-versions) }}
+      matrix:  ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
+    runs-on: ${{ matrix.os }}
     needs: electron-versions
       # fail-fast: false
 
