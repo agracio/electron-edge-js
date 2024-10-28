@@ -14,8 +14,8 @@ jobs:
     strategy:
       # fail-fast: false
       matrix:
-        # electron: [29, 30, 31, 32, 33]
-        electron: [32, 33]
+        electron: [29, 30, 31, 32, 33]
+        # electron: [32, 33]
         os: [windows-2022]
        
     name: build ${{ matrix.os }}-electron-${{ matrix.electron }}
@@ -24,49 +24,49 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
     
-      # - name: Setup env
-      #   uses: ./.github/actions/setup-env
-      #   with:
-      #     electron: '${{ matrix.electron }}.0.0'
-      #     os: ${{ matrix.os }}
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: '${{ matrix.electron }}.0.0'
+          os: ${{ matrix.os }}
    
-      # - name: install node-gyp
-      #   run: npm i -g node-gyp
+      - name: install node-gyp
+        run: npm i -g node-gyp
 
-      # - name: Create release folder
-      #   run: |
-      #       mkdir "release\ia32\${{ matrix.electron }}.0.0"
-      #       mkdir "release\x64\${{ matrix.electron }}.0.0"
-      #       mkdir "release\arm64\${{ matrix.electron }}.0.0"
+      - name: Create release folder
+        run: |
+            mkdir "release\ia32\${{ matrix.electron }}.0.0"
+            mkdir "release\x64\${{ matrix.electron }}.0.0"
+            mkdir "release\arm64\${{ matrix.electron }}.0.0"
 
-      # - name: Build ia32
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     arch: 'ia32'
+      - name: Build ia32
+        timeout-minutes: 30
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ matrix.electron }}
+          arch: 'ia32'
 
-      # - name: Build x64
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     arch: 'x64'
+      - name: Build x64
+        timeout-minutes: 30
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ matrix.electron }}
+          arch: 'x64'
 
-      # - name: Build arm64
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     arch: 'arm64'
+      - name: Build arm64
+        timeout-minutes: 30
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ matrix.electron }}
+          arch: 'arm64'
     
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: success()
-      #   with:
-      #     name: electron-edge-js-${{ matrix.electron }}.0.0
-      #     path: |
-      #       release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: electron-edge-js-${{ matrix.electron }}.0.0
+          path: |
+            release
 
   electron-versions:
     runs-on: ubuntu-22.04
@@ -94,10 +94,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Test build
-      #   uses: ./.github/actions/test-build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     os: ${{ matrix.os }}
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ matrix.electron }}
+          os: ${{ matrix.os }}
   
     
