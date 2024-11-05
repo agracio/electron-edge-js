@@ -3,6 +3,7 @@
 [![Actions Status](https://github.com/agracio/electron-edge-js/workflows/Test/badge.svg)](https://github.com/agracio/electron-edge-js/actions)
 [![Git Issues][issues-img]][issues-url]
 [![Closed Issues][closed-issues-img]][closed-issues-url]
+<!-- [![NPM Downloads][downloads-img]][downloads-url] -->
 
 **This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/)**
 
@@ -149,8 +150,10 @@ build.bat supports only Electron major versions.
 
 For full documentation see [edge-js](https://github.com/agracio/edge-js) repo.
 
-
-[issues-img]: https://img.shields.io/github/issues/agracio/electron-edge-js.svg?style=flat-square
+[issues-img]: https://img.shields.io/github/issues-raw/agracio/electron-edge-js.svg?style=flat-square
 [issues-url]: https://github.com/agracio/electron-edge-js/issues
 [closed-issues-img]: https://img.shields.io/github/issues-closed-raw/agracio/electron-edge-js.svg?style=flat-square&color=brightgreen
 [closed-issues-url]: https://github.com/agracio/electron-edge-js/issues?q=is%3Aissue+is%3Aclosed
+
+[downloads-img]: https://img.shields.io/npm/d18m/electron-edge-js.svg?style=flat-square
+[downloads-url]: https://img.shields.io/npm/d18m/electron-edge-js.svg
