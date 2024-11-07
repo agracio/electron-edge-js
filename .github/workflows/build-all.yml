@@ -79,7 +79,7 @@ jobs:
       - name: Electron versions
         shell: bash
         id: electron-test-versions
-        run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.3', 'os':'windows-2022'},{'electron':'32.2.2', 'os':'windows-2022'},{'electron':'33.0.2', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
+        run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.3', 'os':'windows-2022'},{'electron':'32.2.2', 'os':'windows-2022'},{'electron':'33.1.0', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
 
   test:
     strategy:
