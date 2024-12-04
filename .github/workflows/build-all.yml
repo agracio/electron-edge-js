@@ -20,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Electron 29
+      - name: Build Electron 29.0.0
         uses: ./.github/actions/build-electron
         with:
           electron: 29
@@ -30,59 +30,94 @@ jobs:
         shell: bash
         id: electron-version
         run: echo "electron=29.4.6" >> $GITHUB_OUTPUT
-    
-      # - name: Setup env
-      #   uses: ./.github/actions/setup-env
-      #   with:
-      #     electron: '${{ matrix.electron }}.0.0'
-      #     os: ${{ runner.os }}
-   
-      # - name: install node-gyp
-      #   run: npm i -g node-gyp
 
-      # - name: Create release folder
-      #   run: |
-      #       mkdir "release\ia32\${{ matrix.electron }}.0.0"
-      #       mkdir "release\x64\${{ matrix.electron }}.0.0"
-      #       mkdir "release\arm64\${{ matrix.electron }}.0.0"
+  build-30:
+    runs-on: windows-2022
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-30.0.0
+    steps:
 
-      # - name: Cache node-gyp
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-gyp
-      #   with:
-      #     path: ~\AppData\Local\node-gyp\Cache
-      #     key: '${{ matrix.electron }}.0.0'
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # - name: Build ia32
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     arch: 'ia32'
+      - name: Build Electron 30.0.0
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 30
+          os: ${{ runner.os }}
 
-      # - name: Build x64
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     arch: 'x64'
+      - name: Electron version
+        shell: bash
+        id: electron-version
+        run: echo "electron=30.5.1" >> $GITHUB_OUTPUT
 
-      # - name: Build arm64
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ matrix.electron }}
-      #     arch: 'arm64'
-    
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: success()
-      #   with:
-      #     name: electron-edge-js-${{ matrix.electron }}.0.0
-      #     path: |
-      #       release
+  build-31:
+    runs-on: windows-2022
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-31.0.0
+    steps:
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Electron 31.0.0
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 31
+          os: ${{ runner.os }}
+
+      - name: Electron version
+        shell: bash
+        id: electron-version
+        run: echo "electron=31.7.5" >> $GITHUB_OUTPUT
+
+  build-32:
+    runs-on: windows-2022
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-32.0.0
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Electron 32.0.0
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 32
+          os: ${{ runner.os }}
+
+      - name: Electron version
+        shell: bash
+        id: electron-version
+        run: echo "electron=32.2.6" >> $GITHUB_OUTPUT
+
+  build-33:
+    runs-on: windows-2022
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-33.0.0
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Electron 33.0.0
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 33
+          os: ${{ runner.os }}
+
+      - name: Electron version
+        shell: bash
+        id: electron-version
+        run: echo "electron=33.2.1" >> $GITHUB_OUTPUT
 
   test-29:
     strategy:
@@ -91,9 +126,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: build-29
 
-      # fail-fast: false
-
-    name: test ${{ matrix.os }}-v ${{needs.build-29.outputs.electron}}
+    name: test ${{ matrix.os }}-v${{needs.build-29.outputs.electron}}
     steps:
 
       - name: Checkout code
@@ -105,4 +138,79 @@ jobs:
           electron: ${{ needs.build-29.outputs.electron }}
           os: ${{ matrix.os }}
   
-    
+  test-30:
+    strategy:
+      matrix: 
+       os: [windows-2022]
+    runs-on: ${{ matrix.os }}
+    needs: build-30
+
+    name: test ${{ matrix.os }}-v${{needs.build-30.outputs.electron}}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-30.outputs.electron }}
+          os: ${{ matrix.os }}
+  
+  test-31:
+    strategy:
+      matrix: 
+       os: [windows-2022]
+    runs-on: ${{ matrix.os }}
+    needs: build-31
+
+    name: test ${{ matrix.os }}-v${{needs.build-31.outputs.electron}}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-31.outputs.electron }}
+          os: ${{ matrix.os }}
+  
+  test-32:
+    strategy:
+      matrix: 
+       os: [windows-2022]
+    runs-on: ${{ matrix.os }}
+    needs: build-32
+
+    name: test ${{ matrix.os }}-v${{needs.build-32.outputs.electron}}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-32.outputs.electron }}
+          os: ${{ matrix.os }}
+  
+  test-33:
+    strategy:
+      matrix: 
+       os: [windows-2022]
+    runs-on: ${{ matrix.os }}
+    needs: build-33
+
+    name: test ${{ matrix.os }}-v${{needs.build-33.outputs.electron}}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-33.outputs.electron }}
+          os: ${{ matrix.os }}
+  
