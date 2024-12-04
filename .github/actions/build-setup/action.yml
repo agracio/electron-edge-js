@@ -1,0 +1,65 @@
+name: 'Electron build'
+description: 'Electron build'
+inputs:
+  electron:
+    description: 'Electron version'
+    required: true
+  os:
+    description: 'runs-on'
+    required: false
+    default: 'windows-2022'
+   
+runs:
+  using: "composite"
+  steps:
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: '${{ inputs.electron }}.0.0'
+          os: ${{ inputs.os }}
+   
+      - name: install node-gyp
+        shell: bash
+        run: npm i -g node-gyp
+
+      - name: Create release folder
+        shell: cmd
+        run: |
+            mkdir "release\ia32\${{ inputs.electron }}.0.0"
+            mkdir "release\x64\${{ inputs.electron }}.0.0"
+            mkdir "release\arm64\${{ inputs.electron }}.0.0"
+
+      - name: Cache node-gyp
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~\AppData\Local\node-gyp\Cache
+          key: '${{ inputs.electron }}.0.0'
+
+      - name: Build ia32
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: 'ia32'
+
+      - name: Build x64
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: 'x64'
+
+      - name: Build arm64
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: 'arm64'
+    
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: electron-edge-js-${{ inputs.electron }}.0.0
+          path: |
+            release

@@ -9,94 +9,91 @@ env:
   DOTNET_NOLOGO: 1
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      # fail-fast: false
-      matrix:
-        electron: [29, 30, 31, 32, 33]
-        # electron: [32, 33]
-        os: [windows-2022]
+  build-29:
+    runs-on: windows-2022
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
        
-    name: build ${{ matrix.os }}-electron-${{ matrix.electron }}
+    name: build electron-29.0.0
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
-    
-      - name: Setup env
-        uses: ./.github/actions/setup-env
+
+      - name: Build Electron 29
+        uses: ./.github/actions/setup-build
         with:
-          electron: '${{ matrix.electron }}.0.0'
-          os: ${{ matrix.os }}
-   
-      - name: install node-gyp
-        run: npm i -g node-gyp
+          electron: 29
+          os: ${{ runner.os }}
 
-      - name: Create release folder
-        run: |
-            mkdir "release\ia32\${{ matrix.electron }}.0.0"
-            mkdir "release\x64\${{ matrix.electron }}.0.0"
-            mkdir "release\arm64\${{ matrix.electron }}.0.0"
-
-      - name: Cache node-gyp
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-gyp
-        with:
-          path: ~\AppData\Local\node-gyp\Cache
-          key: '${{ matrix.electron }}.0.0'
-
-      - name: Build ia32
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ matrix.electron }}
-          arch: 'ia32'
-
-      - name: Build x64
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ matrix.electron }}
-          arch: 'x64'
-
-      - name: Build arm64
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ matrix.electron }}
-          arch: 'arm64'
-    
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: electron-edge-js-${{ matrix.electron }}.0.0
-          path: |
-            release
-
-  electron-versions:
-    runs-on: ubuntu-22.04
-    outputs:
-      matrix: ${{ steps.electron-test-versions.outputs.matrix }}
-
-    needs: build
-    name: electron-versions
-    steps:
-      - name: Electron versions
+      - name: Electron version
         shell: bash
-        id: electron-test-versions
-        run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.5', 'os':'windows-2022'},{'electron':'32.2.6', 'os':'windows-2022'},{'electron':'33.2.1', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
+        id: electron-version
+        run: echo "electron=29.4.6" >> $GITHUB_OUTPUT
+    
+      # - name: Setup env
+      #   uses: ./.github/actions/setup-env
+      #   with:
+      #     electron: '${{ matrix.electron }}.0.0'
+      #     os: ${{ runner.os }}
+   
+      # - name: install node-gyp
+      #   run: npm i -g node-gyp
 
-  test:
+      # - name: Create release folder
+      #   run: |
+      #       mkdir "release\ia32\${{ matrix.electron }}.0.0"
+      #       mkdir "release\x64\${{ matrix.electron }}.0.0"
+      #       mkdir "release\arm64\${{ matrix.electron }}.0.0"
+
+      # - name: Cache node-gyp
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-gyp
+      #   with:
+      #     path: ~\AppData\Local\node-gyp\Cache
+      #     key: '${{ matrix.electron }}.0.0'
+
+      # - name: Build ia32
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ matrix.electron }}
+      #     arch: 'ia32'
+
+      # - name: Build x64
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ matrix.electron }}
+      #     arch: 'x64'
+
+      # - name: Build arm64
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ matrix.electron }}
+      #     arch: 'arm64'
+    
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: success()
+      #   with:
+      #     name: electron-edge-js-${{ matrix.electron }}.0.0
+      #     path: |
+      #       release
+
+
+  test-29:
     strategy:
-      matrix:  ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
+      matrix: 
+       os: [windows-2022]
     runs-on: ${{ matrix.os }}
-    needs: electron-versions
+    needs: build-29
+
       # fail-fast: false
 
-    name: test ${{ matrix.os }}-v${{ matrix.electron }}
+    name: test ${{ matrix.os }}-v ${{needs.build-29.outputs.electron}}
     steps:
 
       - name: Checkout code
@@ -105,7 +102,7 @@ jobs:
       - name: Test build
         uses: ./.github/actions/test-build
         with:
-          electron: ${{ matrix.electron }}
+          electron: ${{ needs.build-29.outputs.electron }}
           os: ${{ matrix.os }}
   
     
