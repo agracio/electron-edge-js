@@ -39,6 +39,14 @@ jobs:
             mkdir "release\x64\${{ matrix.electron }}.0.0"
             mkdir "release\arm64\${{ matrix.electron }}.0.0"
 
+      - name: Cache node-gyp
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~\AppData\Local\node-gyp\Cache
+          key: '${{ matrix.electron }}.0.0'
+
       - name: Build ia32
         timeout-minutes: 30
         uses: ./.github/actions/build
@@ -79,7 +87,7 @@ jobs:
       - name: Electron versions
         shell: bash
         id: electron-test-versions
-        run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.5', 'os':'windows-2022'},{'electron':'32.2.5', 'os':'windows-2022'},{'electron':'33.2.0', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
+        run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.5', 'os':'windows-2022'},{'electron':'32.2.6', 'os':'windows-2022'},{'electron':'33.2.1', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
 
   test:
     strategy:

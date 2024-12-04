@@ -56,9 +56,9 @@ jobs:
             elif [[ ${{ inputs.build-version }} == '31' ]]; then
               echo "test-version=31.7.5" >> $GITHUB_OUTPUT
             elif [[ ${{ inputs.build-version }} == '32' ]]; then
-              echo "test-version=32.2.5" >> $GITHUB_OUTPUT
+              echo "test-version=32.2.6" >> $GITHUB_OUTPUT
             elif [[ ${{ inputs.build-version }} == '33' ]]; then
-              echo "test-version=33.2.0" >> $GITHUB_OUTPUT
+              echo "test-version=33.2.1" >> $GITHUB_OUTPUT
             fi 
 
       - name: Setup env
@@ -75,6 +75,14 @@ jobs:
             mkdir "release\ia32\${{ inputs.build-version }}.0.0"
             mkdir "release\x64\${{ inputs.build-version }}.0.0"
             mkdir "release\arm64\${{ inputs.build-version }}.0.0"
+
+      - name: Cache node-gyp
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~\AppData\Local\node-gyp\Cache
+          key: '${{ inputs.build-version }}.0.0'
 
       - name: Build ia32
         timeout-minutes: 30
