@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Electron 29
-        uses: ./.github/actions/setup-build
+        uses: ./.github/actions/build-electron
         with:
           electron: 29
           os: ${{ runner.os }}
