@@ -31,43 +31,25 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-2022
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
     strategy:
-      # fail-fast: false
-      matrix:
-        os: [windows-2022]
+      fail-fast: true
        
-    name: build ${{ matrix.os }}-electron-${{ inputs.build-version }}
+    name: build electron-${{ inputs.build-version }}
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Resolve Electron version from major
-      #   id: electron-test-version
-      #   shell: bash
-      #   run: |
-      #       if [[ ${{ inputs.build-version }} == '29' ]]; then
-      #         echo "test-version=29.4.6" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ inputs.build-version }} == '30' ]]; then
-      #         echo "test-version=30.5.1" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ inputs.build-version }} == '31' ]]; then
-      #         echo "test-version=31.7.5" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ inputs.build-version }} == '32' ]]; then
-      #         echo "test-version=32.2.6" >> $GITHUB_OUTPUT
-      #       elif [[ ${{ inputs.build-version }} == '33' ]]; then
-      #         echo "test-version=33.2.1" >> $GITHUB_OUTPUT
-      #       fi 
-
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
           electron: '${{ inputs.build-version }}.0.0'
-          os: ${{ matrix.os }}
-          
-      - name: Get latestElectron version for v${{ inputs.build-version }}
+          os: ${{ runner.os }}
+
+      - name: Get latest Electron version for ${{ inputs.build-version }}.0.0
         id: electron-test-version
         shell: bash
         run: |
