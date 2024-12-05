@@ -45,13 +45,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get latestElectron version for v${{ inputs.build-version }}
-        id: electron-test-version
-        shell: bash
-        run: |
-          node tools/getVersion.js ${{ inputs.build-version }}
-          echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
-
       # - name: Resolve Electron version from major
       #   id: electron-test-version
       #   shell: bash
@@ -73,6 +66,14 @@ jobs:
         with:
           electron: '${{ inputs.build-version }}.0.0'
           os: ${{ matrix.os }}
+          
+      - name: Get latestElectron version for v${{ inputs.build-version }}
+        id: electron-test-version
+        shell: bash
+        run: |
+          node tools/getVersion.js ${{ inputs.build-version }}
+          echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
+
    
       - name: install node-gyp
         run: npm i -g node-gyp
