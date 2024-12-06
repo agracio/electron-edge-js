@@ -83,9 +83,27 @@ jobs:
 
     name: Resolve latest electron versions
     steps:
-      
+
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
+
+      - name: npm install
+        shell: bash
+        run: npm i
 
       - name: Get latest Electron versions for 29, 30, 31, 32, 33
         id: electron-versions
