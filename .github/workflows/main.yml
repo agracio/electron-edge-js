@@ -83,6 +83,10 @@ jobs:
 
     name: Resolve latest electron versions
     steps:
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Get latest Electron versions for 29, 30, 31, 32, 33
         id: electron-versions
         shell: bash
