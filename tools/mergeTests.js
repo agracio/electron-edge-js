@@ -11,7 +11,9 @@ const options = {
 
 const margeOptions = {
     reportFilename: 'mochawesome.html',
-    reportDir: './test/mochawesome-report'
+    reportDir: './test/mochawesome-report',
+    overwrite: true,
+    reportTitle: `electron-edge-js Electron ${process.argv[2]}` 
 }
   
 merge.merge(options).then(report => {
