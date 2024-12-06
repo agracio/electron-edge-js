@@ -9,8 +9,12 @@ env:
   DOTNET_NOLOGO: 1
 
 jobs:
+
   build-29:
     runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
        
@@ -35,6 +39,9 @@ jobs:
 
   build-30:
     runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
        
@@ -59,6 +66,9 @@ jobs:
   
   build-31:
     runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
        
@@ -83,6 +93,9 @@ jobs:
 
   build-32:
     runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
        
@@ -107,6 +120,9 @@ jobs:
 
   build-33:
     runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
        
@@ -131,9 +147,11 @@ jobs:
 
   test-29:
     strategy:
+      fail-fast: false
       matrix: 
        os: [windows-2022]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     needs: build-29
 
     name: test ${{ matrix.os }}-v${{needs.build-29.outputs.electron}}
@@ -150,9 +168,11 @@ jobs:
   
   test-30:
     strategy:
+      fail-fast: false
       matrix: 
        os: [windows-2022]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     needs: build-30
 
     name: test ${{ matrix.os }}-v${{needs.build-30.outputs.electron}}
@@ -169,9 +189,11 @@ jobs:
   
   test-31:
     strategy:
+      fail-fast: false
       matrix: 
        os: [windows-2022]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     needs: build-31
 
     name: test ${{ matrix.os }}-v${{needs.build-31.outputs.electron}}
@@ -188,9 +210,11 @@ jobs:
   
   test-32:
     strategy:
+      fail-fast: false
       matrix: 
        os: [windows-2022]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     needs: build-32
 
     name: test ${{ matrix.os }}-v${{needs.build-32.outputs.electron}}
@@ -207,9 +231,11 @@ jobs:
   
   test-33:
     strategy:
+      fail-fast: false
       matrix: 
        os: [windows-2022]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     needs: build-33
 
     name: test ${{ matrix.os }}-v${{needs.build-33.outputs.electron}}
