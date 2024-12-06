@@ -76,53 +76,15 @@ env:
   DOTNET_NOLOGO: 1 
 
 jobs:
-  electron-versions:
-    runs-on: ubuntu-22.04
-    outputs:
-      matrix: ${{ steps.electron-versions.outputs.matrix }}
-
-    name: Resolve latest electron versions
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
-
-      - name: npm install
-        shell: bash
-        run: npm i
-
-      - name: Get latest Electron versions for 29, 30, 31, 32, 33
-        id: electron-versions
-        shell: bash
-        run: |
-          node tools/getVersions.js
-          echo "matrix=$(cat electron.txt)" >> $GITHUB_OUTPUT
-
   test:
     runs-on: ${{ matrix.os }}
-    needs: electron-versions
     strategy:
       fail-fast: false
       matrix:
         os: [macos-13, macos-14, ubuntu-22.04, windows-2022]
         # os: [ macos-14,  ubuntu-22.04]
         # electron: [32.1.2]
-        electron: ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
-        # electron: [31.6.0, 32.1.0]
+        electron: [29.4.6, 30.5.1, 31.7.5, 32.2.6, 33.2.1]
         
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
     steps:
@@ -173,23 +135,3 @@ jobs:
           os: ${{ matrix.os }}
 
 
-# electron-versions:
-#     runs-on: ubuntu-22.04
-#     outputs:
-#       matrix: ${{ steps.electron-test-versions.outputs.matrix }}
-
-#     needs: build
-#     name: electron-versions
-#     steps:
-#       - name: Electron versions
-#         shell: bash
-#         id: electron-versions
-#         run: echo "matrix={'include':[{'electron':'29.4.6', 'os':'windows-2022'},{'electron':'30.5.1', 'os':'windows-2022'},{'electron':'31.7.5', 'os':'windows-2022'},{'electron':'32.2.6', 'os':'windows-2022'},{'electron':'33.2.1', 'os':'windows-2022'}]}" >> $GITHUB_OUTPUT
-
-# test1:
-#     strategy:
-#       matrix: 
-#         electron: ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
-#         os: [1]
-#     runs-on: ${{ matrix.os }}
-#     needs: electron-versions
