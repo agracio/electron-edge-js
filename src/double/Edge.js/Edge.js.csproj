@@ -36,9 +36,6 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <Compile Remove="dotnet\*.cs" />
