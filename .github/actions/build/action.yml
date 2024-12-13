@@ -29,6 +29,10 @@ runs:
               (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
           }
 
+          if ( '${{ inputs.electron }}' -ge 33){
+              (Get-Content -Raw node_modules/nan/nan.h) -replace '#include \"nan_scriptorigin.h\"', '// #include \"nan_scriptorigin.h\"' | Out-File -Encoding Utf8 node_modules/nan/nan.h
+          }
+
           node-gyp build
           cmd /c copy /y build\Release\edge_*.node release\${{ inputs.arch }}\${{ inputs.electron }}.0.0
           cmd /c rmdir /S /Q build

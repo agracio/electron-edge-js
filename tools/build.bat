@@ -104,6 +104,10 @@ if %ELECTRONV% GEQ 32 (
         )
     )
 )
+if %ELECTRONV% GEQ 33 (
+    echo Patch nan.h
+    powershell -Command "(Get-Content -Raw node_modules/nan/nan.h) -replace '#include \"nan_scriptorigin.h\"', '// #include \"nan_scriptorigin.h\"' | Out-File -Encoding Utf8 node_modules/nan/nan.h"
+)
 
 "%NODEEXE%" "%GYP%" build
 
