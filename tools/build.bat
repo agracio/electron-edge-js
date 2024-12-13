@@ -32,7 +32,7 @@ pushd %SELF%\..
 if "%ARCH%" == "arm64" (
     for %%V in (%VERSIONS%) do call :build arm64 arm64 %%V 
 ) else (
-    @REM for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
+    for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
     for %%V in (%VERSIONS%) do call :build x64 x64 %%V 
 
 )
