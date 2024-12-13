@@ -17,7 +17,7 @@ runs:
   steps:
     - name: "Merge test files"
       shell: bash
-      run: node tools/mergeTests.js
+      run: node tools/mergeTests.js ${{ inputs.electron }}
 
     - name: Read mochawesome.json
       uses: actions/github-script@v7
@@ -47,6 +47,7 @@ runs:
         path: |
           test/mochawesome-report/mochawesome.json
           test/mochawesome-report/mochawesome.html
+          test/mochawesome-report/assets/
 
     - name: Create test report
       uses: phoenix-actions/test-reporting@v15

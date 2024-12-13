@@ -108,3 +108,4 @@ mochawesome.json
 xunit*.*
 getVersion*.js
 *.vcxproj
+getVersion*.js
