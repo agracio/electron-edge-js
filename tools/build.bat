@@ -32,7 +32,7 @@ pushd %SELF%\..
 if "%ARCH%" == "arm64" (
     for %%V in (%VERSIONS%) do call :build arm64 arm64 %%V 
 ) else (
-    for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
+    @REM for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
     for %%V in (%VERSIONS%) do call :build x64 x64 %%V 
 
 )
@@ -103,6 +103,10 @@ if %ELECTRONV% GEQ 32 (
             powershell -Command "(Get-Content -Raw %%F) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 %%F"
         )
     )
+)
+if %ELECTRONV% GEQ 33 (
+    echo Patch nan.h
+    powershell -Command "(Get-Content -Raw node_modules/nan/nan.h) -replace '#include \"nan_scriptorigin.h\"', '// #include \"nan_scriptorigin.h\"' | Out-File -Encoding Utf8 node_modules/nan/nan.h"
 )
 
 "%NODEEXE%" "%GYP%" build
