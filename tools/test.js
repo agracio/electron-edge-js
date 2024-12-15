@@ -1,5 +1,6 @@
 var spawn = require('child_process').spawn;
 var path = require('path');
+var fs = require('fs');
 var testDir = path.resolve(__dirname, '../test');
 var input = path.resolve(testDir, 'tests.cs');
 var output = path.resolve(testDir, 'Edge.Tests.dll');
@@ -23,7 +24,18 @@ if (!process.env.EDGE_USE_CORECLR) {
 else {
     run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['restore'], function(code, signal) {
         if (code === 0) {
-            run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['build'], runOnSuccess);
+            run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['build'], function(code, signal) {
+                if (code === 0) {
+                    try{
+                        fs.mkdirSync('test/测试', { recursive: true })
+
+                    }
+                    catch (e){
+                        console.error(e)
+                    }
+                    run('cp', ['../test/bin/Debug/test.dll', '../test/测试/Edge.Tests.CoreClr.dll'], runOnSuccess);
+                }
+            });
         }
     });
 }

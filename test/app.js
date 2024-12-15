@@ -31,9 +31,9 @@ function addFiles(mocha){
   mocha.addFile(path.join(__dirname, '103_net2node.js'));
   mocha.addFile(path.join(__dirname, '104_csx.js'));
   mocha.addFile(path.join(__dirname, '105_node2net_sync.js'));
+  mocha.addFile(path.join(__dirname, '106_node2net_symbols.js'));
   mocha.addFile(path.join(__dirname, '201_patterns.js'));
   mocha.addFile(path.join(__dirname, '202_serialization.js'));
-
 }
 
 exports.runTests = function (framework, window){
