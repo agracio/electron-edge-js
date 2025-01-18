@@ -48,6 +48,9 @@ Electron is built using specific version of Node.js. To use `edge-js` in Electro
 Sample app that shows how to work with .NET Core using inline code and compiled C# libraries.  
 https://github.com/agracio/electron-edge-js-quick-start
 
+## Pre-requisites
+- Windows: [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version)
+
 ## Packaging Electron application
 
 `electron-edge-js` needs to be specified as an external module, some examples<br/>  
