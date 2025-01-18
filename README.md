@@ -16,6 +16,7 @@
 | Electron 31.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
 | Electron 32.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
 | Electron 33.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 34.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
 
 - You do not need to use the same version of Node.js in your project as Electron Node.js version
 - On Linux and macOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.

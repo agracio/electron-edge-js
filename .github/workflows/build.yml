@@ -14,6 +14,7 @@ on:
         - 31
         - 32
         - 33
+        - 34
       # test-version:
       #   description: 'Electron version to test build'
       #   required: true

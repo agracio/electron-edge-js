@@ -19,61 +19,32 @@ if not exist "%NODEEXE%" (
 )
 for %%i in ("%NODEEXE%") do set NODEDIR=%%~dpi
 SET DESTDIRROOT=%SELF%\..\lib\native\win32
-set VERSIONS=
-:harvestVersions
-if "%1" neq "" (
-    set VERSIONS=%VERSIONS% %1
-    shift
-    goto :harvestVersions
-)
-if "%VERSIONS%" equ "" set VERSIONS=20.14.0
+
+
+set VERSION=%1
+
 pushd %SELF%\..
 
-if "%ARCH%" == "arm64" (
-    for %%V in (%VERSIONS%) do call :build arm64 arm64 %%V 
-) else (
-    for %%V in (%VERSIONS%) do call :build ia32 x86 %%V 
-    for %%V in (%VERSIONS%) do call :build x64 x64 %%V 
+call :build ia32 ia32 %VERSION%
+call :build x64 x64 %VERSION%
+call :build arm64 arm64 %VERSION%
 
-)
 popd
 
 exit /b 0
 
 :build
 
-if "%3" equ "29.0.0" (
-    SET target=20.9.0
-) else if "%3" equ "30.0.0" (
-    SET target=20.16.0
-) else if "%3" equ "31.0.0" (
-    SET target=20.18.0
-) else if "%3" equ "32.0.0" (
-    SET target=20.18.0
-) else if "%3" equ "33.0.0" (
-    SET target=20.18.0
-) else (
-    echo edge-electron-js does not support Electron %3.
-    exit /b -1
-)
+
 set ELECTRONV=%3
 set "ELECTRONV=%ELECTRONV:~,2%"
-set NODEV=%target%
-set "NODEV=%NODEV:~,2%"
 
 set DESTDIR=%DESTDIRROOT%\%1\%3
-@REM if exist "%DESTDIR%\node.exe" goto gyp
 if not exist "%DESTDIR%\NUL" mkdir "%DESTDIR%"
-echo Downloading node.exe %2 %target%...
-node "%SELF%\download.js" %2 %target% "%DESTDIR%"
-if %ERRORLEVEL% neq 0 (
-    echo Cannot download node.exe %2 v%target%
-    exit /b -1
-)
 
 :gyp
 
-echo Building edge.node %FLAVOR% for node.js %2 v%target%
+echo Building edge.node %FLAVOR% for node.js %2 %3
 set NODEEXE=%DESTDIR%\node.exe
 FOR /F "tokens=* USEBACKQ" %%F IN (`npm config get prefix`) DO (SET NODEBASE=%%F)
 set GYP=%NODEBASE%\node_modules\node-gyp\bin\node-gyp.js
@@ -82,34 +53,34 @@ if not exist "%GYP%" (
     exit /b -1
 )
 
-"%NODEEXE%" "%GYP%" configure --msvs_version=2022 --target=%3 --runtime=electron --dist-url=https://electronjs.org/headers --%FLAVOR% --openssl_fips=''
+node "%GYP%" configure --msvs_version=2022 --target=%3 --arch=%2 --runtime=electron --disturl=https://electronjs.org/headers --%FLAVOR%
 if %ERRORLEVEL% neq 0 (
     echo Error building edge.node %FLAVOR% for node.js %2 v%target%
     exit /b -1
 )
 
-REM Conflict when building arm64 binaries
-if "%ARCH%" == "arm64" (
+@REM Conflict when building arm64 binaries
+if "%2" == "arm64" (
     FOR %%F IN (build\*.vcxproj) DO (
     echo Patch /fp:strict in %%F
     powershell -Command "(Get-Content -Raw %%F) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 %%F"
     )
 )
 
+@REM Conflict when building Electron v32+
 if %ELECTRONV% GEQ 32 (
-    if %NODEV% LSS 22 (
-        FOR %%F IN (build\*.vcxproj) DO (
-            echo Replace std:c++17 with std:c++20 in %%F
-            powershell -Command "(Get-Content -Raw %%F) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 %%F"
-        )
+    FOR %%F IN (build\*.vcxproj) DO (
+        echo Replace std:c++17 with std:c++20 in %%F
+        powershell -Command "(Get-Content -Raw %%F) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 %%F"
     )
 )
+
 if %ELECTRONV% GEQ 33 (
     echo Patch nan.h
     powershell -Command "(Get-Content -Raw node_modules/nan/nan.h) -replace '#include \"nan_scriptorigin.h\"', '// #include \"nan_scriptorigin.h\"' | Out-File -Encoding Utf8 node_modules/nan/nan.h"
 )
 
-"%NODEEXE%" "%GYP%" build
+node "%GYP%" build
 
 echo %DESTDIR%
 copy /y .\build\%FLAVOR%\edge_*.node "%DESTDIR%"

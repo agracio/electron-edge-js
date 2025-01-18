@@ -145,6 +145,33 @@ jobs:
           node tools/getVersion.js 33
           echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
 
+  build-34:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-34.0.0
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Electron 34.0.0
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 34
+          os: ${{ runner.os }}
+
+      - name: Get latest Electron version for 34.0.0
+        id: electron-version
+        shell: bash
+        run: |
+          node tools/getVersion.js 34
+          echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
+
   test-29:
     strategy:
       fail-fast: false
@@ -248,5 +275,26 @@ jobs:
         uses: ./.github/actions/test-build
         with:
           electron: ${{ needs.build-33.outputs.electron }}
+          os: ${{ matrix.os }}
+  
+  test-34:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    needs: build-34
+
+    name: test ${{ matrix.os }}-v${{needs.build-34.outputs.electron}}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-34.outputs.electron }}
           os: ${{ matrix.os }}
   
