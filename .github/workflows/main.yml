@@ -83,6 +83,15 @@ jobs:
 
     name: electron-versions
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - name: npm install
+        shell: bash
+        run: npm i
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
       - name: Electron versions
         shell: bash
         id: electron-versions
