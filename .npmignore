@@ -109,3 +109,4 @@ xunit*.*
 getVersion*.js
 *.vcxproj
 getVersion*.js
+electron*.txt
