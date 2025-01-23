@@ -25,8 +25,8 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node }}
-        # cache: 'npm'
-        # cache-dependency-path: package-lock.json
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
 
     - name: Read package.json
       uses: actions/github-script@v7
@@ -48,7 +48,23 @@ runs:
       if: ${{ inputs.replace-version == 'true' }}
       run: |
         sed -i -e 's/\${{ env.json_electron_version}}/=${{ inputs.electron }}/g' package.json
-    
+
+    - name: Cache node-gyp Linux
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-node-gyp
+      with:
+        path: ~/.cache/node-gyp
+        key: '${{ inputs.os }}-${{ inputs.electron}}'
+
+    - name: Cache node-gyp macOs
+      uses: actions/cache@v4
+      env:
+        cache-name: cache-node-gyp
+      with:
+        path: ~/Library/Caches/node-gyp
+        key: '${{ inputs.os }}-${{ inputs.electron}}'
+
     - name: Cache node modules
       id: cache-nodemodules
       uses: actions/cache@v4
