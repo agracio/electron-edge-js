@@ -102,6 +102,7 @@ jobs:
   test:
     strategy:
       matrix:  ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     needs: electron-versions
 
