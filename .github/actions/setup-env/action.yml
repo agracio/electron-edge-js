@@ -50,6 +50,7 @@ runs:
         sed -i -e 's/\${{ env.json_electron_version}}/=${{ inputs.electron }}/g' package.json
 
     - name: Cache node-gyp Linux
+      if: runner.os == 'Linux'
       uses: actions/cache@v4
       env:
         cache-name: cache-node-gyp
@@ -58,6 +59,7 @@ runs:
         key: '${{ inputs.os }}-${{ inputs.electron}}'
 
     - name: Cache node-gyp macOs
+      if: runner.os == 'macOS'
       uses: actions/cache@v4
       env:
         cache-name: cache-node-gyp
