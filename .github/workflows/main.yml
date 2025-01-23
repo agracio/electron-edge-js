@@ -179,6 +179,7 @@ jobs:
       - if: runner.os == 'Windows'
         name: Run Windows tests
         uses: ./.github/actions/test-windows
+        timeout-minutes: 10
         with:
           electron: ${{ matrix.electron }}
 
