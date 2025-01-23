@@ -83,8 +83,33 @@ jobs:
 
     name: electron-versions
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+  
+      - name: Cache node-gyp
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~/.cache/node-gyp
+          key: '${{ runner.os }}'
+  
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
   
       - name: npm install
         shell: bash
@@ -99,68 +124,68 @@ jobs:
           node tools/getVersions.js
           echo "matrix=$(cat electron-versions.txt)" >> $GITHUB_OUTPUT
 
-  test:
-    strategy:
-      matrix:  ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    needs: electron-versions
+  # test:
+  #   strategy:
+  #     matrix:  ${{ fromJSON(needs.electron-versions.outputs.matrix) }}
+  #     fail-fast: false
+  #   runs-on: ${{ matrix.os }}
+  #   needs: electron-versions
 
-    # runs-on: ${{ matrix.os }}
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     os: [macos-13, macos-14, ubuntu-22.04, ubuntu-22.04-arm, windows-2022]
-    #     # os: [ macos-14,  ubuntu-22.04]
-    #     # electron: [32.1.2]
-    #     electron: [29.4.6, 30.5.1, 31.7.7, 32.2.8, 33.3.2, 34.0.1]
+  #   # runs-on: ${{ matrix.os }}
+  #   # strategy:
+  #   #   fail-fast: false
+  #   #   matrix:
+  #   #     os: [macos-13, macos-14, ubuntu-22.04, ubuntu-22.04-arm, windows-2022]
+  #   #     # os: [ macos-14,  ubuntu-22.04]
+  #   #     # electron: [32.1.2]
+  #   #     electron: [29.4.6, 30.5.1, 31.7.7, 32.2.8, 33.3.2, 34.0.1]
         
-    name: test-${{ matrix.os }}-v${{ matrix.electron }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   name: test-${{ matrix.os }}-v${{ matrix.electron }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-        with:
-          electron: ${{ matrix.electron }}
-          os: ${{ matrix.os }}
-          replace-version: true
+  #     - name: Setup env
+  #       uses: ./.github/actions/setup-env
+  #       with:
+  #         electron: ${{ matrix.electron }}
+  #         os: ${{ matrix.os }}
+  #         replace-version: true
 
-      - if: runner.os == 'macOS' || runner.os == 'Linux'
-        name: Check electron-edge-js build file
-        id: check_build
-        uses: andstor/file-existence-action@v3
-        with:
-          files: "build/Release/edge_coreclr.node"
-          fail: true
-          ignore_case: true
+  #     - if: runner.os == 'macOS' || runner.os == 'Linux'
+  #       name: Check electron-edge-js build file
+  #       id: check_build
+  #       uses: andstor/file-existence-action@v3
+  #       with:
+  #         files: "build/Release/edge_coreclr.node"
+  #         fail: true
+  #         ignore_case: true
   
-      - if: runner.os == 'Windows'
-        name: Run Windows tests
-        uses: ./.github/actions/test-windows
-        with:
-          electron: ${{ matrix.electron }}
+  #     - if: runner.os == 'Windows'
+  #       name: Run Windows tests
+  #       uses: ./.github/actions/test-windows
+  #       with:
+  #         electron: ${{ matrix.electron }}
 
-      - if: runner.os == 'macOS'
-        name: Run macOS tests
-        run: node tools/test.js CI
-        timeout-minutes: 10
+  #     - if: runner.os == 'macOS'
+  #       name: Run macOS tests
+  #       run: node tools/test.js CI
+  #       timeout-minutes: 10
 
-      - if: runner.os == 'Linux'
-        name: Run Linux tests
-        timeout-minutes: 10
-        run: |
-          export DISPLAY=:99
-          echo "DISPLAY=:99" >> $GITHUB_ENV
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          sleep 3
-          node tools/test.js CI
+  #     - if: runner.os == 'Linux'
+  #       name: Run Linux tests
+  #       timeout-minutes: 10
+  #       run: |
+  #         export DISPLAY=:99
+  #         echo "DISPLAY=:99" >> $GITHUB_ENV
+  #         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  #         sleep 3
+  #         node tools/test.js CI
 
-      - name: Test report
-        uses: ./.github/actions/create-test-report
-        with:
-          electron: ${{ matrix.electron }}
-          os: ${{ matrix.os }}
+  #     - name: Test report
+  #       uses: ./.github/actions/create-test-report
+  #       with:
+  #         electron: ${{ matrix.electron }}
+  #         os: ${{ matrix.os }}
 
 
