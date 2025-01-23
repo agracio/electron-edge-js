@@ -93,14 +93,29 @@ jobs:
           node-version: 22
           cache: 'npm'
           cache-dependency-path: package-lock.json
-  
+
+      - name: Read package.json
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              const jsonString = fs.readFileSync('package.json')
+              var json = JSON.parse(jsonString);
+              core.exportVariable('json_electron_version', json.devDependencies.electron.toString())
+            } catch(err) {
+              core.error("Error while reading or parsing package.json")
+              core.setFailed(err)
+            }
+    
       - name: Cache node-gyp
         uses: actions/cache@v4
         env:
           cache-name: cache-node-gyp
         with:
           path: ~/.cache/node-gyp
-          key: '${{ runner.os }}'
+          key: '${{ runner.os }}-${{ env.json_electron_version}}'
   
       - name: Cache node modules
         id: cache-nodemodules
