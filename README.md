@@ -56,6 +56,8 @@ https://github.com/agracio/electron-edge-js-quick-start
 
 `electron-edge-js` needs to be specified as an external module, some examples<br/>  
 
+### webpack
+ 
 ``webpack.config.js ``
 
 ```js
@@ -66,19 +68,7 @@ node: {
     __dirname: true,
     __filename: true,
 },
-```  
-
-``vue.config.js``
-
-```js
-module.export = {
-    pluginOptions: {
-        electronBuilder: {
-            externals:["electron-edge-js"]
-        }
-    }
-}
-```  
+```
 
 ### From [#138](https://github.com/agracio/electron-edge-js/issues/138)
 
@@ -104,11 +94,30 @@ Electron `main.js`
 require("module").globalPaths.push(process.cwd()+'/node_modules');
 var edge = require('electron-edge-js');
 ```
+
+### Vue.js
+
+``vue.config.js``
+
+```js
+module.export = {
+    pluginOptions: {
+        electronBuilder: {
+            externals:["electron-edge-js"]
+        }
+    }
+}
+```  
  
 Related issues to use for troubleshooting:  
 https://github.com/agracio/electron-edge-js/issues/39  
 https://github.com/agracio/electron-edge-js/issues/74  
-https://github.com/agracio/electron-edge-js/issues/21
+https://github.com/agracio/electron-edge-js/issues/21  
+https://github.com/agracio/electron-edge-js/issues/138
+
+## electron-builder
+
+`electron-edge-js` should be excluded from rebuild.
 
 ## electron-forge
 
@@ -145,10 +154,6 @@ powerpoint.open(path.join(${remotePath}${process.env.file}.pptx), function(err) 
 
 If `electron-edge-js` module is used on main Electron thread refreshing the window (F5, Ctrl+R, Command+R etc) will cause a hard crash in `electron-edge-js` module and Electron app.  
 Currently there is no solution to this issue other than using Electron [IPC](https://www.electronjs.org/docs/latest/tutorial/ipc).
-
-## Build
-
-build.bat supports only Electron major versions.
 
 ## Documentation
 
