@@ -46,8 +46,8 @@ runs:
         name: ${{ inputs.name }}-${{ inputs.os }}-${{ inputs.electron }}
         path: |
           test/mochawesome-report/mochawesome.json
-          test/mochawesome-report/mochawesome.html
-          test/mochawesome-report/assets/
+          # test/mochawesome-report/mochawesome.html
+          # test/mochawesome-report/assets/
 
     - name: Create test report
       uses: phoenix-actions/test-reporting@v15
