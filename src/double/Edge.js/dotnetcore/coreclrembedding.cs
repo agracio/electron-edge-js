@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Threading.Tasks;
 using System.IO;
+using System.Numerics;
+using System.Security.Policy;
 using Microsoft.Extensions.DependencyModel;
 
 // ReSharper disable InconsistentNaming
@@ -732,7 +734,7 @@ public class CoreCLREmbedding
             
             if (!Compilers.ContainsKey(compiler))
             {
-                if (DependencyContext.Default ==null || !DependencyContext.Default.RuntimeLibraries.Any(l => l.Name == compiler))
+                if (DependencyContext.Default == null || !DependencyContext.Default.RuntimeLibraries.Any(l => l.Name == compiler))
                 {
                     if (!File.Exists(options["bootstrapDependencyManifest"].ToString()))
                     {
@@ -1005,6 +1007,7 @@ public class CoreCLREmbedding
         {
             case V8Type.String:
             case V8Type.Int32:
+            case V8Type.UInt32:
             case V8Type.Boolean:
             case V8Type.Number:
             case V8Type.Date:
@@ -1075,13 +1078,14 @@ public class CoreCLREmbedding
             return IntPtr.Zero;
         }
 
-        else if (clrObject is string)
-        {
-            v8Type = V8Type.String;
-            return Marshal.StringToCoTaskMemUTF8((string) clrObject);
-        }
-
-        else if (clrObject is char)
+        else if (
+            clrObject is string 
+            || clrObject is char 
+            || clrObject is Guid 
+            || clrObject is Uri 
+            || clrObject is DateTimeOffset 
+            || clrObject is decimal 
+            || clrObject is Enum)
         {
             v8Type = V8Type.String;
             return Marshal.StringToCoTaskMemUTF8(clrObject.ToString());
@@ -1096,12 +1100,6 @@ public class CoreCLREmbedding
                 ? 1
                 : 0);
             return memoryLocation;
-        }
-
-        else if (clrObject is Guid)
-        {
-            v8Type = V8Type.String;
-            return Marshal.StringToCoTaskMemUTF8(clrObject.ToString());
         }
 
         else if (clrObject is DateTime)
@@ -1126,19 +1124,7 @@ public class CoreCLREmbedding
             return memoryLocation;
         }
 
-        else if (clrObject is DateTimeOffset)
-        {
-            v8Type = V8Type.String;
-            return Marshal.StringToCoTaskMemUTF8(clrObject.ToString());
-        }
-
-        else if (clrObject is Uri)
-        {
-            v8Type = V8Type.String;
-            return Marshal.StringToCoTaskMemUTF8(clrObject.ToString());
-        }
-
-        else if (clrObject is short)
+        else if (clrObject is short || clrObject is ushort || clrObject is int)
         {
             v8Type = V8Type.Int32;
             IntPtr memoryLocation = Marshal.AllocCoTaskMem(sizeof (int));
@@ -1147,54 +1133,16 @@ public class CoreCLREmbedding
             return memoryLocation;
         }
 
-        else if (clrObject is int)
+        else if (clrObject is long || clrObject is ulong || clrObject is double || clrObject is uint)
         {
-            v8Type = V8Type.Int32;
-            IntPtr memoryLocation = Marshal.AllocCoTaskMem(sizeof (int));
-
-            Marshal.WriteInt32(memoryLocation, (int) clrObject);
-            return memoryLocation;
+            return WriteDouble(Convert.ToDouble(clrObject), out v8Type);
         }
-
-        else if (clrObject is long)
-        {
-            v8Type = V8Type.Number;
-            IntPtr memoryLocation = Marshal.AllocCoTaskMem(sizeof (double));
-
-            WriteDouble(memoryLocation, Convert.ToDouble((long) clrObject));
-            return memoryLocation;
-        }
-
-        else if (clrObject is double)
-        {
-            v8Type = V8Type.Number;
-            IntPtr memoryLocation = Marshal.AllocCoTaskMem(sizeof (double));
-
-            WriteDouble(memoryLocation, (double) clrObject);
-            return memoryLocation;
-        }
-
+        
         else if (clrObject is float)
         {
-            v8Type = V8Type.Number;
-            IntPtr memoryLocation = Marshal.AllocCoTaskMem(sizeof (double));
-
-            WriteDouble(memoryLocation, Convert.ToDouble((Single) clrObject));
-            return memoryLocation;
+            return WriteDouble(Convert.ToDouble((Single)clrObject), out v8Type);
         }
-
-        else if (clrObject is decimal)
-        {
-            v8Type = V8Type.String;
-            return Marshal.StringToCoTaskMemUTF8(clrObject.ToString());
-        }
-
-        else if (clrObject is Enum)
-        {
-            v8Type = V8Type.String;
-            return Marshal.StringToCoTaskMemUTF8(clrObject.ToString());
-        }
-
+        
         else if (clrObject is byte[] || clrObject is IEnumerable<byte>)
         {
             v8Type = V8Type.Buffer;
@@ -1369,6 +1317,15 @@ public class CoreCLREmbedding
 
             return destinationPointer;
         }
+    }
+    
+    private static IntPtr WriteDouble(double number, out V8Type v8Type)
+    {
+        v8Type = V8Type.Number;
+        IntPtr memoryLocation = Marshal.AllocCoTaskMem(sizeof (double));
+
+        WriteDouble(memoryLocation,number);
+        return memoryLocation;
     }
 
     public static object MarshalV8ToCLR(IntPtr v8Object, V8Type objectType)
