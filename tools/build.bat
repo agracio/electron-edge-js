@@ -11,15 +11,7 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`node -p process.arch`) DO (SET ARCH=%%F)
 SET FLAVOR=%1
 shift
 if "%FLAVOR%" equ "" set FLAVOR=release
-for %%i in (node.exe) do set NODEEXE=%%~$PATH:i
-if not exist "%NODEEXE%" (
-    echo Cannot find node.exe
-    popd
-    exit /b -1
-)
-for %%i in ("%NODEEXE%") do set NODEDIR=%%~dpi
 SET DESTDIRROOT=%SELF%\..\lib\native\win32
-
 
 set VERSION=%1
 
@@ -45,7 +37,7 @@ if not exist "%DESTDIR%\NUL" mkdir "%DESTDIR%"
 :gyp
 
 echo Building edge.node %FLAVOR% for node.js %2 %3
-set NODEEXE=%DESTDIR%\node.exe
+
 FOR /F "tokens=* USEBACKQ" %%F IN (`npm config get prefix`) DO (SET NODEBASE=%%F)
 set GYP=%NODEBASE%\node_modules\node-gyp\bin\node-gyp.js
 if not exist "%GYP%" (
@@ -67,17 +59,12 @@ if "%2" == "arm64" (
     )
 )
 
-@REM Conflict when building Electron v32+
-if %ELECTRONV% GEQ 32 (
+@REM Conflict when building Electron v32
+if %ELECTRONV% EQU 32 (
     FOR %%F IN (build\*.vcxproj) DO (
         echo Replace std:c++17 with std:c++20 in %%F
         powershell -Command "(Get-Content -Raw %%F) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 %%F"
     )
-)
-
-if %ELECTRONV% GEQ 33 (
-    echo Patch nan.h
-    powershell -Command "(Get-Content -Raw node_modules/nan/nan.h) -replace '#include \"nan_scriptorigin.h\"', '// #include \"nan_scriptorigin.h\"' | Out-File -Encoding Utf8 node_modules/nan/nan.h"
 )
 
 node "%GYP%" build

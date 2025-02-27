@@ -23,14 +23,10 @@ runs:
             (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
           }
           
-          if ( '${{ inputs.electron }}' -ge 32){
+          if ( '${{ inputs.electron }}' -eq 32){
               (Get-Content -Raw build/build_managed.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/build_managed.vcxproj
               (Get-Content -Raw build/edge_coreclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
               (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
-          }
-
-          if ( '${{ inputs.electron }}' -ge 33){
-              (Get-Content -Raw node_modules/nan/nan.h) -replace '#include \"nan_scriptorigin.h\"', '// #include \"nan_scriptorigin.h\"' | Out-File -Encoding Utf8 node_modules/nan/nan.h
           }
 
           node-gyp build
