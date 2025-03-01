@@ -77,7 +77,7 @@ env:
 
 jobs:
   electron-versions:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.electron-versions.outputs.matrix }}
 
@@ -136,7 +136,7 @@ jobs:
         shell: bash
         id: electron-versions
         run: |
-          node tools/getVersions.js
+          node tools/getVersion.js
           echo "matrix=$(cat electron-versions.txt)" >> $GITHUB_OUTPUT
 
   test:
