@@ -19,7 +19,7 @@ function createMocha (reportFilename, version) {
       consoleReporter: 'none',
       showSkipped: true,
       json: true,
-      reportTitle: 'electron-edge-js ' + version
+      reportTitle: `electron-edge-js ${version} Electron ${process.versions.electron}`
     },
     timeout:10000,
   });
@@ -38,11 +38,8 @@ function addFiles(mocha){
 
 exports.runTests = function (framework, window){
 
-    //if (typeof framework === "undefined") return;
-
-    //process.env.EDGE_USE_CORECLR = framework;
-    // console.log(`runner: ${runner}`);
     var version = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : process.platform === 'win32' ? '.NET Framework 4.5' : 'Mono Framework';
+    //process.platform === 'win32' && !process.env.EDGE_USE_CORECLR ? delete process.env.EDGE_USE_CORECLR : process.env.EDGE_USE_CORECLR = 1
     //var prefix = process.env.EDGE_USE_CORECLR ? 'CoreCLR' : 'NET';
     var prefix = '';
     var suffix = process.env.EDGE_USE_CORECLR ? 'coreclr' :'net';
@@ -68,11 +65,8 @@ exports.runTests = function (framework, window){
     run.on('end', function(){
         setTimeout(function(){
           mocha.dispose();
-          // console.log('runComplete')
           window.webContents.send("runComplete", reportFilename);
-          // console.log('run end')
           if(runner === 'CI'){
-            // console.log('window.close()')
             window.close();
           }
         }, 1000);
