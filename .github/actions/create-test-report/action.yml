@@ -29,11 +29,11 @@ runs:
             const jsonString = fs.readFileSync('test/mochawesome-report/mochawesome.json')
             var report = JSON.parse(jsonString);
             let stats = {
-                passing: report.stats.passes,
-                skipped: report.stats.pending,
-                failures: report.stats.failures
+                Passing: report.stats.passes,
+                Skipped: report.stats.pending,
+                Failures: report.stats.failures
             };
-            core.notice(JSON.stringify(stats));
+            core.notice(stats);
           } catch(err) {
             core.error("Error while reading or parsing test/mochawesome-report/mochawesome.json")
             core.setFailed(err)
@@ -46,8 +46,8 @@ runs:
         name: ${{ inputs.name }}-${{ inputs.os }}-${{ inputs.electron }}
         path: |
           test/mochawesome-report/mochawesome.json
-          # test/mochawesome-report/mochawesome.html
-          # test/mochawesome-report/assets/
+          test/mochawesome-report/mochawesome.html
+          test/mochawesome-report/assets/
 
     # - name: Create test report
     #   uses: phoenix-actions/test-reporting@v15
