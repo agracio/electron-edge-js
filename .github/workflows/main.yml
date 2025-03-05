@@ -106,7 +106,7 @@ jobs:
       - name:  remove Electron build
         shell: bash
         run: |
-          sed -i -e 's/\"install"\\: "node tools\\/install.js",//g' package.json
+          sed -i -e 's/\"install"\\: "node tools\\/install\\.js",//g' package.json
 
       - name: npm install
         shell: bash
