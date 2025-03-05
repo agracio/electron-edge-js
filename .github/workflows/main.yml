@@ -125,10 +125,15 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('package.json') }}
-  
+ 
+      # - name:  remove Electron build
+      #   shell: bash
+      #   run: |
+      #     sed -i -e 's/\"install"\\: "node tools\\/install\\.js",//g' package.json
+
       - name: npm install
         shell: bash
-        run: npm i -D
+        run: npm i
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
