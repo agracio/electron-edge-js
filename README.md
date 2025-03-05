@@ -9,17 +9,23 @@
 
 ### Windows binaries pre-compiled for 
 
-| Electron        | Node.Js          | x86/x64            | arm64              |
-| --------------- | ---------------- | ------------------ | ------------------ |
-| Electron 29.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 30.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 31.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 32.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 33.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 34.x   | v20.x            | :heavy_check_mark: | :heavy_check_mark: |
+| Electron        |  x86/x64           | arm64              |
+| --------------- |  ----------------- | ------------------ |
+| Electron 29.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 30.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 31.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 32.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 33.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 34.x   | :heavy_check_mark: | :heavy_check_mark: |
 
-- You do not need to use the same version of Node.js in your project as Electron Node.js version
-- On Linux and macOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
+
+#### On Linux and macOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
+
+### Linux/macOS suppoted versions
+
+| Electron         | x64                | arm64              |
+| ---------------  | ------------------ | ------------------ |
+| Electron 29 - 34 | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
