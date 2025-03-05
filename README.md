@@ -17,15 +17,16 @@
 | Electron 32.x   | :heavy_check_mark: | :heavy_check_mark: |
 | Electron 33.x   | :heavy_check_mark: | :heavy_check_mark: |
 | Electron 34.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 35.x   | :heavy_check_mark: | :heavy_check_mark: |
 
 
-#### On Linux and macOS `npm install` will compile binaries with correct Node.Js headers for a given Electron version.
+#### On Linux and macOS `npm install` will compile binaries with correct Electron headers for a given Electron version.
 
 ### Linux/macOS suppoted versions
 
 | Electron         | x64                | arm64              |
 | ---------------  | ------------------ | ------------------ |
-| Electron 29 - 34 | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 29 - 35 | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
@@ -43,12 +44,6 @@ var helloWorld = edge.func(function () {/*
     }
 */});
 ```
-
-## Why use `electron-edge-js`?
-
-Electron is built using specific version of Node.js. To use `edge-js` in Electron project you would need to recompile it using the same Node.js version and Electron headers.
-
-`electron-edge-js` comes precompiled with correct Node.js versions and headers.
 
 ## Quick start
 
