@@ -9,24 +9,19 @@
 
 ### Windows binaries pre-compiled for 
 
-| Electron        |  x86/x64           | arm64              |
-| --------------- |  ----------------- | ------------------ |
-| Electron 29.x   | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 30.x   | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 31.x   | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 32.x   | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 33.x   | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 34.x   | :heavy_check_mark: | :heavy_check_mark: |
-| Electron 35.x   | :heavy_check_mark: | :heavy_check_mark: |
+| Electron             |  x86/x64           | arm64              |
+| -------------------- |  ----------------- | ------------------ |
+| Electron 29.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
+
 
 
 #### On Linux and macOS `npm install` will compile binaries with correct Electron headers for a given Electron version.
 
 ### Linux/macOS suppoted versions
 
-| Electron         | x64                | arm64              |
-| ---------------  | ------------------ | ------------------ |
-| Electron 29 - 35 | :heavy_check_mark: | :heavy_check_mark: |
+| Electron             | x64                | arm64              |
+| -------------------- | ------------------ | ------------------ |
+| Electron 29.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
