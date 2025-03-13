@@ -173,6 +173,7 @@ jobs:
 
       - name: Test build
         uses: ./.github/actions/test-build
+        timeout-minutes: 10
         with:
           electron: ${{ needs.build.outputs.test-version }}
           os: ${{ matrix.os }}
