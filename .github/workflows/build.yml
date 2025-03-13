@@ -3,7 +3,7 @@ name: Build
 on:
   workflow_dispatch:
     inputs:
-      build-version:
+      electron:
         description: 'Electron version to build'
         required: true
         default: '30'
@@ -32,70 +32,129 @@ jobs:
         # os: [windows-2022, macos-13, macos-15]
       fail-fast: true
        
-    name: build electron-${{ inputs.build-version }}
+    name: build electron-${{ inputs.electron }}
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-        with:
-          electron: '${{ inputs.build-version }}'
-          os: ${{ runner.os }}
+      - name: npm install
+        shell: bash
+        run: npm i
 
-      - name: Get latest Electron version for ${{ inputs.build-version }}
+      - name: Get latest Electron version for ${{ inputs.electron }}
         id: electron-test-version
         shell: bash
         run: |
-          node tools/getVersion.js ${{ inputs.build-version }}
+          node tools/getVersion.js ${{ inputs.electron }}
           echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
    
-      - name: install node-gyp
-        run: npm i -g node-gyp
-
-      - name: Create release folder
-        run: |
-            mkdir "release\ia32\${{ inputs.build-version }}"
-            mkdir "release\x64\${{ inputs.build-version }}"
-            mkdir "release\arm64\${{ inputs.build-version }}"
-
-      - name: Cache node-gyp
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-gyp
+      - name: Build Electron ${{ inputs.electron }}
+        uses: ./.github/actions/build-electron
         with:
-          path: ~\AppData\Local\node-gyp\Cache
-          key: '${{ inputs.build-version }}'
+          node: ${{ inputs.electron }}
+          os: ${{ matrix.os }}
+            
+      # - name: install node-gyp
+      #   run: npm i -g node-gyp
 
-      - name: Build ia32
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ inputs.build-version }}
-          arch: 'ia32'
+      # - name: Create release folder
+      #   uses: actions/github-script@v7
+      #   with:
+      #     result-encoding: string
+      #     script: |
+      #       try {
+      #         const fs = require('fs')
+      #         if('${{ runner.os }}' == 'Windows'){
+      #           fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
+      #           fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
+      #           fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
+      #         }
+      #         else if('${{ runner.os }}' == 'macOS' && '${{ inputs.electron }}' != 'macos-13'){
+      #           fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
+      #         }
+      #         else if('${{ runner.os }}' == 'macOS' && '${{ inputs.electron }}' == 'macos-13'){
+      #           fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.electron }}`, { recursive: true });
+      #         }
+      #       } catch(err) {
+      #         core.error("Error creating release directory")
+      #         core.setFailed(err)
+      #       }
 
-      - name: Build x64
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ inputs.build-version }}
-          arch: 'x64'
+      # - name: Cache node-gyp
+      #   if: runner.os == 'Windows'
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-gyp
+      #   with:
+      #     path: ~\AppData\Local\node-gyp\Cache
+      #     key: '${{ runner.os }}-${{ inputs.electron }}'
 
-      - name: Build arm64
-        timeout-minutes: 30
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ inputs.build-version }}
-          arch: 'arm64'
+      # - name: Cache node-gyp macOS
+      #   if: runner.os == 'macOS'
+      #   uses: actions/cache@v4
+      #   env:
+      #     cache-name: cache-node-gyp
+      #   with:
+      #     path: ~/Library/Caches/node-gyp
+      #     key: '${{ runner.os }}-${{ inputs.electron }}'
+  
+      # - name: Build ia32
+      #   if: runner.os == 'Windows'
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ inputs.electron }}
+      #     arch: 'ia32'
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: electron-edge-js-${{ inputs.build-version }}
-          path: |
-            release
+      # - name: Build x64
+      #   if: runner.os == 'Windows' || matrix.os == 'macos-13'
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ inputs.electron }}
+      #     arch: 'x64'
+
+      # - name: Build arm64
+      #   if: runner.os == 'Windows' || matrix.os == 'macos-15'
+      #   timeout-minutes: 30
+      #   uses: ./.github/actions/build
+      #   with:
+      #     electron: ${{ inputs.electron }}
+      #     arch: 'arm64'
+
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: runner.os == 'Windows' && success()
+      #   with:
+      #     name: win32-electron-edge-js-${{ inputs.electron }}
+      #     path: |
+      #       release
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: runner.os  == 'macOS' && matrix.os  == 'macos-15' && success()
+      #   with:
+      #     name: darwin-arm64-electron-edge-js-${{ inputs.electron }}
+      #     path: |
+      #       release
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: runner.os  == 'macOS' && matrix.os  == 'macos-13' && success()
+      #   with:
+      #     name: darwin-x64-electron-edge-js-${{ inputs.electron }}
+      #     path: |
+      #       release
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: success()
+      #   with:
+      #     name: electron-edge-js-${{ inputs.electron }}
+      #     path: |
+      #       release
 
   test:
     runs-on: ${{ matrix.os }}
