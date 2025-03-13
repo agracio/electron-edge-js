@@ -32,7 +32,7 @@ jobs:
         # os: [windows-2022, macos-13, macos-15]
       fail-fast: true
        
-    name: build electron-${{ inputs.electron }}
+    name: build electron-${{ inputs.electron }} ${{ matrix.os }}
     steps:
 
       - name: Checkout code
@@ -165,7 +165,7 @@ jobs:
         os: [macos-13, macos-15]
       fail-fast: false
 
-    name: test ${{ matrix.os }}-v${{ needs.build.outputs.test-version }}
+    name: test electron-${{ needs.build.outputs.test-version }} ${{ matrix.os }}
     steps:
 
       - name: Checkout code
