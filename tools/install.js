@@ -87,8 +87,9 @@ if (process.platform === 'win32') {
 } 
 
 else {
-	if(process.platform === 'darwin'){
-		const electronVersion = getVersion().split(".")[0];
+	let version = getVersion();
+	if(process.platform === 'darwin' && version){
+		const electronVersion = version.split(".")[0];
 		const edjeNative = path.resolve(__dirname, '../lib/native/' + process.platform + '/' + process.arch + '/' + electronVersion + '/' + 'edge_nativeclr.node');
 		const edjeNativeClr = path.resolve(__dirname, '../lib/native/' + process.platform + '/' + process.arch + '/' + electronVersion + '/' + 'edge_coreclr.node');
 
@@ -149,8 +150,12 @@ function getVersion(){
 
 			version = pkg.version;
 		} catch (e) {
-			console.error("Unable to find electron version number, install is 'using npm i electron'");
+			console.error("Unable to find electron version number, install is using 'npm i electron'");
 		}
+	}
+
+	if(!version){
+		console.error("Unable to find electron version number, install is using 'npm i electron'");
 	}
 
 	return version;
