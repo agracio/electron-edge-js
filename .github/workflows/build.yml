@@ -52,7 +52,7 @@ jobs:
       - name: Build Electron ${{ inputs.electron }}
         uses: ./.github/actions/build-electron
         with:
-          node: ${{ inputs.electron }}
+          electron: ${{ inputs.electron }}
           os: ${{ matrix.os }}
             
       # - name: install node-gyp

@@ -31,15 +31,15 @@ runs:
             try {
               const fs = require('fs')
               if('${{ runner.os }}' == 'Windows'){
-                fs.mkdirSync('release/win32/ia32/${{ inputs.node }}', { recursive: true });
-                fs.mkdirSync('release/win32/x64/${{ inputs.node }}', { recursive: true });
-                fs.mkdirSync('release/win32/arm64/${{ inputs.node }}', { recursive: true });
+                fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
+                fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
+                fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
               }
               else if('${{ runner.os }}' == 'macOS' && '${{ inputs.os }}' != 'macos-13'){
-                fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.node }}`, { recursive: true });
+                fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
               }
               else if('${{ runner.os }}' == 'macOS' && '${{ inputs.os }}' == 'macos-13'){
-                fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.node }}`, { recursive: true });
+                fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.electron }}`, { recursive: true });
               }
             } catch(err) {
               core.error("Error creating release directory")
