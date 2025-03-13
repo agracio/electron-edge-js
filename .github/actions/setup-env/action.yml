@@ -98,7 +98,7 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        sudo -q apt install gdb
+        sudo apt -q install gdb
 
     - name: Versions
       shell: bash
