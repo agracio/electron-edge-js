@@ -98,7 +98,10 @@ else {
 		else{
 			build();
 		}
-	}   		
+	} 
+	else {
+		build();
+	}  		
 }
 
 function getVersion(){
