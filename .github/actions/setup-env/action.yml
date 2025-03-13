@@ -81,6 +81,19 @@ runs:
       with:
         dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
 
+    - name: Setup Mono
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        brew install mono --overwrite
+        brew reinstall pkg-config
+
+    - name: Setup Mono
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt -q install mono-complete pkg-config
+
     - name: Versions
       shell: bash
       run: |

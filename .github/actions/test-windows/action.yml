@@ -17,7 +17,7 @@ runs:
     - name: Check electron-edge-js Windows pre-built files
       uses: andstor/file-existence-action@v3
       with:
-        files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}.0.0/edge_nativeclr.node"
+        files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
         fail: true
         ignore_case: true
 

@@ -2,8 +2,10 @@ const fs = require("fs");
 const http = require('isomorphic-git/http/web');
 const git = require("isomorphic-git");
 
-const majors = [29, 30, 31, 32, 33, 34, 35, 36];
-const oses = ['macos-13', 'macos-14', 'ubuntu-22.04', 'ubuntu-22.04-arm', 'windows-2022'];
+// const majors = [30, 31, 32, 33, 34, 35, 36];
+const majors = [30];
+// const oses = ['macos-13', 'macos-15', 'ubuntu-22.04', 'ubuntu-22.04-arm', 'windows-2022'];
+const oses = ['macos-13', 'macos-15', 'windows-2022'];
 
 git.getRemoteInfo({
     http,

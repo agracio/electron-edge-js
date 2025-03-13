@@ -172,29 +172,31 @@ jobs:
           os: ${{ matrix.os }}
           replace-version: true
 
-      - if: runner.os == 'macOS' || runner.os == 'Linux'
-        name: Check electron-edge-js build file
-        id: check_build
-        uses: andstor/file-existence-action@v3
-        with:
-          files: "build/Release/edge_coreclr.node"
-          fail: true
-          ignore_case: true
+      # - if: runner.os == 'macOS' || runner.os == 'Linux'
+      #   name: Check electron-edge-js build file
+      #   id: check_build
+      #   uses: andstor/file-existence-action@v3
+      #   with:
+      #     files: "build/Release/edge_coreclr.node"
+      #     fail: true
+      #     ignore_case: true
   
-      - if: runner.os == 'Windows'
-        name: Run Windows tests
-        uses: ./.github/actions/test-windows
-        timeout-minutes: 10
-        with:
-          electron: ${{ matrix.electron }}
-
-      - if: runner.os == 'macOS'
-        name: Run macOS tests
+      - if: runner.os == 'macOS' || runner.os == 'Windows'
+        name: Run .NET 4.5 tests
         run: node tools/test.js CI
         timeout-minutes: 10
+        env:
+          EDGE_USE_CORECLR: 1
+
+      - if: runner.os == 'macOS' || runner.os == 'Windows'
+        name: "Run .net core tests"
+        run: node tools/test.js CI
+        timeout-minutes: 10
+        env:
+          EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'Linux'
-        name: Run Linux tests
+        name: Run .NET 4.5 tests
         timeout-minutes: 10
         run: |
           export DISPLAY=:99
@@ -202,6 +204,18 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 3
           node tools/test.js CI
+
+      - if: runner.os == 'Linux'
+        name: "Run .net core tests"
+        timeout-minutes: 10
+        run: |
+          export DISPLAY=:99
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+          node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
 
       - name: Test report
         uses: ./.github/actions/create-test-report

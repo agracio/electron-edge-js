@@ -9,34 +9,27 @@ on:
         default: '30'
         type: choice
         options:
-        - 29
         - 30
         - 31
         - 32
         - 33
         - 34
         - 35
-      # test-version:
-      #   description: 'Electron version to test build'
-      #   required: true
-      #   default: '31.6.0'
-      #   type: choice
-      #   options:
-      #   - 29.4.6
-      #   - 30.5.1
-      #   - 31.6.0
+
 
 env:
-  ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
   DOTNET_NOLOGO: 1
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: ${{ matrix.os }}
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
     strategy:
+      matrix:
+        os: [macos-13, macos-15]
+        # os: [windows-2022, macos-13, macos-15]
       fail-fast: true
        
     name: build electron-${{ inputs.build-version }}
@@ -48,25 +41,24 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
         with:
-          electron: '${{ inputs.build-version }}.0.0'
+          electron: '${{ inputs.build-version }}'
           os: ${{ runner.os }}
 
-      - name: Get latest Electron version for ${{ inputs.build-version }}.0.0
+      - name: Get latest Electron version for ${{ inputs.build-version }}
         id: electron-test-version
         shell: bash
         run: |
           node tools/getVersion.js ${{ inputs.build-version }}
           echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
-
    
       - name: install node-gyp
         run: npm i -g node-gyp
 
       - name: Create release folder
         run: |
-            mkdir "release\ia32\${{ inputs.build-version }}.0.0"
-            mkdir "release\x64\${{ inputs.build-version }}.0.0"
-            mkdir "release\arm64\${{ inputs.build-version }}.0.0"
+            mkdir "release\ia32\${{ inputs.build-version }}"
+            mkdir "release\x64\${{ inputs.build-version }}"
+            mkdir "release\arm64\${{ inputs.build-version }}"
 
       - name: Cache node-gyp
         uses: actions/cache@v4
@@ -74,7 +66,7 @@ jobs:
           cache-name: cache-node-gyp
         with:
           path: ~\AppData\Local\node-gyp\Cache
-          key: '${{ inputs.build-version }}.0.0'
+          key: '${{ inputs.build-version }}'
 
       - name: Build ia32
         timeout-minutes: 30
@@ -101,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: electron-edge-js-${{ inputs.build-version }}.0.0
+          name: electron-edge-js-${{ inputs.build-version }}
           path: |
             release
 
@@ -110,8 +102,9 @@ jobs:
     needs: build
     strategy:
       matrix:
-        os: [windows-2022]
-      # fail-fast: false
+        # os: [windows-2022]
+        os: [macos-13, macos-15]
+      fail-fast: false
 
     name: test ${{ matrix.os }}-v${{ needs.build.outputs.test-version }}
     steps:
