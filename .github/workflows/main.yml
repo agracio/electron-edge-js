@@ -109,14 +109,6 @@ jobs:
               core.setFailed(err)
             }
     
-      - name: Cache node-gyp
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-gyp
-        with:
-          path: ~/.cache/node-gyp
-          key: '${{ runner.os }}-${{ env.json_electron_version}}'
-  
       - name: Cache node modules
         id: cache-nodemodules
         uses: actions/cache@v4
