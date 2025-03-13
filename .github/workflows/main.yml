@@ -185,8 +185,6 @@ jobs:
         name: Run .NET 4.5 tests
         run: node tools/test.js CI
         timeout-minutes: 10
-        env:
-          EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'macOS' || runner.os == 'Windows'
         name: "Run .net core tests"
