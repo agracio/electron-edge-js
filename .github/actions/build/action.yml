@@ -15,20 +15,35 @@ runs:
     - name: Build ${{ inputs.arch }}
       shell: pwsh
       run: |
+      
           node-gyp configure --target=${{ inputs.electron }}.0.0 --disturl=https://electronjs.org/headers --runtime=electron --release --arch=${{ inputs.arch }}
 
-          if ( '${{ inputs.arch }}' -eq 'arm64'){
+          if ( '${{ inputs.arch }}' -eq 'arm64' -And '${{ runner.os }}' -eq 'Windows'){
             (Get-Content -Raw build/build_managed.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/build_managed.vcxproj
             (Get-Content -Raw build/edge_coreclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
             (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
           }
           
-          if ( '${{ inputs.electron }}' -eq 32){
+          if ( '${{ inputs.electron }}' -eq 32 -And '${{ runner.os }}' -eq 'Windows'){
               (Get-Content -Raw build/build_managed.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/build_managed.vcxproj
               (Get-Content -Raw build/edge_coreclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
               (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
           }
 
           node-gyp build
-          cmd /c copy /y build\Release\edge_*.node release\${{ inputs.arch }}\${{ inputs.electron }}
-          cmd /c rmdir /S /Q build
+
+          if ( '${{ runner.os }}' -eq 'Windows'){
+            cmd /c copy /y build\Release\edge_*.node release\win32\${{ inputs.arch }}\${{ inputs.electron }}
+            cmd /c rmdir /S /Q build
+          }
+
+          if ( '${{ runner.os }}' -eq 'macOS'){
+            Get-ChildItem -Path build/Release
+            Copy-Item "build/Release/edge_coreclr.node" -Destination "release/darwin/${{ inputs.arch }}/${{ inputs.electron }}"
+            Copy-Item "build/Release/edge_nativeclr.node" -Destination "release/darwin/${{ inputs.arch }}/${{ inputs.electron }}"
+            Copy-Item "build/Release/MonoEmbedding.exe" -Destination "release/darwin/${{ inputs.arch }}/${{ inputs.electron }}"
+            
+            node-gyp clean
+          }
+
+
