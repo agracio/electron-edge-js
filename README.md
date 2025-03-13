@@ -11,7 +11,7 @@
 
 | Electron             |  x86/x64           | arm64              |
 | -------------------- |  ----------------- | ------------------ |
-| Electron 29.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
 
 
@@ -21,7 +21,7 @@
 
 | Electron             | x64                | arm64              |
 | -------------------- | ------------------ | ------------------ |
-| Electron 29.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
