@@ -164,17 +164,17 @@ jobs:
           os: ${{ matrix.os }}
           replace-version: true
 
-      # - if: runner.os == 'macOS' || runner.os == 'Linux'
-      #   name: Check electron-edge-js build file
-      #   id: check_build
-      #   uses: andstor/file-existence-action@v3
-      #   with:
-      #     files: "build/Release/edge_coreclr.node"
-      #     fail: true
-      #     ignore_case: true
+      - if: runner.os == 'Linux'
+        name: Check electron-edge-js build file
+        id: check_build
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "build/Release/edge_coreclr.node"
+          fail: true
+          ignore_case: true
   
       - if: runner.os == 'macOS' || runner.os == 'Windows'
-        name: Run .NET 4.5 tests
+        name: Run .NET 4.5/Mono tests
         run: node tools/test.js CI
         timeout-minutes: 10
 
@@ -186,17 +186,7 @@ jobs:
           EDGE_USE_CORECLR: 1
 
       - if: runner.os == 'Linux'
-        name: Run .NET 4.5 tests
-        timeout-minutes: 10
-        run: |
-          export DISPLAY=:99
-          echo "DISPLAY=:99" >> $GITHUB_ENV
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          sleep 3
-          node tools/test.js CI
-
-      - if: runner.os == 'Linux'
-        name: "Run .net core tests"
+        name: "Run .net core tests Linux"
         timeout-minutes: 10
         run: |
           export DISPLAY=:99
