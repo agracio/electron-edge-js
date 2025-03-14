@@ -13,15 +13,24 @@
 | -------------------- |  ----------------- | ------------------ |
 | Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
+### macOS binaries pre-compiled for 
 
+| Electron             |  x64               | arm64              |
+| -------------------- |  ----------------- | ------------------ |
+| Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
-#### On Linux and macOS `npm install` will compile binaries with correct Electron headers for a given Electron version.
+#### Using Electron version not pre-compiled for macOS will cause `npm install` to compile binaries with correct Electron headers for a given Electron version.
 
-### Linux/macOS suppoted versions
+#### NOTE: electron-edge-js does not support electron versions below v29 due to `nan` module limitations.
+
+### Linux
+On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.
+
+### Linux suppoted versions
 
 | Electron             | x64                | arm64              |
 | -------------------- | ------------------ | ------------------ |
-| Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
+| Electron 29.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
