@@ -11,12 +11,7 @@ function getVersion() {
 	let url = 'http://releases.electronjs.org/releases.json';
 
     function getVersionFromMajor(json, major){
-        json = json
-                .sort()
-                .map(({ version }) => version)
-                .filter(function (str) { return !str.includes('^'); })
-                .filter(function (str) { return !str.includes('-'); })
-                .filter(function (str) { return str.startsWith(`${major}.`); });
+        json = json.filter(function (str) { return str.startsWith(`${major}.`); });
         if(json.length !== 0){
             return json[0];
         }
@@ -40,9 +35,15 @@ function getVersion() {
 		res.on("end", () => {
 			try {
 
+            let json = JSON.parse(body)
+                .sort()
+                .map(({ version }) => version)
+                .filter(function (str) { return !str.includes('^'); })
+                .filter(function (str) { return !str.includes('-'); });
+
                 let major = process.argv[2];
                 if(major){
-                    version = getVersionFromMajor(JSON.parse(body), major);
+                    version = getVersionFromMajor(json, major);
                     fs.writeFileSync('electron.txt', version);
                     console.log(version);
                 }
@@ -51,7 +52,7 @@ function getVersion() {
                     let results = [];
                 
                     majors.forEach((major) => {
-                        let version = getVersionFromMajor(JSON.parse(body), major);
+                        let version = getVersionFromMajor(json, major);
                         if(version){
                             versions.push(version);
                         }
