@@ -15,7 +15,7 @@ on:
         - 33
         - 34
         - 35
-
+        - 36
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
@@ -55,107 +55,6 @@ jobs:
           electron: ${{ inputs.electron }}
           os: ${{ matrix.os }}
             
-      # - name: install node-gyp
-      #   run: npm i -g node-gyp
-
-      # - name: Create release folder
-      #   uses: actions/github-script@v7
-      #   with:
-      #     result-encoding: string
-      #     script: |
-      #       try {
-      #         const fs = require('fs')
-      #         if('${{ runner.os }}' == 'Windows'){
-      #           fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
-      #           fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
-      #           fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
-      #         }
-      #         else if('${{ runner.os }}' == 'macOS' && '${{ inputs.electron }}' != 'macos-13'){
-      #           fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
-      #         }
-      #         else if('${{ runner.os }}' == 'macOS' && '${{ inputs.electron }}' == 'macos-13'){
-      #           fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.electron }}`, { recursive: true });
-      #         }
-      #       } catch(err) {
-      #         core.error("Error creating release directory")
-      #         core.setFailed(err)
-      #       }
-
-      # - name: Cache node-gyp
-      #   if: runner.os == 'Windows'
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-gyp
-      #   with:
-      #     path: ~\AppData\Local\node-gyp\Cache
-      #     key: '${{ runner.os }}-${{ inputs.electron }}'
-
-      # - name: Cache node-gyp macOS
-      #   if: runner.os == 'macOS'
-      #   uses: actions/cache@v4
-      #   env:
-      #     cache-name: cache-node-gyp
-      #   with:
-      #     path: ~/Library/Caches/node-gyp
-      #     key: '${{ runner.os }}-${{ inputs.electron }}'
-  
-      # - name: Build ia32
-      #   if: runner.os == 'Windows'
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ inputs.electron }}
-      #     arch: 'ia32'
-
-      # - name: Build x64
-      #   if: runner.os == 'Windows' || matrix.os == 'macos-13'
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ inputs.electron }}
-      #     arch: 'x64'
-
-      # - name: Build arm64
-      #   if: runner.os == 'Windows' || matrix.os == 'macos-15'
-      #   timeout-minutes: 30
-      #   uses: ./.github/actions/build
-      #   with:
-      #     electron: ${{ inputs.electron }}
-      #     arch: 'arm64'
-
-
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: runner.os == 'Windows' && success()
-      #   with:
-      #     name: win32-electron-edge-js-${{ inputs.electron }}
-      #     path: |
-      #       release
-
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: runner.os  == 'macOS' && matrix.os  == 'macos-15' && success()
-      #   with:
-      #     name: darwin-arm64-electron-edge-js-${{ inputs.electron }}
-      #     path: |
-      #       release
-
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: runner.os  == 'macOS' && matrix.os  == 'macos-13' && success()
-      #   with:
-      #     name: darwin-x64-electron-edge-js-${{ inputs.electron }}
-      #     path: |
-      #       release
-
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   if: success()
-      #   with:
-      #     name: electron-edge-js-${{ inputs.electron }}
-      #     path: |
-      #       release
-
   test:
     runs-on: ${{ matrix.os }}
     needs: build
