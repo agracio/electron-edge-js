@@ -87,9 +87,28 @@ if (process.platform === 'win32') {
 } 
 
 else {
+	let version = getVersion();
+	if(process.platform === 'darwin' && version){
+		const electronVersion = version.split(".")[0];
+		const edjeNative = path.resolve(__dirname, '../lib/native/' + process.platform + '/' + process.arch + '/' + electronVersion + '/' + 'edge_nativeclr.node');
+		const edjeNativeClr = path.resolve(__dirname, '../lib/native/' + process.platform + '/' + process.arch + '/' + electronVersion + '/' + 'edge_coreclr.node');
+
+		if(fs.existsSync(edjeNative) && fs.existsSync(edjeNativeClr)){
+			spawn('dotnet', ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
+		}
+		else{
+			build();
+		}
+	} 
+	else {
+		build();
+	}  		
+}
+
+function getVersion(){
+	
 	// Code from electron-prebuild: https://github.com/electron/electron-rebuild
 	const possibleModuleNames = ['electron', 'electron-prebuilt', 'electron-prebuilt-compile'];
-
 	function locateElectronPrebuilt () {
 		let electronPath;
 
@@ -117,8 +136,8 @@ else {
 		return null;
 	}
 
-	location = locateElectronPrebuilt();
-	version = null;
+	let location = locateElectronPrebuilt();
+	let version = null;
 	electronPath = null;
 	if (location != null)
 	{ 
@@ -131,14 +150,25 @@ else {
 
 			version = pkg.version;
 		} catch (e) {
-			console.error("Unable to find electron-prebuilt's version number, either install it or specify an explicit version");
+			console.error("Unable to find electron version number, install is using 'npm i electron'");
 		}
 	}
+
+	if(!version){
+		console.error("Unable to find electron version number, install is using 'npm i electron'");
+	}
+
+	return version;
+}
+
+function build(){
+	let version = getVersion();
 	if (version !== null)
 	{
 		spawn('node-gyp', ['configure', 'build', '--target='+version, '--runtime=electron', '--disturl=https://electronjs.org/headers', '--release'], { stdio: 'inherit' });
 	}
-	else
+	
+	else{
 		spawn('node-gyp', ['configure', 'build'], { stdio: 'inherit' });
-   		
+	}
 }

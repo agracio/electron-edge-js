@@ -77,7 +77,7 @@ env:
 
 jobs:
   electron-versions:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     outputs:
       matrix: ${{ steps.electron-versions.outputs.matrix }}
 
@@ -109,14 +109,6 @@ jobs:
               core.setFailed(err)
             }
     
-      - name: Cache node-gyp
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-gyp
-        with:
-          path: ~/.cache/node-gyp
-          key: '${{ runner.os }}-${{ env.json_electron_version}}'
-  
       - name: Cache node modules
         id: cache-nodemodules
         uses: actions/cache@v4
@@ -172,7 +164,7 @@ jobs:
           os: ${{ matrix.os }}
           replace-version: true
 
-      - if: runner.os == 'macOS' || runner.os == 'Linux'
+      - if: runner.os == 'Linux'
         name: Check electron-edge-js build file
         id: check_build
         uses: andstor/file-existence-action@v3
@@ -181,20 +173,20 @@ jobs:
           fail: true
           ignore_case: true
   
-      - if: runner.os == 'Windows'
-        name: Run Windows tests
-        uses: ./.github/actions/test-windows
-        timeout-minutes: 10
-        with:
-          electron: ${{ matrix.electron }}
-
-      - if: runner.os == 'macOS'
-        name: Run macOS tests
+      - if: runner.os == 'macOS' || runner.os == 'Windows'
+        name: Run .NET 4.5/Mono tests
         run: node tools/test.js CI
         timeout-minutes: 10
 
+      - if: runner.os == 'macOS' || runner.os == 'Windows'
+        name: "Run .net core tests"
+        run: node tools/test.js CI
+        timeout-minutes: 10
+        env:
+          EDGE_USE_CORECLR: 1
+
       - if: runner.os == 'Linux'
-        name: Run Linux tests
+        name: "Run .net core tests Linux"
         timeout-minutes: 10
         run: |
           export DISPLAY=:99
@@ -202,6 +194,8 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 3
           node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
 
       - name: Test report
         uses: ./.github/actions/create-test-report

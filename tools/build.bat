@@ -15,6 +15,13 @@ SET DESTDIRROOT=%SELF%\..\lib\native\win32
 
 set VERSION=%1
 
+set ELECTRONV=%1
+echo %ELECTRONV%
+set "ELECTRONV=%ELECTRONV:~,2%"
+
+if %ELECTRONV% equ %VERSION% (
+    SET VERSION=%ELECTRONV%.0.0
+)
 pushd %SELF%\..
 
 call :build ia32 ia32 %VERSION%
@@ -27,16 +34,13 @@ exit /b 0
 
 :build
 
-
-set ELECTRONV=%3
-set "ELECTRONV=%ELECTRONV:~,2%"
-
-set DESTDIR=%DESTDIRROOT%\%1\%3
+set DESTDIR=%DESTDIRROOT%\%1\%ELECTRONV%
+echo %DESTDIR%
 if not exist "%DESTDIR%\NUL" mkdir "%DESTDIR%"
 
 :gyp
 
-echo Building edge.node %FLAVOR% for node.js %2 %3
+echo Building edge.node %FLAVOR% for Electron %2 v%3
 
 FOR /F "tokens=* USEBACKQ" %%F IN (`npm config get prefix`) DO (SET NODEBASE=%%F)
 set GYP=%NODEBASE%\node_modules\node-gyp\bin\node-gyp.js
@@ -47,7 +51,7 @@ if not exist "%GYP%" (
 
 node "%GYP%" configure --msvs_version=2022 --target=%3 --arch=%2 --runtime=electron --disturl=https://electronjs.org/headers --%FLAVOR%
 if %ERRORLEVEL% neq 0 (
-    echo Error building edge.node %FLAVOR% for node.js %2 v%target%
+    echo Error building edge.node %FLAVOR% for Electron %2 v%3
     exit /b -1
 )
 
@@ -68,11 +72,15 @@ if %ELECTRONV% EQU 32 (
 )
 
 node "%GYP%" build
+if %ERRORLEVEL% neq 0 (
+    echo Error building edge.node %FLAVOR% for Electron %2 v%3
+    exit /b -1
+)
 
 echo %DESTDIR%
 copy /y .\build\%FLAVOR%\edge_*.node "%DESTDIR%"
 if %ERRORLEVEL% neq 0 (
-    echo Error copying edge.node %FLAVOR% for node.js %2 v%target%
+    echo Error copying edge.node %FLAVOR% for Electron %2 v%3
     exit /b -1
 )
 rmdir /S /Q .\build\
@@ -82,4 +90,4 @@ if %ERRORLEVEL% neq 0 (
     exit /b -1
 )
 
-echo Success building edge.node %FLAVOR% for node.js %2 v%target%
+echo Success building edge.node %FLAVOR% for Electron %2 v%3
