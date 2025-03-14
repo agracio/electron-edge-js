@@ -7,6 +7,19 @@
 
 **This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/)**
 
+## Version support policy
+
+### Electron officially support 3 latest released versions of electron. You can read more about Electron release schedule and support here [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)
+
+### electron-edge-js support policy
+
+- Windows supports 6 latest Electron releases.
+- macOS comes precompiled with 6 latest Electron releases. When using Electron version that is not pre-compiled `electron-edge-js` binaries be automaticaly compiled during `npm install`.
+- Linux will will always compile `electron-edge-js` binaries during `npm install` for a given Electron version.
+
+#### NOTE: electron-edge-js does not support electron versions below v29 due to `nan` module compatibility.
+-----
+
 ### Windows binaries pre-compiled for 
 
 | Electron             |  x86/x64           | arm64              |
@@ -20,8 +33,6 @@
 | Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Using Electron version not pre-compiled for macOS will cause `npm install` to compile binaries with correct Electron headers for a given Electron version.
-
-#### NOTE: electron-edge-js does not support electron versions below v29 due to `nan` module limitations.
 
 ### Linux
 On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.
