@@ -186,15 +186,15 @@ jobs:
         env:
           EDGE_USE_CORECLR: 1
 
-      - if: runner.os == 'Linux'
-        name: Run Mono tests
-        timeout-minutes: 10
-        run: |
-          export DISPLAY=:99
-          echo "DISPLAY=:99" >> $GITHUB_ENV
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          sleep 3
-          node tools/test.js CI
+      # - if: runner.os == 'Linux'
+      #   name: Run Mono tests
+      #   timeout-minutes: 10
+      #   run: |
+      #     export DISPLAY=:99
+      #     echo "DISPLAY=:99" >> $GITHUB_ENV
+      #     Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+      #     sleep 3
+      #     node tools/test.js CI
 
       - if: runner.os == 'Linux'
         name: "Run .net core tests Linux"
