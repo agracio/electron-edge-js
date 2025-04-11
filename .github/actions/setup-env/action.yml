@@ -88,12 +88,11 @@ runs:
         brew install mono --overwrite
         brew reinstall pkg-config
 
-    # - name: Setup Mono
-    #   if: runner.os == 'Linux'
-    #   shell: bash
-    #   run: |
-    #     sudo apt -q install mono-complete pkg-config
-    #     sudo apt -q install gdb
+    - name: Setup Mono
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo apt -q install mono-complete pkg-config
 
     - name: Versions
       shell: bash
