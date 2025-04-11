@@ -92,7 +92,7 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        sudo apt -q install mono-complete pkg-config
+        sudo apt -q install mono-complete pkg-config gdb
 
     - name: Versions
       shell: bash
