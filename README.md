@@ -9,19 +9,18 @@
 
 ## Version support policy
 
-### Electron officially support 3 latest released versions. You can read more about Electron release schedule and support here [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)
+### Electron officially supports 3 latest released versions. You can read more about Electron release schedule and support here [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)
 
 ### electron-edge-js support policy
 
 - Windows supports 6 latest Electron releases.
-- macOS comes precompiled with 6 latest Electron releases. When using Electron version that is not pre-compiled `electron-edge-js` binaries will be automaticaly compiled during `npm install`.
-- Linux will will always compile `electron-edge-js` binaries during `npm install` for a given Electron version.
-- Due to `nan` module limitations versions prior to Electron 29 are not supported.
+- macOS comes precompiled with 6 latest Electron releases. When using Electron version that is not pre-compiled `electron-edge-js` binaries will be compiled during `npm install` using `node-gyp`.
+- Linux will will always compile `electron-edge-js` binaries during `npm install` using `node-gyp`.
 
-#### NOTE: electron-edge-js does not support electron versions below v29 due to `nan` module compatibility.
+#### NOTE: Due to `nan` module compatibility issues versions prior to **Electron 29** are not supported.
 -----
 
-### Windows binaries pre-compiled for 
+### Windows supported versions 
 
 | Electron             |  x86/x64           | arm64              |
 | -------------------- |  ----------------- | ------------------ |
@@ -33,7 +32,7 @@
 | -------------------- |  ----------------- | ------------------ |
 | Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
-#### Using Electron version not pre-compiled for macOS will cause `npm install` to compile binaries with correct Electron headers for a given Electron version.
+Supports Electron 29.x - 35.x
 
 ### Linux
 On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.
@@ -71,7 +70,7 @@ https://github.com/agracio/electron-edge-js-quick-start
 
 ## Packaging Electron application
 
-`electron-edge-js` needs to be specified as an external module, some examples<br/>  
+`electron-edge-js` needs to be specified as an external module, some examples  
 
 ### webpack
  
