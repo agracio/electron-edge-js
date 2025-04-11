@@ -1,10 +1,10 @@
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = true;
-if(process.platform === 'linux' && !process.env.EDGE_USE_CORECLR){ 
-  Object.assign(process.env, { 
-      // Work around Mono problem: undefined symbol: mono_add_internal_call_with_flags 
-      LD_PRELOAD: 'libmono-2.0.so libmonosgen-2.0.so libstdc++.so.6', 
-  }); 
-} 
+// if(process.platform === 'linux' && !process.env.EDGE_USE_CORECLR){ 
+//   Object.assign(process.env, { 
+//       // Work around Mono problem: undefined symbol: mono_add_internal_call_with_flags 
+//       LD_PRELOAD: 'libmono-2.0.so libmonosgen-2.0.so libstdc++.so.6', 
+//   }); 
+// } 
 const {app, BrowserWindow, ipcMain, ipcRenderer} = require("electron");
 const testRunner = require('./app.js');
 
