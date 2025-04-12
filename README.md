@@ -9,7 +9,7 @@
 
 ## Version support policy
 
-### Electron officially supports 3 latest released versions. You can read more about Electron release schedule and support here [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)
+### Electron officially supports 3 latest released versions. You can read more about Electron release schedule and support here [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines).
 
 ### electron-edge-js support policy
 
@@ -37,11 +37,13 @@ Supports Electron 29.x - 35.x
 ### Linux
 On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.
 
-### Linux suppoted versions
+### Linux supported versions
 
 | Electron             | x64                | arm64              |
 | -------------------- | ------------------ | ------------------ |
 | Electron 29.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
+
+Other Linux architectures might work but have not been tested.
 
 #### Usage is the same as edge-js, replace `require('edge-js')` with `require('electron-edge-js')`:
 
