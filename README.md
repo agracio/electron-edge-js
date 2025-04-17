@@ -1,6 +1,6 @@
 # .NET and Node.js in-process on Electron
 
-[![Actions Status](https://github.com/agracio/electron-edge-js/workflows/Test/badge.svg)](https://github.com/agracio/electron-edge-js/actions)
+[![Actions Status](https://github.com/agracio/electron-edge-js/workflows/CI/badge.svg)](https://github.com/agracio/electron-edge-js/actions)
 [![Git Issues][issues-img]][issues-url]
 [![Closed Issues][closed-issues-img]][closed-issues-url]
 <!-- [![NPM Downloads][downloads-img]][downloads-url] -->
@@ -32,7 +32,7 @@
 | -------------------- |  ----------------- | ------------------ |
 | Electron 30.x - 35.x | :heavy_check_mark: | :heavy_check_mark: |
 
-Supports Electron 29.x - 35.x
+**Supports Electron 29.x - 35.x**
 
 ### Linux
 On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.

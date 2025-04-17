@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on: 
   workflow_dispatch:
@@ -8,6 +8,7 @@ on:
       - 'stress/*'
       - 'performance/*'
       - '.github/FUNDING.YML'
+      - '.github/workflows/ci-old.yml'
       - '.github/workflows/build.yml'
       - '.github/workflows/build*.yml'
       - '.github/actions/test-build/action.yml'
@@ -43,6 +44,7 @@ on:
       - 'stress/*'
       - 'performance/*'
       - '.github/FUNDING.YML'
+      - '.github/workflows/ci-old.yml'
       - '.github/workflows/build.yml'
       - '.github/workflows/build*.yml'
       - '.github/actions/test-build/action.yml'
