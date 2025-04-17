@@ -1,0 +1,152 @@
+name: CI out of support
+
+on: 
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - 'samples/*'
+      - 'stress/*'
+      - 'performance/*'
+      - '.github/FUNDING.YML'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/build.yml'
+      - '.github/workflows/build*.yml'
+      - '.github/actions/test-build/action.yml'
+      - '.github/actions/build*/*.*'
+      - '.github/actions/build/*.*'
+      - '**/*.md'
+      - '**/*.d.ts'
+      - '**/*.bat'
+      - '.travis.yml'
+      - 'Dockerfile'
+      - '.gitconfig'
+      - '.gitignore'
+      - 'appveyor*.*'
+      - 'LICENSE*'
+      - '.idea/**'
+      - '.vscode/**'
+      - '*.bat'
+      - '*.nuspec'
+      - 'tools/nuget/*'
+      - '.npmignore'
+      - 'test/config.json'
+      - 'test/double'
+      - '.circleci'
+      - '.circleci/*'
+      - 'README.md'
+      - '*.sln'
+      - '*.vcxproj'
+  push:
+    branches-ignore:
+      - 'circleci'
+    paths-ignore:
+      - 'samples/*'
+      - 'stress/*'
+      - 'performance/*'
+      - '.github/FUNDING.YML'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/build.yml'
+      - '.github/workflows/build*.yml'
+      - '.github/actions/test-build/action.yml'
+      - '.github/actions/build*/*.*'
+      - '.github/actions/build/*.*'
+      - '**/*.md'
+      - '**/*.d.ts'
+      - '**/*.bat'
+      - '.travis.yml'
+      - 'Dockerfile'
+      - '.gitconfig'
+      - '.gitignore'
+      - 'appveyor*.*'
+      - 'LICENSE*'
+      - '.idea/**'
+      - '.vscode/**'
+      - '*.bat'
+      - '*.nuspec'
+      - 'tools/nuget/*'
+      - '.npmignore'
+      - 'test/config.json'
+      - 'test/double'
+      - '.circleci'
+      - '.circleci/*'
+      - 'README.md'
+      - '*.sln'
+      - '*.vcxproj'
+
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1 
+  DOTNET_NOLOGO: 1 
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-15, ubuntu-22.04, ubuntu-22.04-arm]
+        electron: [29.4.6]
+        # electron: [29.4.6, 30.5.1, 31.7.7, 32.3.3, 33.4.9, 34.0.1]
+        
+    name: test-${{ matrix.os }}-v${{ matrix.electron }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: ${{ matrix.electron }}
+          os: ${{ matrix.os }}
+          replace-version: true
+
+      - if: runner.os == 'Linux'
+        name: Check electron-edge-js build file
+        id: check_build
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "build/Release/edge_coreclr.node"
+          fail: true
+          ignore_case: true
+  
+      - if: runner.os == 'macOS' || runner.os == 'Windows'
+        name: Run .NET 4.5/Mono tests
+        run: node tools/test.js CI
+        timeout-minutes: 10
+
+      - if: runner.os == 'macOS' || runner.os == 'Windows'
+        name: "Run .net core tests"
+        run: node tools/test.js CI
+        timeout-minutes: 10
+        env:
+          EDGE_USE_CORECLR: 1
+
+      # - if: runner.os == 'Linux'
+      #   name: Run Mono tests
+      #   timeout-minutes: 10
+      #   run: |
+      #     export DISPLAY=:99
+      #     echo "DISPLAY=:99" >> $GITHUB_ENV
+      #     Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+      #     sleep 3
+      #     node tools/test.js CI
+
+      - if: runner.os == 'Linux'
+        name: "Run .net core tests Linux"
+        timeout-minutes: 10
+        run: |
+          export DISPLAY=:99
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+          node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
+
+      - name: Test report
+        uses: ./.github/actions/create-test-report
+        with:
+          electron: ${{ matrix.electron }}
+          os: ${{ matrix.os }}
+
+
