@@ -318,6 +318,114 @@ HRESULT CoreClrEmbedding::Initialize(BOOL debugMode)
 
 	pal::string_t dotnetExecutablePath, dotnetDirectory;
 
+#ifdef EDGE_PLATFORM_WINDOWS
+	// https://learn.microsoft.com/en-us/dotnet/core/runtime-discovery/troubleshoot-app-launch?pivots=os-windows#multi-level-lookup-disabled-for-net-7-and-later
+	// https://learn.microsoft.com/en-us/dotnet/core/compatibility/deployment/7.0/multilevel-lookup
+	// https://github.com/dotnet/designs/blob/main/accepted/2020/install-locations.md
+	// https://github.com/dotnet/designs/blob/main/accepted/2021/install-location-per-architecture.md
+	BOOL is_wow64_process = false;
+	IsWow64Process(GetCurrentProcess(), &is_wow64_process);
+
+	// 1. Get the path to the .NET from the environment variable DOTNET_ROOT
+	if (is_wow64_process)
+	{
+		pal::getenv(_X("DOTNET_ROOT(x86)"), &dotnetDirectory);
+		trace::verbose(_X("CoreClrEmbedding::Initialize - Running as WOW64, checking DOTNET_ROOT(x86)"));
+	}
+	else
+	{
+		pal::getenv(_X("DOTNET_ROOT"), &dotnetDirectory);
+		trace::verbose(_X("CoreClrEmbedding::Initialize - Checking DOTNET_ROOT"));
+	}
+	append_path(&dotnetExecutablePath, _X("dotnet"));
+	dotnetExecutablePath.append(pal::exe_suffix());
+	if (pal::file_exists(dotnetExecutablePath))
+	{
+		pal::realpath(&dotnetExecutablePath);
+		dotnetDirectory = get_directory(dotnetExecutablePath);
+		trace::info(_X("CoreClrEmbedding::Initialize - Found dotnet at %s"), dotnetExecutablePath.c_str());
+	}
+	else
+	{
+		dotnetExecutablePath = _X("");
+		dotnetDirectory = _X("");
+		trace::info(_X("CoreClrEmbedding::Initialize - No dotnet found in DOTNET_ROOT"));
+	}
+	// 2. Get the path to the .NET from the registry
+	if (dotnetDirectory.empty())
+	{
+		pal::string_t arch = GetOSArchitecture();
+		pal::string_t registry_key = _X("SOFTWARE\\dotnet\\Setup\\InstalledVersions\\");
+		registry_key.append(arch);
+		trace::info(_X("CoreClrEmbedding::Initialize - Checking registry key %s"), registry_key.c_str());
+
+		HKEY hkey = NULL;
+		if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, registry_key.c_str(), 0, KEY_READ | KEY_WOW64_32KEY, &hkey) == ERROR_SUCCESS)
+		{
+			WCHAR buffer[MAX_PATH] = {0};
+			DWORD buffer_size = sizeof(buffer);
+			DWORD type = 0;
+
+			if (RegQueryValueExW(hkey, _X("InstallLocation"), NULL, &type, (LPBYTE)buffer, &buffer_size) == ERROR_SUCCESS && type == REG_SZ)
+			{
+				dotnetDirectory = buffer;
+				trace::info(_X("CoreClrEmbedding::Initialize - Found dotnet directory from registry: %s"), dotnetDirectory.c_str());
+
+				dotnetExecutablePath = dotnetDirectory;
+				append_path(&dotnetExecutablePath, _X("dotnet"));
+				dotnetExecutablePath.append(pal::exe_suffix());
+
+				if (!pal::file_exists(dotnetExecutablePath))
+				{
+					trace::warning(_X("CoreClrEmbedding::Initialize - dotnet executable not found at %s"), dotnetExecutablePath.c_str());
+					dotnetExecutablePath = _X("");
+					dotnetDirectory = _X("");
+				}
+				else
+				{
+					trace::info(_X("CoreClrEmbedding::Initialize - Found dotnet from registry at %s"), dotnetExecutablePath.c_str());
+				}
+			}
+			RegCloseKey(hkey);
+		}
+		else
+		{
+			trace::warning(_X("CoreClrEmbedding::Initialize - Failed to open registry key %s"), registry_key.c_str());
+		}
+	}
+
+	// 3. Get the path to the .NET from the PATH environment variable %ProgramFiles%
+	if (dotnetDirectory.empty())
+	{
+		if (is_wow64_process)
+		{
+			pal::getenv(_X("ProgramFiles(x86)"), &dotnetDirectory);
+			trace::verbose(_X("CoreClrEmbedding::Initialize - Running as WOW64, checking ProgramFiles(x86)"));
+		}
+		else
+		{
+			pal::getenv(_X("ProgramFiles"), &dotnetDirectory);
+			trace::verbose(_X("CoreClrEmbedding::Initialize - Checking ProgramFiles"));
+		}
+		append_path(&dotnetDirectory, _X("dotnet"));
+
+		dotnetExecutablePath = dotnetDirectory;
+		append_path(&dotnetExecutablePath, _X("dotnet"));
+		dotnetExecutablePath.append(pal::exe_suffix());
+		if (pal::file_exists(dotnetExecutablePath))
+		{
+			pal::realpath(&dotnetExecutablePath);
+			dotnetDirectory = get_directory(dotnetExecutablePath);
+			trace::info(_X("CoreClrEmbedding::Initialize - Found dotnet at %s"), dotnetExecutablePath.c_str());
+		}
+		else
+		{
+			dotnetExecutablePath = _X("");
+			dotnetDirectory = _X("");
+			trace::info(_X("CoreClrEmbedding::Initialize - No dotnet found in ProgramFiles"));
+		}
+	}
+#else
 	size_t previousIndex = 0;
 	size_t currentIndex = pathEnvironmentVariable.find(PATH_SEPARATOR);
 
