@@ -98,7 +98,7 @@ jobs:
         with:
           electron: ${{ matrix.electron }}
           os: ${{ matrix.os }}
-	        arch: ${{ runner.arch }}
+          arch: ${{ runner.arch }}
           replace-version: true
 
       - if: runner.os == 'Linux'
