@@ -62,7 +62,7 @@ jobs:
     strategy:
       fail-fast: false
 
-    name: upload artifacts node-${{ inputs.electron }}
+    name: upload artifacts electron-${{ inputs.electron }}
     steps:
 
       - name: Download artifacts

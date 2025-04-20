@@ -43,21 +43,21 @@ runs:
           }
 
     - name: Download artifacts
-      if: inputs.os = 'windows-2022'
+      if: inputs.os == 'windows-2022'
       uses: actions/download-artifact@v4
       with:
         path: release
         pattern: win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}*
 
     - name: Download artifacts
-      if: inputs.os = 'windows-2025'
+      if: inputs.os == 'windows-2025'
       uses: actions/download-artifact@v4
       with:
         path: release
         pattern: win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}*
 
     - name: Download artifacts
-      if:  inputs.os = 'macos-15'
+      if:  inputs.os == 'macos-15'
       uses: actions/download-artifact@v4
       with:
         path: release
@@ -74,13 +74,13 @@ runs:
       run: ls -R release
 
     - name: Copy artifacts
-      if:  inputs.os = 'windows-2022'
+      if:  inputs.os == 'windows-2022'
       shell: pwsh
       run: |
         cmd /c copy /y release\win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}\win32\ia32\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}
 
     - name: Copy artifacts
-      if:  inputs.os = 'windows-2025'
+      if:  inputs.os == 'windows-2025'
       shell: pwsh
       run: |
         cmd /c copy /y release\win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}\win32\x64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}
