@@ -4,7 +4,7 @@ inputs:
   node:
     description: 'Node.js version'
     required: false
-    default: '20'
+    default: '22'
   os:
     description: 'runs-on'
     required: false
@@ -26,6 +26,15 @@ runs:
   steps:
 
     - name: Setup NodeJS
+      if: runner.os == 'Linux'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node }}
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - name: Setup NodeJS
+      if: runner.os != 'Linux'
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node }}
