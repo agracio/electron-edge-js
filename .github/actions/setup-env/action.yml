@@ -16,6 +16,10 @@ inputs:
     description: 'Replace electron version?'
     required: false
     default: 'false'
+  arch:
+    description: 'Architecture'
+    required: false
+    default: 'x64'
 
 runs:
   using: "composite"
@@ -25,6 +29,7 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node }}
+        architecture: ${{ inputs.arch }}
         cache: 'npm'
         cache-dependency-path: package-lock.json
 

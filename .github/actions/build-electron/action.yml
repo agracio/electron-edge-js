@@ -14,10 +14,20 @@ runs:
   steps:
 
       - name: Setup env
+        if: inputs.os == 'windows-2022'
         uses: ./.github/actions/setup-env
         with:
           electron: '${{ inputs.electron }}.0.0'
           os: ${{ inputs.os }}
+          arch: 'x86'
+
+      - name: Setup env
+        if: inputs.os != 'windows-2022'
+        uses: ./.github/actions/setup-env
+        with:
+          electron: '${{ inputs.electron }}.0.0'
+          os: ${{ inputs.os }}
+          arch: ${{ runner.arch }}
    
       - name: install node-gyp
         shell: bash
@@ -30,15 +40,17 @@ runs:
           script: |
             try {
               const fs = require('fs')
-              if('${{ runner.os }}' == 'Windows'){
+              if('${{ inputs.os }}' == 'windows-2022'){
                 fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
+              }
+              if('${{ inputs.os }}' == 'windows-2025'){
                 fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
                 fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
               }
-              else if('${{ runner.os }}' == 'macOS' && '${{ inputs.os }}' != 'macos-13'){
+              else if('${{ inputs.os }}' == 'macos-15'){
                 fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
               }
-              else if('${{ runner.os }}' == 'macOS' && '${{ inputs.os }}' == 'macos-13'){
+              else if('${{ inputs.os }}' == 'macos-13'){
                 fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.electron }}`, { recursive: true });
               }
             } catch(err) {
@@ -65,21 +77,21 @@ runs:
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
       - name: Build ia32
-        if: runner.os == 'Windows'
+        if: (inputs.os == 'windows-2022')
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'ia32'
 
       - name: Build x64
-        if: runner.os == 'Windows' || inputs.os == 'macos-13'
+        if: inputs.os == 'windows-2025' || inputs.os == 'macos-13'
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'x64'
 
       - name: Build arm64
-        if: runner.os == 'Windows' || inputs.os == 'macos-15'
+        if: inputs.os == 'windows-2025' || inputs.os == 'macos-15'
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
@@ -87,7 +99,7 @@ runs:
     
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        if: runner.os == 'Windows' && success()
+        if: inputs.os == 'windows-2025' && success()
         with:
           name: win32-electron-edge-js-${{ inputs.electron }}
           path: |
@@ -95,16 +107,24 @@ runs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        if: runner.os  == 'macOS' && inputs.os  == 'macos-15' && success()
+        if: inputs.os == 'windows-2022' && success()
         with:
-          name: darwin-arm64-electron-edge-js-${{ inputs.electron }}
+          name: win32-electron-edge-js-ia32-${{ inputs.electron }}
           path: |
             release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        if: runner.os  == 'macOS' && inputs.os  == 'macos-13' && success()
+        if: inputs.os  == 'macos-15' && success()
         with:
-          name: darwin-x64-electron-edge-js-${{ inputs.electron }}
+          name: darwin-electron-edge-js-arm64-${{ inputs.electron }}
+          path: |
+            release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: inputs.os  == 'macos-13' && success()
+        with:
+          name: darwin-electron-edge-js-x64-${{ inputs.electron }}
           path: |
             release

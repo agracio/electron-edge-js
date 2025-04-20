@@ -43,62 +43,75 @@ runs:
           }
 
     - name: Download artifacts
-      if:  runner.os == 'Windows'
+      if: inputs.os = 'windows-2022'
+      uses: actions/download-artifact@v4
+      with:
+        path: release
+        pattern: win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}*
+
+    - name: Download artifacts
+      if: inputs.os = 'windows-2025'
       uses: actions/download-artifact@v4
       with:
         path: release
         pattern: win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}*
 
     - name: Download artifacts
-      if:  runner.os == 'macOS' && inputs.os != 'macos-13'
+      if:  inputs.os = 'macos-15'
       uses: actions/download-artifact@v4
       with:
         path: release
-        pattern: darwin-arm64-electron-edge-js-${{ steps.electron_version.outputs.substring }}*
+        pattern: darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}*
 
     - name: Download artifacts
-      if:  runner.os == 'macOS' && inputs.os == 'macos-13'
+      if: inputs.os == 'macos-13'
       uses: actions/download-artifact@v4
       with:
         path: release
-        pattern: darwin-x64-electron-edge-js-${{ steps.electron_version.outputs.substring }}*
+        pattern: darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}*
     - name: List artifacts
       shell: bash
       run: ls -R release
 
     - name: Copy artifacts
-      if:  runner.os == 'Windows'
+      if:  inputs.os = 'windows-2022'
+      shell: pwsh
+      run: |
+        cmd /c copy /y release\win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}\win32\ia32\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}
+
+    - name: Copy artifacts
+      if:  inputs.os = 'windows-2025'
       shell: pwsh
       run: |
         cmd /c copy /y release\win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}\win32\x64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}
 
     - name: Copy artifacts
-      if:  runner.os == 'macOS' && inputs.os != 'macos-13'
+      if:  inputs.os == 'macos-15'
       uses: actions/github-script@v7
       with:
         result-encoding: string
         script: |
           try {
             const fs = require('fs')
-              fs.copyFileSync('release/darwin-arm64-electron-edge-js-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
-              fs.copyFileSync('release/darwin-arm64-electron-edge-js-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
-              fs.copyFileSync('release/darwin-arm64-electron-edge-js-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
+              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
           } catch(err) {
             core.error("Error creating release directory")
             core.setFailed(err)
           }
 
     - name: Copy artifacts
-      if:  runner.os == 'macOS' && inputs.os == 'macos-13'
+      if: inputs.os == 'macos-13'
       uses: actions/github-script@v7
       with:
         result-encoding: string
         script: |
           try {
             const fs = require('fs')
-              fs.copyFileSync('release/darwin-x64-electron-edge-js-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
-              fs.copyFileSync('release/darwin-x64-electron-edge-js-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
-              fs.copyFileSync('release/darwin-x64-electron-edge-js-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
+              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
           } catch(err) {
             core.error("Error creating release directory")
             core.setFailed(err)
@@ -106,13 +119,32 @@ runs:
 
     - name: Setup env
       uses: ./.github/actions/setup-env
+      if: inputs.os != 'windows-2022'
       with:
         electron: ${{ inputs.electron }}
         os: ${{ inputs.os }}
+        arch: ${{ runner.arch }}
+        replace-version: true
+
+    - name: Setup env
+      uses: ./.github/actions/setup-env
+      if: inputs.os == 'windows-2022'
+      with:
+        electron: ${{ inputs.electron }}
+        os: ${{ inputs.os }}
+        arch: x86
         replace-version: true
 
     - name: Check edge-js Windows pre-built files
-      if:  runner.os == 'Windows'
+      if: inputs.os == 'windows-2022'
+      uses: andstor/file-existence-action@v3
+      with:
+        files: "lib/native/win32/ia32/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/win32/ia32/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
+        fail: true
+        ignore_case: true
+
+    - name: Check edge-js Windows pre-built files
+      if: inputs.os != 'windows-2022'
       uses: andstor/file-existence-action@v3
       with:
         files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
@@ -120,23 +152,14 @@ runs:
         ignore_case: true
 
     - name: Check edge-js macOS pre-built files
-      if:  runner.os == 'macOS' && inputs.os == 'macos-13'
+      if:  runner.os == 'macOS'
       uses: andstor/file-existence-action@v3
       with:
         files: "lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
         fail: true
         ignore_case: true
 
-    - name: Check edge-js macOS pre-built files
-      if:  runner.os == 'macOS' && inputs.os != 'macos-13'
-      uses: andstor/file-existence-action@v3
-      with:
-        files: "lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node"
-        fail: true
-        ignore_case: true
-
-    - name: Run .NET 4.5 tests
-      # if: inputs.os != 'macos-13'
+    - name: Run .NET 4.5/Mono tests
       shell: bash
       run: node tools/test.js CI
 
@@ -152,4 +175,19 @@ runs:
         electron: ${{ inputs.electron }}
         os: ${{ inputs.os }}
         name: 'build-tests'
- 
+
+    - name: publish test-summary nacOS
+      if: runner.os == 'macOS'
+      uses: EnricoMi/publish-unit-test-result-action/macos@v2
+      with:
+        check_run_annotations: 'none'
+        check_name: 'test-summary electron-${{ inputs.electron }} ${{ inputs.os }}'
+        files: "test-results.xml"
+        
+    - name: publish test-summary Windows
+      if: runner.os == 'Windows'
+      uses: EnricoMi/publish-unit-test-result-action/windows@v2
+      with:
+        check_run_annotations: 'none'
+        check_name: 'test-summary electron-${{ inputs.electron }} ${{ inputs.os }}'
+        files: "test-results.xml"
