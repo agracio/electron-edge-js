@@ -30,9 +30,9 @@ jobs:
         uses: ./.github/actions/build-electron
         with:
           electron: 30
-          os: ${{ runner.os }}
+          os: ${{ matrix.os }}
 
-      - name: Get latest Electron version for 30.0.0
+      - name: Get latest Electron version for 30
         id: electron-version
         shell: bash
         run: |
@@ -55,13 +55,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Electron 31.0.0
+      - name: Build Electron 31
         uses: ./.github/actions/build-electron
         with:
           electron: 31
-          os: ${{ runner.os }}
+          os: ${{ matrix.os }}
 
-      - name: Get latest Electron version for 31.0.0
+      - name: Get latest Electron version for 31
         id: electron-version
         shell: bash
         run: |
@@ -84,13 +84,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Electron 32.0.0
+      - name: Build Electron 32
         uses: ./.github/actions/build-electron
         with:
           electron: 32
-          os: ${{ runner.os }}
+          os: ${{ matrix.os }}
 
-      - name: Get latest Electron version for 32.0.0
+      - name: Get latest Electron version for 32
         id: electron-version
         shell: bash
         run: |
@@ -113,13 +113,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Electron 33.0.0
+      - name: Build Electron 33
         uses: ./.github/actions/build-electron
         with:
           electron: 33
-          os: ${{ runner.os }}
+          os: ${{ matrix.os }}
 
-      - name: Get latest Electron version for 33.0.0
+      - name: Get latest Electron version for 33
         id: electron-version
         shell: bash
         run: |
@@ -142,13 +142,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Electron 34.0.0
+      - name: Build Electron 34
         uses: ./.github/actions/build-electron
         with:
           electron: 34
-          os: ${{ runner.os }}
+          os: ${{ matrix.os }}
 
-      - name: Get latest Electron version for 34.0.0
+      - name: Get latest Electron version for 34
         id: electron-version
         shell: bash
         run: |
@@ -171,13 +171,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Electron 35.0.0
+      - name: Build Electron 35
         uses: ./.github/actions/build-electron
         with:
           electron: 35
-          os: ${{ runner.os }}
+          os: ${{ matrix.os }}
 
-      - name: Get latest Electron version for 35.0.0
+      - name: Get latest Electron version for 35
         id: electron-version
         shell: bash
         run: |
