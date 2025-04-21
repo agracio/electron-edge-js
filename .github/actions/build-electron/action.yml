@@ -27,7 +27,6 @@ runs:
         with:
           electron: '${{ inputs.electron }}.0.0'
           os: ${{ inputs.os }}
-          arch: ${{ runner.arch }}
    
       - name: install node-gyp
         shell: bash
