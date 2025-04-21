@@ -196,15 +196,6 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        with:
-          path: release
-          pattern: win32-electron-edge-js*
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: release
-          pattern: darwin-electron-edge-js*
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -212,7 +203,7 @@ jobs:
         with:
           name: electron-edge-js
           path: |
-            release 
+            * 
 
   test-30:
     strategy:
