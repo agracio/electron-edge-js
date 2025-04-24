@@ -7,6 +7,7 @@ var output = path.resolve(testDir, 'Edge.Tests.dll');
 var buildParameters = ['-target:library', '/debug', '-out:' + output, input];
 
 var electron = require('electron')
+const checkMono = require('./checkMono');
 var runner = process.argv[2];
 
 if(process.platform === 'linux' && !process.env.EDGE_USE_CORECLR){
