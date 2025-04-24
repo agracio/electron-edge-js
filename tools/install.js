@@ -95,7 +95,8 @@ else {
 		const edjeNative = path.resolve(__dirname, '../lib/native/' + process.platform + '/' + process.arch + '/' + electronVersion + '/' + 'edge_nativeclr.node');
 		const edjeNativeClr = path.resolve(__dirname, '../lib/native/' + process.platform + '/' + process.arch + '/' + electronVersion + '/' + 'edge_coreclr.node');
 
-	  const checkNative = checkMono() ? fs.existsSync(edjeNative) : true;
+		const checkNative = checkMono() ? fs.existsSync(edjeNative) : true;
+
 		if(checkNative && fs.existsSync(edjeNativeClr)){
 			spawn('dotnet', ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
 		}

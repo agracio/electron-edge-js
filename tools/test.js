@@ -9,10 +9,6 @@ var buildParameters = ['-target:library', '/debug', '-out:' + output, input];
 var electron = require('electron')
 var runner = process.argv[2];
 
-// if (process.platform !== 'win32') {
-//     process.env.EDGE_USE_CORECLR = 1
-// }
-
 if(process.platform === 'linux' && !process.env.EDGE_USE_CORECLR){
     Object.assign(process.env, {
         // Work around Mono problem: undefined symbol: mono_add_internal_call_with_flags
@@ -20,32 +16,64 @@ if(process.platform === 'linux' && !process.env.EDGE_USE_CORECLR){
     });
 }
 
-if (!process.env.EDGE_USE_CORECLR) {
-	if (process.platform !== 'win32') {
-		buildParameters = buildParameters.concat(['-sdk:4.5']);
-	}
-    var compiler = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe'
-	run(process.platform === 'win32' ? compiler : 'mcs', buildParameters, runOnSuccess);
+function build(){
+    if (!process.env.EDGE_USE_CORECLR) {
+        if (process.platform !== 'win32') {
+            buildParameters = buildParameters.concat(['-sdk:4.5']);
+        }
+
+        let compiler;
+
+        if(process.platform === 'win32'){
+            compiler = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe'
+        }
+        else if(checkMono()){
+            compiler = 'mcs'
+        }
+        
+        if(compiler){
+            dotnet(compiler, buildParameters);
+        }
+        else{
+            coreclr();
+        }
+    }
+
+    else {
+        coreclr();
+    }
 }
 
-else {
+function dotnet(compiler, buildParameters){
+    run(compiler, buildParameters, runOnSuccess);
+}
+
+function coreclr(){
     run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['restore'], function(code, signal) {
         if (code === 0) {
             run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['build'], function(code, signal) {
                 if (code === 0) {
                     try{
                         fs.mkdirSync('test/测试', { recursive: true })
-
                     }
                     catch (e){
-                        console.error(e)
+                        console.error(e);
+                        throw e;
                     }
-                    run('cp', ['../test/bin/Debug/test.dll', '../test/测试/Edge.Tests.CoreClr.dll'], runOnSuccess);
+                    fs.copyFile('test/bin/Debug/test.dll', 'test/测试/Edge.Tests.CoreClr.dll', (e) => {
+                        if (e) {
+                            console.error(e);
+                            throw e;
+                        }
+                        runOnSuccess(0);
+                    });
                 }
             });
         }
     });
 }
+
+build();
 
 function run(cmd, args, onClose){
 
