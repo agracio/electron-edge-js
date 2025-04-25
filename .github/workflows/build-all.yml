@@ -210,7 +210,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: build-30
+    needs: [upload-artifacts, build-30]
 
     name: test ${{needs.build-30.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -231,7 +231,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: build-31
+    needs: [upload-artifacts, build-31]
 
     name: test ${{needs.build-31.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -252,7 +252,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: build-32
+    needs: [upload-artifacts, build-32]
 
     name: test ${{needs.build-32.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -273,7 +273,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: build-33
+    needs: [upload-artifacts, build-33]
 
     name: test ${{needs.build-33.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -294,7 +294,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: build-34
+    needs: [upload-artifacts, build-34]
 
     name: test ${{needs.build-34.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -315,7 +315,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: build-35
+    needs: [upload-artifacts, build-35]
 
     name: test ${{needs.build-35.outputs.electron}} ${{ matrix.os }}
     steps:
