@@ -29,7 +29,7 @@ jobs:
     strategy:
       matrix:
         # os: [macos-13, macos-15]
-        os: [windows-2022, windows-2025, macos-13, macos-15]
+        os: [windows-2025, macos-13, macos-15]
       fail-fast: true
        
     name: build electron-${{ inputs.electron }} ${{ matrix.os }}
@@ -80,7 +80,7 @@ jobs:
     strategy:
       matrix:
         # os: [windows-2022]
-        os: [windows-2022, windows-2025, macos-13, macos-15]
+        os: [windows-2025, windows-11-arm, macos-13, macos-15]
       fail-fast: false
 
     name: test electron-${{ needs.build.outputs.test-version }} ${{ matrix.os }}

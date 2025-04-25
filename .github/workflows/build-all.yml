@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
@@ -73,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
@@ -102,7 +102,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
@@ -131,7 +131,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
@@ -160,7 +160,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
@@ -207,7 +207,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     needs: build-30
@@ -228,7 +228,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     needs: build-31
@@ -249,7 +249,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     needs: build-32
@@ -270,7 +270,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     needs: build-33
@@ -291,7 +291,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     needs: build-34
@@ -312,7 +312,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-       os: [windows-2022, windows-2025, macos-13, macos-15]
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     needs: build-35

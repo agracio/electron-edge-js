@@ -7,22 +7,13 @@ inputs:
   os:
     description: 'runs-on'
     required: false
-    default: 'windows-2022'
+    default: 'windows-2025'
    
 runs:
   using: "composite"
   steps:
 
       - name: Setup env
-        if: inputs.os == 'windows-2022'
-        uses: ./.github/actions/setup-env
-        with:
-          electron: '${{ inputs.electron }}.0.0'
-          os: ${{ inputs.os }}
-          arch: 'x86'
-
-      - name: Setup env
-        if: inputs.os != 'windows-2022'
         uses: ./.github/actions/setup-env
         with:
           electron: '${{ inputs.electron }}.0.0'
@@ -39,10 +30,8 @@ runs:
           script: |
             try {
               const fs = require('fs')
-              if('${{ inputs.os }}' == 'windows-2022'){
+              if('${{ runner.os }}' == 'Windows'){
                 fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
-              }
-              if('${{ inputs.os }}' == 'windows-2025'){
                 fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
                 fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
               }
@@ -76,21 +65,21 @@ runs:
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
       - name: Build ia32
-        if: (inputs.os == 'windows-2022')
+        if: runner.os == 'Windows'
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'ia32'
 
       - name: Build x64
-        if: inputs.os == 'windows-2025' || inputs.os == 'macos-13'
+        if: runner.os == 'Windows' || inputs.os == 'macos-13'
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'x64'
 
       - name: Build arm64
-        if: inputs.os == 'windows-2025' || inputs.os == 'macos-15'
+        if: runner.os == 'Windows' || inputs.os == 'macos-15'
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
@@ -98,17 +87,9 @@ runs:
     
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        if: inputs.os == 'windows-2025' && success()
+        if: runner.os == 'Windows' && success()
         with:
           name: win32-electron-edge-js-${{ inputs.electron }}
-          path: |
-            release
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: inputs.os == 'windows-2022' && success()
-        with:
-          name: win32-electron-edge-js-ia32-${{ inputs.electron }}
           path: |
             release
 
