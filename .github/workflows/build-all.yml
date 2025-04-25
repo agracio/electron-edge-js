@@ -186,7 +186,7 @@ jobs:
 
   upload-artifacts:
     runs-on: ubuntu-latest
-    needs: [build-30, build-31, build-32, build-33, build-34, build-35]
+    needs: [test-30, test-31, test-32, test-33, test-34, test-35]
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -196,6 +196,17 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
+        if: success()
+        with:
+          path: release
+          pattern: win32-electron-edge-js*
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        if: success()
+        with:
+          path: release
+          pattern: darwin-electron-edge-js*
 
       - name: Upload artifacts
         uses: actions/upload-artifact/merge@v4
@@ -210,7 +221,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: [upload-artifacts, build-30]
+    needs: [build-30]
 
     name: test ${{needs.build-30.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -231,7 +242,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: [upload-artifacts, build-31]
+    needs: [build-31]
 
     name: test ${{needs.build-31.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -252,7 +263,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: [upload-artifacts, build-32]
+    needs: [build-32]
 
     name: test ${{needs.build-32.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -273,7 +284,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: [upload-artifacts, build-33]
+    needs: [build-33]
 
     name: test ${{needs.build-33.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -294,7 +305,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: [upload-artifacts, build-34]
+    needs: [build-34]
 
     name: test ${{needs.build-34.outputs.electron}} ${{ matrix.os }}
     steps:
@@ -315,7 +326,7 @@ jobs:
        os: [windows-2025, windows-11-arm, macos-13, macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
-    needs: [upload-artifacts, build-35]
+    needs: [build-35]
 
     name: test ${{needs.build-35.outputs.electron}} ${{ matrix.os }}
     steps:

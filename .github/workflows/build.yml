@@ -58,7 +58,7 @@ jobs:
 
   upload-artifacts:
     runs-on: ubuntu-latest
-    needs: build
+    needs: test
     strategy:
       fail-fast: false
 
@@ -67,6 +67,17 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
+        if: success()
+        with:
+          path: release
+          pattern: win32-electron-edge-js*
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        if: success()
+        with:
+          path: release
+          pattern: darwin-electron-edge-js*
 
       - name: Upload artifacts
         uses: actions/upload-artifact/merge@v4
