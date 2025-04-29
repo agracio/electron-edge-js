@@ -9,36 +9,7 @@ env:
   DOTNET_NOLOGO: 1
 
 jobs:
-
-  build-30:
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix: 
-       os: [windows-2025, macos-13, macos-15]
-    runs-on: ${{ matrix.os }}
-    outputs:
-      electron: ${{ steps.electron-version.outputs.electron }}
-       
-    name: build electron-30
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build Electron 30 ${{ matrix.os }}
-        uses: ./.github/actions/build-electron
-        with:
-          electron: 30
-          os: ${{ matrix.os }}
-
-      - name: Get latest Electron version for 30
-        id: electron-version
-        shell: bash
-        run: |
-          node tools/getVersion.js 30
-          echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
-  
+ 
   build-31:
     timeout-minutes: 20
     strategy:
@@ -184,9 +155,38 @@ jobs:
           node tools/getVersion.js 35
           echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
 
+  build-36:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2025, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-36 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Electron 36
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 36
+          os: ${{ matrix.os }}
+
+      - name: Get latest Electron version for 36
+        id: electron-version
+        shell: bash
+        run: |
+          node tools/getVersion.js 36
+          echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
+
   upload-artifacts:
     runs-on: ubuntu-latest
-    needs: [test-30, test-31, test-32, test-33, test-34, test-35]
+    needs: [test-31, test-32, test-33, test-34, test-35, test-36]
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -213,27 +213,6 @@ jobs:
         if: success()
         with:
           name: electron-edge-js
-
-  test-30:
-    strategy:
-      fail-fast: false
-      matrix: 
-       os: [windows-2025, windows-11-arm, macos-13, macos-15]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
-    needs: [build-30]
-
-    name: test ${{needs.build-30.outputs.electron}} ${{ matrix.os }}
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Test build
-        uses: ./.github/actions/test-build
-        with:
-          electron: ${{ needs.build-30.outputs.electron }}
-          os: ${{ matrix.os }}
   
   test-31:
     strategy:
@@ -338,5 +317,26 @@ jobs:
         uses: ./.github/actions/test-build
         with:
           electron: ${{ needs.build-35.outputs.electron }}
+          os: ${{ matrix.os }}
+  
+  test-36:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    needs: [build-36]
+
+    name: test ${{needs.build-36.outputs.electron}} ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-36.outputs.electron }}
           os: ${{ matrix.os }}
   

@@ -9,7 +9,6 @@ on:
         default: '30'
         type: choice
         options:
-        - 30
         - 31
         - 32
         - 33
