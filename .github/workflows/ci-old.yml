@@ -85,7 +85,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-13, macos-15, ubuntu-22.04, ubuntu-22.04-arm]
-        electron: [29.4.6]
+        electron: [29.4.6, 30.5.1]
         # electron: [29.4.6, 30.5.1, 31.7.7, 32.3.3, 33.4.9, 34.0.1]
         
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
@@ -100,7 +100,7 @@ jobs:
           os: ${{ matrix.os }}
           replace-version: true
 
-      - if: runner.os == 'Linux'
+      - if: runner.os == 'Linux' || runner.os == 'macOS'
         name: Check electron-edge-js build file
         id: check_build
         uses: andstor/file-existence-action@v3
