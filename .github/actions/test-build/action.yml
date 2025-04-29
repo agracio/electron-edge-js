@@ -114,6 +114,7 @@ runs:
         replace-version: true
 
     - name: Check edge-js Windows pre-built files
+      if:  runner.os == 'Windows'
       uses: andstor/file-existence-action@v3
       with:
         files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
@@ -124,7 +125,7 @@ runs:
       if:  runner.os == 'macOS'
       uses: andstor/file-existence-action@v3
       with:
-        files: "lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
+        files: "lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
         fail: true
         ignore_case: true
 
