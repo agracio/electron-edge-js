@@ -79,13 +79,17 @@ https://github.com/agracio/electron-edge-js-quick-start
 ``webpack.config.js ``
 
 ```js
-externals: {
+module.exports = {
+  target: 'node',
+  externals: {
     'electron-edge-js': 'commonjs2 electron-edge-js',
-},
-node: {
+    'edge-cs': 'commonjs2 edge-cs',
+  },
+  node: {
     __dirname: true,
     __filename: true,
-},
+  },
+}
 ```
 
 ### From [#138](https://github.com/agracio/electron-edge-js/issues/138)
