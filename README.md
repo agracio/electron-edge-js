@@ -7,6 +7,11 @@
 
 **This is a fork of [edge-js](https://github.com/agracio/edge-js) adapted to support [Electron](https://github.com/electron/electron/)**
 
+## Overview
+
+**electron-edge-js allows you to run .NET code in Electron process on Windows, macOS, and Linux.**  
+**Call compiled .NET dlls or inline C# code directly from Electron process.**  
+
 ## Version support policy
 
 ### Electron officially supports 3 latest released versions. You can read more about Electron release schedule and support here [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines).
