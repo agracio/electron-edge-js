@@ -6,15 +6,15 @@ on:
       electron:
         description: 'Electron version to build'
         required: true
-        default: '30'
+        default: '32'
         type: choice
         options:
-        - 31
         - 32
         - 33
         - 34
         - 35
         - 36
+        - 37
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 

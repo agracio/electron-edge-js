@@ -20,25 +20,6 @@ jobs:
     outputs:
       electron: ${{ steps.electron-version.outputs.electron }}
        
-    name: build electron-31 ${{ matrix.os }}
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build Electron 31
-        uses: ./.github/actions/build-electron
-        with:
-          electron: 31
-          os: ${{ matrix.os }}
-
-      - name: Get latest Electron version for 31
-        id: electron-version
-        shell: bash
-        run: |
-          node tools/getVersion.js 31
-          echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
-
   build-32:
     timeout-minutes: 20
     strategy:
@@ -183,10 +164,39 @@ jobs:
         run: |
           node tools/getVersion.js 36
           echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
+ 
+  build-37:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2025, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    outputs:
+      electron: ${{ steps.electron-version.outputs.electron }}
+       
+    name: build electron-37 ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Electron 37
+        uses: ./.github/actions/build-electron
+        with:
+          electron: 37
+          os: ${{ matrix.os }}
+
+      - name: Get latest Electron version for 37
+        id: electron-version
+        shell: bash
+        run: |
+          node tools/getVersion.js 37
+          echo "electron=$(cat electron.txt)" >> $GITHUB_OUTPUT
 
   upload-artifacts:
     runs-on: ubuntu-latest
-    needs: [test-31, test-32, test-33, test-34, test-35, test-36]
+    needs: [test-32, test-33, test-34, test-35, test-36, test-37]
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -213,27 +223,6 @@ jobs:
         if: success()
         with:
           name: electron-edge-js
-  
-  test-31:
-    strategy:
-      fail-fast: false
-      matrix: 
-       os: [windows-2025, windows-11-arm, macos-13, macos-15]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
-    needs: [build-31]
-
-    name: test ${{needs.build-31.outputs.electron}} ${{ matrix.os }}
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Test build
-        uses: ./.github/actions/test-build
-        with:
-          electron: ${{ needs.build-31.outputs.electron }}
-          os: ${{ matrix.os }}
   
   test-32:
     strategy:
@@ -340,3 +329,23 @@ jobs:
           electron: ${{ needs.build-36.outputs.electron }}
           os: ${{ matrix.os }}
   
+  test-37:
+    strategy:
+      fail-fast: false
+      matrix: 
+       os: [windows-2025, windows-11-arm, macos-13, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    needs: [build-37]
+
+    name: test ${{needs.build-37.outputs.electron}} ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        with:
+          electron: ${{ needs.build-37.outputs.electron }}
+          os: ${{ matrix.os }}
