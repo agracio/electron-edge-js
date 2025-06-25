@@ -9,16 +9,6 @@ env:
   DOTNET_NOLOGO: 1
 
 jobs:
- 
-  build-31:
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix: 
-       os: [windows-2025, macos-13, macos-15]
-    runs-on: ${{ matrix.os }}
-    outputs:
-      electron: ${{ steps.electron-version.outputs.electron }}
        
   build-32:
     timeout-minutes: 20
