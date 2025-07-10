@@ -19,7 +19,7 @@
 ### electron-edge-js support policy
 
 - Windows supports 6 latest Electron releases.
-- macOS comes precompiled with 6 latest Electron releases. When using Electron version that is not pre-compiled `electron-edge-js` binaries will be compiled during `npm install` using `node-gyp`.
+- macOS comes pre-compiled with 6 latest Electron releases. When using Electron version that is not pre-compiled `electron-edge-js` binaries will be compiled during `npm install` using `node-gyp`.
 - Linux will will always compile `electron-edge-js` binaries during `npm install` using `node-gyp`.
 
 #### NOTE: Due to `nan` module compatibility issues versions prior to **Electron 29** are not supported.
