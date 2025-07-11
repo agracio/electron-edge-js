@@ -3,15 +3,10 @@ const fs = require("fs");
 const { execSync } = require('child_process');
 
 const majors = [32, 33, 34, 35, 36, 37];
-// const majors = [30];
 const oses = ['macos-13', 'macos-15', 'ubuntu-22.04', 'ubuntu-22.04-arm', 'windows-2025', 'windows-11-arm'];
-// const oses = ['ubuntu-22.04', 'ubuntu-22.04-arm'];
 getVersion();
 
 function getVersion() {
-
-    let npm = JSON.parse(execSync('npm view electron versions --json').toString());
-	let url = 'http://releases.electronjs.org/releases.json';
 
     function getVersionFromMajor(json, major){
         json = json.filter(function (str) { return str.startsWith(`${major}.`); });
@@ -25,59 +20,36 @@ function getVersion() {
         return null;
     }
 
-	http.get(url,(res) => {
-		let body = "";
+    let npm = JSON.parse(execSync('npm view electron versions --json').toString())
+    .reverse()
+    .filter(function (str) { return !str.includes('^'); })
+    .filter(function (str) { return !str.includes('-'); });
 
-		if (res.statusCode !== 200) {
-			throw new Error(`Unable to get Electron versions from ${url}`);
-		}
-	
-		res.on("data", (chunk) => {
-			body += chunk;
-		});
-	
-		res.on("end", () => {
-			try {
-
-            let json = JSON.parse(body)
-                .sort()
-                .map(({ version }) => version)
-                .filter(function (str) { return !str.includes('^'); })
-                .filter(function (str) { return !str.includes('-'); });
-
-                let major = process.argv[2];
-                if(major){
-                    version = getVersionFromMajor(json, major);
-                    fs.writeFileSync('electron.txt', version);
-                    console.log(version);
-                }
-                else{
-                    let versions = [];
-                    let results = [];
-                
-                    majors.forEach((major) => {
-                        let version = getVersionFromMajor(json, major);
-                        if(version){
-                            versions.push(version);
-                        }
-                    });
-                
-                    oses.forEach((os) => {
-                        versions.forEach((version) => {
-                            results.push({'electron': `${version}`, 'os': `${os}`});
-                        });
-                    });
-                
-                    let res = `{'include':${JSON.stringify(results)}}`
-                    fs.writeFileSync('electron-versions.txt', res);
-                    console.log(versions);
-                }
-			} catch (error) {
-				throw error;
-			};
-		});
-	
-	}).on("error", (error) => {
-		throw new Error(error);
-	});
+    let major = process.argv[2];
+    if(major){
+        version = getVersionFromMajor(npm, major);
+        fs.writeFileSync('electron.txt', version);
+        console.log(version);
+    }
+    else{
+        let versions = [];
+        let results = [];
+    
+        majors.forEach((major) => {
+            let version = getVersionFromMajor(npm, major);
+            if(version){
+                versions.push(version);
+            }
+        });
+    
+        oses.forEach((os) => {
+            versions.forEach((version) => {
+                results.push({'electron': `${version}`, 'os': `${os}`});
+            });
+        });
+    
+        let res = `{'include':${JSON.stringify(results)}}`
+        fs.writeFileSync('electron-versions.txt', res);
+        console.log(versions);
+    }
 }
