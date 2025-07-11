@@ -1,5 +1,6 @@
 var {http} = require('follow-redirects');
 const fs = require("fs");
+const { execSync } = require('child_process');
 
 const majors = [32, 33, 34, 35, 36, 37];
 // const majors = [30];
@@ -8,17 +9,20 @@ const oses = ['macos-13', 'macos-15', 'ubuntu-22.04', 'ubuntu-22.04-arm', 'windo
 getVersion();
 
 function getVersion() {
+
+    let npm = JSON.parse(execSync('npm view electron versions --json').toString());
 	let url = 'http://releases.electronjs.org/releases.json';
 
     function getVersionFromMajor(json, major){
         json = json.filter(function (str) { return str.startsWith(`${major}.`); });
-        if(json.length !== 0){
-            return json[0];
+        for (let i = 0; i < json.length; i++) {
+            let version = json[i];
+            if(npm.includes(version)){
+                return json[i];
+            }
         }
-        else{
-            console.warn(`Unable to resolve latest version for Electron ${major}`);
-            return null;
-        }
+        console.warn(`Unable to resolve latest version for Electron ${major}`);
+        return null;
     }
 
 	http.get(url,(res) => {
