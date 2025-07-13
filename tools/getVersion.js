@@ -9,13 +9,8 @@ getVersion();
 function getVersion() {
 
     function getVersionFromMajor(json, major){
-        json = json.filter(function (str) { return str.startsWith(`${major}.`); });
-        for (let i = 0; i < json.length; i++) {
-            let version = json[i];
-            if(npm.includes(version)){
-                return json[i];
-            }
-        }
+        const version = json.find((str) =>  str.startsWith(`${major}.`));
+        if(version) return version; 
         console.warn(`Unable to resolve latest version for Electron ${major}`);
         return null;
     }
