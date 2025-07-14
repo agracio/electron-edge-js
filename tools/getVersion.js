@@ -1,9 +1,9 @@
-var {http} = require('follow-redirects');
 const fs = require("fs");
 const { execSync } = require('child_process');
 
 const majors = [32, 33, 34, 35, 36, 37];
 const oses = ['macos-13', 'macos-15', 'ubuntu-22.04', 'ubuntu-22.04-arm', 'windows-2025', 'windows-11-arm'];
+
 getVersion();
 
 function getVersion() {
@@ -15,14 +15,14 @@ function getVersion() {
         return null;
     }
 
-    let npm = JSON.parse(execSync('npm view electron versions --json').toString())
+    let json = JSON.parse(execSync('npm view electron versions --json').toString())
     .reverse()
     .filter(function (str) { return !str.includes('^'); })
     .filter(function (str) { return !str.includes('-'); });
 
     let major = process.argv[2];
     if(major){
-        version = getVersionFromMajor(npm, major);
+        version = getVersionFromMajor(json, major);
         fs.writeFileSync('electron.txt', version);
         console.log(version);
     }
@@ -31,7 +31,7 @@ function getVersion() {
         let results = [];
     
         majors.forEach((major) => {
-            let version = getVersionFromMajor(npm, major);
+            let version = getVersionFromMajor(json, major);
             if(version){
                 versions.push(version);
             }
