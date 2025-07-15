@@ -21,6 +21,7 @@ jobs:
     runs-on: ${{ inputs.os }}
     environment: ${{ inputs.environment }}
     name: build electron-${{ inputs.electron }} ${{ inputs.os }}
+    timeout-minutes: 30
     steps:
       
       - name: Checkout code
@@ -74,7 +75,7 @@ jobs:
         env:
           cache-name: cache-node-gyp
         with:
-          path: /Library/Caches/node-gyp
+          path: ~/Library/Caches/node-gyp/
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
       - if: runner.os == 'Windows'

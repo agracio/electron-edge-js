@@ -6,7 +6,7 @@ on:
       electron:
         description: 'Electron version to build'
         required: true
-        default: '32'
+        default: '37'
         type: choice
         options:
         - 32
@@ -108,7 +108,7 @@ jobs:
         uses: ./.github/actions/test-build
         timeout-minutes: 10
         with:
-          electron: ${{ needs.build.outputs.test-version }}
+          electron: ${{ needs.electron-version.outputs.test-version }}
           os: ${{ matrix.os }}
   
   upload-artifacts:
