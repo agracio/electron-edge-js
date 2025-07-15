@@ -34,7 +34,7 @@ env:
 
 jobs:
   electron-version:
-    runs-on: macos-15
+    runs-on: ubuntu-latest
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
 
