@@ -23,6 +23,7 @@ on:
         type: string
 
 env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true 
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
   DOTNET_NOLOGO: 1
 
@@ -73,60 +74,24 @@ jobs:
       electron: ${{ inputs.electron }}
       os: windows-2025
       environment: electron-edge-js
-  #   runs-on: windows-2025
-  #   environment: electron-edge-js
-  #   strategy:
-  #     fail-fast: true
-       
-  #   name: build electron-${{ inputs.electron }} windows-2025
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
 
-  #     - name: Build Electron ${{ inputs.electron }}
-  #       uses: ./.github/workflows/build-electron.yml
-  #       with:
-  #         electron: ${{ inputs.electron }}
-  #         os: windows-2025
+  build-darwin-x64:
+    uses: ./.github/workflows/build-electron.yml
+    with:
+      electron: ${{ inputs.electron }}
+      os: macos-13
+      environment: electron-edge-js
 
-  # build-darwin-x64:
-  #   runs-on: macos-13
-  #   environment: electron-edge-js
-  #   strategy:
-  #     fail-fast: true
-       
-  #   name: build electron-${{ inputs.electron }} macos-13
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Build Electron ${{ inputs.electron }}
-  #       uses: ./.github/workflows/build-electron.yml
-  #       with:
-  #         electron: ${{ inputs.electron }}
-  #         os: macos-13
-
-  # build-darwin-arm64:
-  #   runs-on: macos-15
-  #   environment: electron-edge-js
-  #   strategy:
-  #     fail-fast: true
-       
-  #   name: build electron-${{ inputs.electron }} macos-15
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Build Electron ${{ inputs.electron }}
-  #       uses: ./.github/workflows/build-electron.yml
-  #       with:
-  #         electron: ${{ inputs.electron }}
-  #         os: macos-15
+  build-darwin-arm64:
+    uses: ./.github/workflows/build-electron.yml
+    with:
+      electron: ${{ inputs.electron }}
+      os: macos-15
+      environment: electron-edge-js
 
   test:
     runs-on: ${{ matrix.os }}
-    needs: [electron-version, build-win]
-    # needs: [electron-version, build-win, build-darwin-x64, build-darwin-arm64]
+    needs: [electron-version, build-win, build-darwin-x64, build-darwin-arm64]
     strategy:
       matrix:
         # os: [windows-2022]

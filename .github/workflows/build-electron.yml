@@ -32,12 +32,6 @@ jobs:
           electron: '${{ inputs.electron }}.0.0'
           os: ${{ inputs.os }}
 
-      # - name: Build Electron
-      #   uses: ./.github/actions/build-electron
-      #   with:
-      #     electron: ${{ inputs.electron }}
-      #     os: ${{ inputs.os }}
-
       - name: install node-gyp
         shell: bash
         run: npm i -g node-gyp
@@ -65,8 +59,8 @@ jobs:
               core.setFailed(err)
             }
 
-      - name: Cache node-gyp Windows
-        if: runner.os == 'Windows'
+      - if: runner.os == 'Windows'
+        name: Cache node-gyp Windows
         uses: actions/cache@v4
         env:
           cache-name: cache-node-gyp
@@ -74,8 +68,8 @@ jobs:
           path: ~\AppData\Local\node-gyp\Cache
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
-      - name: Cache node-gyp macOS
-        if: runner.os == 'macOS'
+      - if: runner.os == 'macOS'
+        name: Cache node-gyp macOS
         uses: actions/cache@v4
         env:
           cache-name: cache-node-gyp
@@ -83,22 +77,22 @@ jobs:
           path: /Library/Caches/node-gyp
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
-      - name: Build ia32
-        if: runner.os == 'Windows'
+      - if: runner.os == 'Windows'
+        name: Build ia32
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'ia32'
 
-      - name: Build x64
-        if: runner.os == 'Windows' || inputs.os == 'macos-13'
+      - if: runner.os == 'Windows' || inputs.os == 'macos-13'
+        name: Build x64
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'x64'
 
-      - name: Build arm64
-        if: runner.os == 'Windows' || inputs.os == 'macos-15'
+      - if: runner.os == 'Windows' || inputs.os == 'macos-15'
+        name: Build arm64
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
