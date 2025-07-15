@@ -15,16 +15,60 @@ on:
         - 35
         - 36
         - 37
+  workflow_call:
+    inputs:
+      electron:
+        description: 'Electron version to build'
+        required: true
+        type: string
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1 
   DOTNET_NOLOGO: 1
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  electron-version:
+    runs-on: macos-latest
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
+
+    name: electron-version
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Cache node modules
+        id: cache-nodemodules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
+ 
+      - name: npm install
+        shell: bash
+        run: npm i
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+      - name: Get latest Electron version for ${{ inputs.electron }}
+        id: electron-test-version
+        shell: bash
+        run: |
+          node tools/getVersion.js ${{ inputs.electron }}
+          echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         # os: [macos-13, macos-15]
@@ -34,27 +78,34 @@ jobs:
     name: build electron-${{ inputs.electron }} ${{ matrix.os }}
     steps:
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: npm install
-        shell: bash
-        run: npm i
-
-      - name: Get latest Electron version for ${{ inputs.electron }}
-        id: electron-test-version
-        shell: bash
-        run: |
-          node tools/getVersion.js ${{ inputs.electron }}
-          echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
-   
       - name: Build Electron ${{ inputs.electron }}
-        uses: ./.github/actions/build-electron
+        uses: ./.github/workflows/build-electron.yml
         with:
           electron: ${{ inputs.electron }}
           os: ${{ matrix.os }}
 
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: [build, electron-version]
+    strategy:
+      matrix:
+        # os: [windows-2022]
+        os: [windows-2025, windows-11-arm, macos-13, macos-15]
+      fail-fast: false
 
+    name: test electron-${{ needs.electron-version.outputs.test-version }} ${{ matrix.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test build
+        uses: ./.github/actions/test-build
+        timeout-minutes: 10
+        with:
+          electron: ${{ needs.build.outputs.test-version }}
+          os: ${{ matrix.os }}
+  
   upload-artifacts:
     runs-on: ubuntu-latest
     needs: test
@@ -83,27 +134,4 @@ jobs:
         if: success()
         with:
           name: electron-edge-js-${{ inputs.electron }}
-  
-  test:
-    runs-on: ${{ matrix.os }}
-    needs: build
-    strategy:
-      matrix:
-        # os: [windows-2022]
-        os: [windows-2025, windows-11-arm, macos-13, macos-15]
-      fail-fast: false
-
-    name: test electron-${{ needs.build.outputs.test-version }} ${{ matrix.os }}
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Test build
-        uses: ./.github/actions/test-build
-        timeout-minutes: 10
-        with:
-          electron: ${{ needs.build.outputs.test-version }}
-          os: ${{ matrix.os }}
-  
     

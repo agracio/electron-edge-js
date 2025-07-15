@@ -1,0 +1,125 @@
+name: Segment - Electron Build
+
+on:
+  workflow_call:
+    inputs:
+      electron:
+        description: 'Electron version to build for'
+        required: true
+        type: string
+      os:
+        description: 'OS'
+        required: true
+        type: string
+
+jobs:
+  build-electron:
+    runs-on: ${{ inputs.os }}
+    environment: electron-edge-js
+    name: build electron-${{ inputs.electron }} ${{ inputs.os }}
+    steps:
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: '${{ inputs.electron }}.0.0'
+          os: ${{ inputs.os }}
+
+      # - name: Build Electron
+      #   uses: ./.github/actions/build-electron
+      #   with:
+      #     electron: ${{ inputs.electron }}
+      #     os: ${{ inputs.os }}
+
+      - name: install node-gyp
+        shell: bash
+        run: npm i -g node-gyp
+
+      - name: Create release folder
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              if('${{ runner.os }}' == 'Windows'){
+                fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
+                fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
+                fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
+              }
+              else if('${{ inputs.os }}' == 'macos-15'){
+                fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
+              }
+              else if('${{ inputs.os }}' == 'macos-13'){
+                fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.electron }}`, { recursive: true });
+              }
+            } catch(err) {
+              core.error("Error creating release directory")
+              core.setFailed(err)
+            }
+
+      - name: Cache node-gyp Windows
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~\AppData\Local\node-gyp\Cache
+          key: '${{ runner.os }}-${{ inputs.electron }}'
+
+      - name: Cache node-gyp macOS
+        if: runner.os == 'macOS'
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~/Library/Caches/node-gyp
+          key: '${{ runner.os }}-${{ inputs.electron }}'
+
+      - name: Build ia32
+        if: runner.os == 'Windows'
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: 'ia32'
+
+      - name: Build x64
+        if: runner.os == 'Windows' || inputs.os == 'macos-13'
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: 'x64'
+
+      - name: Build arm64
+        if: runner.os == 'Windows' || inputs.os == 'macos-15'
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: 'arm64'
+    
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows' && success()
+        with:
+          name: win32-electron-edge-js-${{ inputs.electron }}
+          path: |
+            release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: inputs.os  == 'macos-15' && success()
+        with:
+          name: darwin-electron-edge-js-arm64-${{ inputs.electron }}
+          path: |
+            release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: inputs.os  == 'macos-13' && success()
+        with:
+          name: darwin-electron-edge-js-x64-${{ inputs.electron }}
+          path: |
+            release
