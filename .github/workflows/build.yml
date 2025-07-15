@@ -73,6 +73,20 @@ jobs:
           node tools/getVersion.js ${{ inputs.electron }}
           echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
 
+  test-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.test-versions.outputs.matrix }}
+
+    name: test-versions
+    steps:
+
+      - name: Test versions
+        shell: bash
+        id: test-versions
+        run: |
+          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
+
   build-win-x86:
     uses: ./.github/workflows/build-electron.yml
     with:
@@ -111,20 +125,6 @@ jobs:
       os: macos-15
       environment: electron-edge-js
   
-  test-versions:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.test-versions.outputs.matrix }}
-
-    name: test-versions
-    steps:
-
-      - name: Test versions
-        shell: bash
-        id: test-versions
-        run: |
-          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
-
   test:
     uses: ./.github/workflows/build-test.yml
     with:
@@ -134,7 +134,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.test-versions.outputs.matrix) }}
       fail-fast: false
-    name: test-${{ matrix.name }}
+    name: ${{ matrix.name }}
 
   # test-win-x64:
   #   uses: ./.github/workflows/build-test.yml
