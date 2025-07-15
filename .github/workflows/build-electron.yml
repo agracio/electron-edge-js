@@ -15,6 +15,11 @@ on:
         description: 'environment'
         required: true
         type: string
+      arch:
+        description: 'arch'
+        required: false
+        default: 'x64'
+        type: string
 
 jobs:
   build-electron:
@@ -45,9 +50,9 @@ jobs:
             try {
               const fs = require('fs')
               if('${{ runner.os }}' == 'Windows'){
-                fs.mkdirSync('release/win32/ia32/${{ inputs.electron }}', { recursive: true });
-                fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
-                fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
+                fs.mkdirSync('release/win32/${{ inputs.arch }}/${{ inputs.electron }}', { recursive: true });
+                // fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
+                // fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
               }
               else if('${{ inputs.os }}' == 'macos-15'){
                 fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
@@ -83,16 +88,16 @@ jobs:
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
-          arch: 'ia32'
+          arch: ${{ inputs.electron }}
 
-      - if: runner.os == 'Windows' || inputs.os == 'macos-13'
+      - if: inputs.os == 'macos-13'
         name: Build x64
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'x64'
 
-      - if: runner.os == 'Windows' || inputs.os == 'macos-15'
+      - if: inputs.os == 'macos-15'
         name: Build arm64
         uses: ./.github/actions/build
         with:
@@ -103,7 +108,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: runner.os == 'Windows' && success()
         with:
-          name: win32-electron-edge-js-${{ inputs.electron }}
+          name: win32-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
           path: |
             release
 

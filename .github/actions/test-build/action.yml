@@ -47,7 +47,7 @@ runs:
       uses: actions/download-artifact@v4
       with:
         path: release
-        pattern: win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}*
+        pattern: win32-electron-edge-js-*-${{ steps.electron_version.outputs.substring }}*
 
     - name: Download artifacts
       if:  inputs.os == 'macos-15'
@@ -62,6 +62,7 @@ runs:
       with:
         path: release
         pattern: darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}*
+        
     - name: List artifacts
       shell: bash
       run: ls -R release
@@ -70,9 +71,9 @@ runs:
       if:  runner.os == 'Windows'
       shell: pwsh
       run: |
-        cmd /c copy /y release\win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}\win32\x64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}
-        cmd /c copy /y release\win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}\win32\ia32\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}
-        cmd /c copy /y release\win32-electron-edge-js-${{ steps.electron_version.outputs.substring }}\win32\arm64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}
+        cmd /c copy /y release\win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}\win32\ia32\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}
+        cmd /c copy /y release\win32-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}\win32\x64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}
+        cmd /c copy /y release\win32-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}\win32\arm64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}
 
     - name: Copy artifacts
       if:  inputs.os == 'macos-15'
