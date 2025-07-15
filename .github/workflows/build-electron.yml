@@ -25,7 +25,7 @@ jobs:
   build-electron:
     runs-on: ${{ inputs.os }}
     environment: ${{ inputs.environment }}
-    name: build electron-${{ inputs.electron }} ${{ inputs.os }}
+    name: build electron-${{ inputs.electron }} ${{ inputs.os }} ${{ inputs.arch }}
     timeout-minutes: 20
     steps:
       
@@ -49,17 +49,7 @@ jobs:
           script: |
             try {
               const fs = require('fs')
-              if('${{ runner.os }}' == 'Windows'){
-                fs.mkdirSync('release/win32/${{ inputs.arch }}/${{ inputs.electron }}', { recursive: true });
-                // fs.mkdirSync('release/win32/x64/${{ inputs.electron }}', { recursive: true });
-                // fs.mkdirSync('release/win32/arm64/${{ inputs.electron }}', { recursive: true });
-              }
-              else if('${{ inputs.os }}' == 'macos-15'){
-                fs.mkdirSync(`release/${process.platform}/arm64/${{ inputs.electron }}`, { recursive: true });
-              }
-              else if('${{ inputs.os }}' == 'macos-13'){
-                fs.mkdirSync(`release/${process.platform}/x64/${{ inputs.electron }}`, { recursive: true });
-              }
+              fs.mkdirSync(`release/${process.platform}/${{ inputs.arch }}/${{ inputs.electron }}`, { recursive: true });
             } catch(err) {
               core.error("Error creating release directory")
               core.setFailed(err)
@@ -90,19 +80,12 @@ jobs:
           electron: ${{ inputs.electron }}
           arch: ${{ inputs.arch }}
 
-      - if: inputs.os == 'macos-13'
-        name: Build darwin x64
+      - if: runner.os == 'macOS'
+        name: Build darwin ${{ inputs.arch }}
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
-          arch: 'x64'
-
-      - if: inputs.os == 'macos-15'
-        name: Build darwin arm64
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ inputs.electron }}
-          arch: 'arm64'
+          arch: ${{ inputs.arch }}
     
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -114,16 +97,8 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        if: inputs.os  == 'macos-15' && success()
+        if: runner.os == 'macOS' && success()
         with:
-          name: darwin-electron-edge-js-arm64-${{ inputs.electron }}
-          path: |
-            release
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        if: inputs.os  == 'macos-13' && success()
-        with:
-          name: darwin-electron-edge-js-x64-${{ inputs.electron }}
+          name: darwin-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
           path: |
             release

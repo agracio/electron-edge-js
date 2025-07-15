@@ -116,6 +116,7 @@ jobs:
     with:
       electron: ${{ inputs.electron }}
       os: macos-13
+      arch: x64
       environment: electron-edge-js
 
   build-darwin-arm64:
@@ -123,6 +124,7 @@ jobs:
     with:
       electron: ${{ inputs.electron }}
       os: macos-15
+      arch: arm64
       environment: electron-edge-js
   
   test:
@@ -187,14 +189,14 @@ jobs:
         if: success()
         with:
           path: release
-          pattern: win32-electron-edge-js*
+          pattern: win32-electron-edge-js-*-${{ inputs.electron }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
         if: success()
         with:
           path: release
-          pattern: darwin-electron-edge-js*
+          pattern: darwin-electron-edge-js-*-${{ inputs.electron }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact/merge@v4
