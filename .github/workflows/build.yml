@@ -112,33 +112,57 @@ jobs:
       environment: electron-edge-js
 
   test:
-    runs-on: ${{ matrix.os }}
+    uses: ./.github/workflows/build-test.yml
+    with:
+      electron: ${{ needs.electron-version.outputs.test-version }}
+      os: ${{ matrix.os }}
     needs: [electron-version, build-win-x86, build-win-x64, build-win-arm64, build-darwin-x64, build-darwin-arm64]
     strategy:
       matrix:
-        # os: [windows-2022]
         os: [windows-2025, windows-11-arm, macos-13, macos-15]
       fail-fast: false
+    name: test electron-${{ inputs.electron }} ${{ matrix.os }}
 
-    name: test electron-${{ needs.electron-version.outputs.test-version }} ${{ matrix.os }}
-    steps:
+  # test-win-x64:
+  #   uses: ./.github/workflows/build-test.yml
+  #   with:
+  #     electron: ${{ needs.electron-version.outputs.test-version }}
+  #     os: windows-2025
+  #   needs: [electron-version, build-win-x86, build-win-x64]
+  #   strategy:
+  #     fail-fast: false
+  #  test-win-arm64:
+  #   uses: ./.github/workflows/build-test.yml
+  #   with:
+  #     electron: ${{ needs.electron-version.outputs.test-version }}
+  #     os: windows-11-arm
+  #   needs: [electron-version, build-win-arm64]
+  #   strategy:
+  #     fail-fast: false
 
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # test-win-darwin-x64:
+  #   uses: ./.github/workflows/build-test.yml
+  #   with:
+  #     electron: ${{ needs.electron-version.outputs.test-version }}
+  #     os: macos-13
+  #   needs: [electron-version, build-darwin-x64]
+  #   strategy:
+  #     fail-fast: false
 
-      - name: Test build
-        uses: ./.github/actions/test-build
-        timeout-minutes: 10
-        with:
-          electron: ${{ needs.electron-version.outputs.test-version }}
-          os: ${{ matrix.os }}
-  
+  # test-win-darwin-arm64:
+  #   uses: ./.github/workflows/build-test.yml
+  #   with:
+  #     electron: ${{ needs.electron-version.outputs.test-version }}
+  #     os: macos-15
+  #   needs: [electron-version, build-darwin-arm64]
+  #   strategy:
+  #     fail-fast: false
+
+ 
   upload-artifacts:
     if: ${{ inputs.build-all == false }}
     runs-on: ubuntu-latest
-    needs: test
-    strategy:
-      fail-fast: false
+    needs: [test]
 
     name: upload artifacts electron-${{ inputs.electron }}
     steps:

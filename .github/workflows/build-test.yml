@@ -1,0 +1,156 @@
+name: Segment - test electron-edge-js for Electron Build 
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: 'runs-on'
+        required: true
+        default: 'windows-2025'
+        type: string
+      electron:
+        description: 'Electron version'
+        required: true
+        type: string
+
+jobs:
+  test-build:
+    runs-on: ${{ inputs.os }}
+    name: test electron-${{ inputs.electron }} ${{ inputs.os }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: agracio/github-substring-action@v1.0.0
+        id: electron_version
+        with:
+          value: ${{ inputs.electron }}
+          length_from_start: 2
+
+      - name: Create release folder
+        if:  runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cmd /c if not exist "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}" mkdir "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}"
+          cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}"
+          cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}"
+
+      - name: Create release folder
+        if:  runner.os == 'macOS'
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              fs.mkdirSync('lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}', { recursive: true });
+              fs.mkdirSync('lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}', { recursive: true });
+            } catch(err) {
+              core.error("Error creating release directory")
+              core.setFailed(err)
+            }
+
+      - name: Download artifacts
+        if: runner.os == 'Windows'
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: win32-electron-edge-js-*-${{ steps.electron_version.outputs.substring }}*
+
+      - name: Download artifacts
+        if:  inputs.os == 'macos-15'
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}*
+
+      - name: Download artifacts
+        if: inputs.os == 'macos-13'
+        uses: actions/download-artifact@v4
+        with:
+          path: release
+          pattern: darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}*
+        
+      - name: List artifacts
+        shell: bash
+        run: ls -R release
+
+      - name: Copy artifacts
+        if:  runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cmd /c copy /y release\win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}\win32\ia32\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}
+          cmd /c copy /y release\win32-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}\win32\x64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}
+          cmd /c copy /y release\win32-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}\win32\arm64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}
+
+      - name: Copy artifacts
+        if:  inputs.os == 'macos-15'
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
+            } catch(err) {
+              core.error("Error creating release directory")
+              core.setFailed(err)
+            }
+
+      - name: Copy artifacts
+        if: inputs.os == 'macos-13'
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
+              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
+            } catch(err) {
+              core.error("Error creating release directory")
+              core.setFailed(err)
+            }
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: ${{ inputs.electron }}
+          os: ${{ inputs.os }}
+          replace-version: true
+
+      - name: Check edge-js Windows pre-built files
+        if:  runner.os == 'Windows'
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
+          fail: true
+          ignore_case: true
+
+      - name: Check edge-js macOS pre-built files
+        if:  runner.os == 'macOS'
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
+          fail: true
+          ignore_case: true
+
+      - name: Run .NET 4.5/Mono tests
+        shell: bash
+        run: node tools/test.js CI
+
+      - name: "Run .net core tests"
+        shell: bash
+        run: node tools/test.js CI
+        env:
+          EDGE_USE_CORECLR: 1
+        
+      - name: Test report
+        uses: ./.github/actions/create-test-report
+        with:
+          electron: ${{ inputs.electron }}
+          os: ${{ inputs.os }}
+          name: 'build-tests'
