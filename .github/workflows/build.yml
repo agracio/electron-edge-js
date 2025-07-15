@@ -67,26 +67,54 @@ jobs:
           node tools/getVersion.js ${{ inputs.electron }}
           echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
 
-  build:
-    runs-on: ${{ matrix.os }}
+  build-win:
+    runs-on: windows-2025
+    environment: electron-edge-js
     strategy:
-      matrix:
-        # os: [macos-13, macos-15]
-        os: [windows-2025, macos-13, macos-15]
       fail-fast: true
        
-    name: build electron-${{ inputs.electron }} ${{ matrix.os }}
+    name: build electron-${{ inputs.electron }} windows-2025
     steps:
 
       - name: Build Electron ${{ inputs.electron }}
         uses: ./.github/workflows/build-electron.yml
         with:
           electron: ${{ inputs.electron }}
-          os: ${{ matrix.os }}
+          os: windows-2025
+
+  build-darwin-x64:
+    runs-on: macos-13
+    environment: electron-edge-js
+    strategy:
+      fail-fast: true
+       
+    name: build electron-${{ inputs.electron }} macos-13
+    steps:
+
+      - name: Build Electron ${{ inputs.electron }}
+        uses: ./.github/workflows/build-electron.yml
+        with:
+          electron: ${{ inputs.electron }}
+          os: macos-13
+
+  build-darwin-arm64:
+    runs-on: macos-15
+    environment: electron-edge-js
+    strategy:
+      fail-fast: true
+       
+    name: build electron-${{ inputs.electron }} macos-15
+    steps:
+
+      - name: Build Electron ${{ inputs.electron }}
+        uses: ./.github/workflows/build-electron.yml
+        with:
+          electron: ${{ inputs.electron }}
+          os: macos-15
 
   test:
     runs-on: ${{ matrix.os }}
-    needs: [build, electron-version]
+    needs: [electron-version, build-win, build-darwin-x64, build-darwin-arm64]
     strategy:
       matrix:
         # os: [windows-2022]
