@@ -11,11 +11,15 @@ on:
         description: 'OS'
         required: true
         type: string
+      environment:
+        description: 'environment'
+        required: true
+        type: string
 
 jobs:
   build-electron:
     runs-on: ${{ inputs.os }}
-    environment: electron-edge-js
+    environment: ${{ inputs.environment }}
     name: build electron-${{ inputs.electron }} ${{ inputs.os }}
     steps:
       
