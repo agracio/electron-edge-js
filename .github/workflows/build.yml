@@ -141,7 +141,7 @@ jobs:
     with:
       electron: ${{ needs.electron-version.outputs.test-version }}
       os: windows-2025
-    needs: [electron-version, build-win-x86, build-win-x64]
+    needs: [electron-version, build-win-x86, build-win-x64, build-win-arm64]
     strategy:
       fail-fast: false
 
@@ -150,7 +150,7 @@ jobs:
     with:
       electron: ${{ needs.electron-version.outputs.test-version }}
       os: windows-11-arm
-    needs: [electron-version, build-win-arm64]
+    needs: [electron-version, build-win-x86, build-win-x64, build-win-arm64]
     strategy:
       fail-fast: false
 

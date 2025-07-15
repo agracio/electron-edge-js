@@ -11,6 +11,11 @@ on:
         description: 'Electron version'
         required: true
         type: string
+      arch:
+        description: 'arch'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   test-build:
