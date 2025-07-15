@@ -18,7 +18,7 @@ on:
       arch:
         description: 'arch'
         required: false
-        default: 'x64'
+        default: ''
         type: string
 
 jobs:
@@ -84,21 +84,21 @@ jobs:
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
       - if: runner.os == 'Windows'
-        name: Build ia32
+        name: Build win ${{ inputs.arch }}
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
-          arch: ${{ inputs.electron }}
+          arch: ${{ inputs.arch }}
 
       - if: inputs.os == 'macos-13'
-        name: Build x64
+        name: Build darwin x64
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
           arch: 'x64'
 
       - if: inputs.os == 'macos-15'
-        name: Build arm64
+        name: Build darwin arm64
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
