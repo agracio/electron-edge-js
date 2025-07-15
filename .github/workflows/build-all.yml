@@ -15,47 +15,36 @@ jobs:
     with:
       electron: 32
       build-all: true
-    strategy:
-      fail-fast: true
 
   build-33:
     uses: ./.github/workflows/build.yml
     with:
       electron: 33
       build-all: true
-    strategy:
-      fail-fast: true
 
   build-34:
     uses: ./.github/workflows/build.yml
     with:
       electron: 34
       build-all: true
-    strategy:
-      fail-fast: true
+
   build-35:
     uses: ./.github/workflows/build.yml
     with:
       electron: 35
       build-all: true
-    strategy:
-      fail-fast: true
 
   build-36:
     uses: ./.github/workflows/build.yml
     with:
       electron: 36
       build-all: true
-    strategy:
-      fail-fast: true
 
   build-37:
     uses: ./.github/workflows/build.yml
     with:
       electron: 37
       build-all: true
-    strategy:
-      fail-fast: true
 
   upload-artifacts:
     runs-on: ubuntu-latest
