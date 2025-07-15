@@ -76,7 +76,7 @@ jobs:
         env:
           cache-name: cache-node-gyp
         with:
-          path: ~/Library/Caches/node-gyp
+          path: /Library/Caches/node-gyp
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
       - name: Build ia32
