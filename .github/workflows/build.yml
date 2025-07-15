@@ -123,7 +123,7 @@ jobs:
         shell: bash
         id: test-versions
         run: |
-          echo "matrix=$({'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"}{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"}{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]})" >> $GITHUB_OUTPUT
+          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"}{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"}{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
 
   test:
     uses: ./.github/workflows/build-test.yml
