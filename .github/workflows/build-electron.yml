@@ -1,0 +1,104 @@
+name: Segment - electron-edge-js for Electron Build
+
+on:
+  workflow_call:
+    inputs:
+      electron:
+        description: 'Electron version to build for'
+        required: true
+        type: string
+      os:
+        description: 'OS'
+        required: true
+        type: string
+      environment:
+        description: 'environment'
+        required: true
+        type: string
+      arch:
+        description: 'arch'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  build-electron:
+    runs-on: ${{ inputs.os }}
+    environment: ${{ inputs.environment }}
+    name: build electron-${{ inputs.electron }} ${{ inputs.os }} ${{ inputs.arch }}
+    timeout-minutes: 20
+    steps:
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+        with:
+          electron: '${{ inputs.electron }}.0.0'
+          os: ${{ inputs.os }}
+
+      - name: install node-gyp
+        shell: bash
+        run: npm i -g node-gyp
+
+      - name: Create release folder
+        uses: actions/github-script@v7
+        with:
+          result-encoding: string
+          script: |
+            try {
+              const fs = require('fs')
+              fs.mkdirSync(`release/${process.platform}/${{ inputs.arch }}/${{ inputs.electron }}`, { recursive: true });
+            } catch(err) {
+              core.error("Error creating release directory")
+              core.setFailed(err)
+            }
+
+      - if: runner.os == 'Windows'
+        name: Cache node-gyp Windows
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~\AppData\Local\node-gyp\Cache
+          key: '${{ runner.os }}-${{ inputs.electron }}'
+
+      - if: runner.os == 'macOS'
+        name: Cache node-gyp macOS
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-gyp
+        with:
+          path: ~/Library/Caches/node-gyp/
+          key: '${{ runner.os }}-${{ inputs.electron }}'
+
+      - if: runner.os == 'Windows'
+        name: Build win ${{ inputs.arch }}
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: ${{ inputs.arch }}
+
+      - if: runner.os == 'macOS'
+        name: Build darwin ${{ inputs.arch }}
+        uses: ./.github/actions/build
+        with:
+          electron: ${{ inputs.electron }}
+          arch: ${{ inputs.arch }}
+    
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows' && success()
+        with:
+          name: win32-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
+          path: |
+            release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: runner.os == 'macOS' && success()
+        with:
+          name: darwin-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
+          path: |
+            release

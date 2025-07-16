@@ -69,7 +69,7 @@ runs:
       env:
         cache-name: cache-node-gyp
       with:
-        path: ~/Library/Caches/node-gyp
+        path: ~/Library/Caches/node-gyp/
         key: '${{ inputs.os }}-${{ inputs.electron}}'
 
     - name: Cache node modules
