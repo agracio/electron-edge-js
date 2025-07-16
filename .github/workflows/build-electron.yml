@@ -1,4 +1,4 @@
-name: Segment - electron-edge-js for Electron Build
+name: Pipeline Segment - build electron-edge-js
 
 on:
   workflow_call:

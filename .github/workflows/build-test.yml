@@ -1,4 +1,4 @@
-name: Segment - test electron-edge-js for Electron Build 
+name: Pipeline Segment - test electron-edge-js
 on:
   workflow_call:
     inputs:
