@@ -54,25 +54,23 @@ jobs:
       fail-fast: false
 
     name: upload artifcts
+    if: success()
     steps:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        if: success()
         with:
           path: release
           pattern: win32-electron-edge-js*
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        if: success()
         with:
           path: release
           pattern: darwin-electron-edge-js*
 
       - name: Upload artifacts
         uses: actions/upload-artifact/merge@v4
-        if: success()
         with:
           name: electron-edge-js
   

@@ -176,7 +176,7 @@ jobs:
 
  
   upload-artifacts:
-    # if: ${{ inputs.build-all == false }}
+    if: ${{ inputs.build-all == false }}
     runs-on: ubuntu-latest
     needs: [test]
     # needs: [test-win-x64, test-win-arm64, test-darwin-x64, test-darwin-arm64]
