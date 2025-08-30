@@ -25,7 +25,8 @@ jobs:
   build-electron:
     runs-on: ${{ inputs.os }}
     environment: ${{ inputs.environment }}
-    name: build electron-${{ inputs.electron }} ${{ inputs.os }} ${{ inputs.arch }}
+    # name: build electron-${{ inputs.electron }} ${{ inputs.os }} ${{ inputs.arch }}
+    name: build
     timeout-minutes: 20
     steps:
       

@@ -20,7 +20,8 @@ on:
 jobs:
   test-build:
     runs-on: ${{ inputs.os }}
-    name: test electron-${{ inputs.electron }} ${{ inputs.os }}
+    # name: test electron-${{ inputs.electron }} ${{ inputs.os }}
+    name: test electron-${{ inputs.electron }}
     steps:
 
       - name: Checkout code

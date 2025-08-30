@@ -6,15 +6,15 @@ on:
       electron:
         description: 'Electron version to build for'
         required: true
-        default: '37'
+        default: '38'
         type: choice
         options:
-        - 32
-        - 33
-        - 34
-        - 35
-        - 36
-        - 37
+        - '33'
+        - '34'
+        - '35'
+        - '36'
+        - '37'
+        - '38'
   workflow_call:
     inputs:
       electron:
@@ -38,7 +38,7 @@ jobs:
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
 
-    name: electron-version
+    name: electron-test-version-${{ inputs.electron }}
     steps:
 
       - name: Checkout code
@@ -73,17 +73,17 @@ jobs:
           node tools/getVersion.js ${{ inputs.electron }}
           echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
 
-  test-versions:
+  test-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.test-versions.outputs.matrix }}
+      matrix: ${{ steps.test-matrix.outputs.matrix }}
 
-    name: test-versions
+    name: test-matrix
     steps:
 
       - name: Test versions
         shell: bash
-        id: test-versions
+        id: test-matrix
         run: |
           echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
 
@@ -132,54 +132,16 @@ jobs:
     with:
       electron: ${{ needs.electron-version.outputs.test-version }}
       os: ${{ matrix.os }}
-    needs: [electron-version, test-versions, build-win-x86, build-win-x64, build-win-arm64, build-darwin-x64, build-darwin-arm64]
+    needs: [electron-version, test-matrix, build-win-x86, build-win-x64, build-win-arm64, build-darwin-x64, build-darwin-arm64]
     strategy:
-      matrix: ${{ fromJSON(needs.test-versions.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.test-matrix.outputs.matrix) }}
       fail-fast: false
     name: ${{ matrix.name }}
 
-  # test-win-x64:
-  #   uses: ./.github/workflows/build-test.yml
-  #   with:
-  #     electron: ${{ needs.electron-version.outputs.test-version }}
-  #     os: windows-2025
-  #   needs: [electron-version, build-win-x86, build-win-x64, build-win-arm64]
-  #   strategy:
-  #     fail-fast: false
-
-  # test-win-arm64:
-  #   uses: ./.github/workflows/build-test.yml
-  #   with:
-  #     electron: ${{ needs.electron-version.outputs.test-version }}
-  #     os: windows-11-arm
-  #   needs: [electron-version, build-win-x86, build-win-x64, build-win-arm64]
-  #   strategy:
-  #     fail-fast: false
-
-  # test-darwin-x64:
-  #   uses: ./.github/workflows/build-test.yml
-  #   with:
-  #     electron: ${{ needs.electron-version.outputs.test-version }}
-  #     os: macos-13
-  #   needs: [electron-version, build-darwin-x64]
-  #   strategy:
-  #     fail-fast: false
-
-  # test-darwin-arm64:
-  #   uses: ./.github/workflows/build-test.yml
-  #   with:
-  #     electron: ${{ needs.electron-version.outputs.test-version }}
-  #     os: macos-15
-  #   needs: [electron-version, build-darwin-arm64]
-  #   strategy:
-  #     fail-fast: false
-
- 
   upload-artifacts:
     if: ${{ inputs.build-all == false }}
     runs-on: ubuntu-latest
     needs: [test]
-    # needs: [test-win-x64, test-win-arm64, test-darwin-x64, test-darwin-arm64]
 
     name: upload artifacts electron-${{ inputs.electron }}
     steps:
@@ -203,4 +165,5 @@ jobs:
         if: success()
         with:
           name: electron-edge-js-${{ inputs.electron }}
+          pattern: /**/**/${{ inputs.electron }}
     
