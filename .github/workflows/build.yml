@@ -38,7 +38,7 @@ jobs:
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
 
-    name: electron-test-version-${{ inputs.electron }}
+    name: test-version-electron-${{ inputs.electron }}
     steps:
 
       - name: Checkout code
@@ -65,6 +65,7 @@ jobs:
         run: npm i
         env:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          DOTNET_NOLOGO: 1
 
       - name: Get latest Electron version for ${{ inputs.electron }}
         id: electron-test-version
@@ -77,10 +78,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.test-matrix.outputs.matrix }}
-
-    name: test-matrix
+    name: test-os-matrix
     steps:
-
       - name: Test versions
         shell: bash
         id: test-matrix
@@ -89,7 +88,6 @@ jobs:
 
   build-win-x86:
     uses: ./.github/workflows/build-electron.yml
-    name: build win-x86
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
@@ -97,7 +95,6 @@ jobs:
 
   build-win-x64:
     uses: ./.github/workflows/build-electron.yml
-    name: build win-x64
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
@@ -105,7 +102,6 @@ jobs:
 
   build-win-arm64:
     uses: ./.github/workflows/build-electron.yml
-    name: build win-arm64
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
@@ -113,7 +109,6 @@ jobs:
 
   build-darwin-x64:
     uses: ./.github/workflows/build-electron.yml
-    name: build darwin-x64
     with:
       electron: ${{ inputs.electron }}
       os: macos-13
@@ -121,7 +116,6 @@ jobs:
 
   build-darwin-arm64:
     uses: ./.github/workflows/build-electron.yml
-    name: build darwin-arm64
     with:
       electron: ${{ inputs.electron }}
       os: macos-15
@@ -165,5 +159,5 @@ jobs:
         if: success()
         with:
           name: electron-edge-js-${{ inputs.electron }}
-          pattern: '*-electron-edge-js-${{ inputs.electron }}'
+          pattern: release/*-electron-edge-js-*-${{ inputs.electron }}
     

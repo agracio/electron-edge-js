@@ -26,8 +26,8 @@ jobs:
   test-build:
     runs-on: ${{ inputs.os }}
     environment: ${{ inputs.environment }}
-    # name: test electron-${{ inputs.electron }} ${{ inputs.os }}
-    name: test electron-${{ inputs.electron }}
+    # name: electron-${{ inputs.electron }} ${{ inputs.os }}
+    name: electron ${{ inputs.electron }}
     steps:
 
       - name: Checkout code
@@ -107,7 +107,7 @@ jobs:
               fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
               fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
             } catch(err) {
-              core.error("Error creating release directory")
+              core.error("Error copying artifacts")
               core.setFailed(err)
             }
 
@@ -123,7 +123,7 @@ jobs:
               fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
               fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
             } catch(err) {
-              core.error("Error creating release directory")
+              core.error("Error copying artifacts")
               core.setFailed(err)
             }
 
