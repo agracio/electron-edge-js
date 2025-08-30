@@ -33,8 +33,22 @@ env:
   DOTNET_NOLOGO: 1
 
 jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.test-matrix.outputs.matrix }}
+    name: test-os-matrix
+    steps:
+      - name: Test versions
+        shell: bash
+        id: test-matrix
+        run: |
+          echo "::notice::Starting build for Electron ${{ inputs.electron }}"
+          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
+
   electron-version:
     runs-on: ubuntu-latest
+    needs: test-matrix
     outputs:
       test-version: ${{ steps.electron-test-version.outputs.test-version }}
 
@@ -73,18 +87,7 @@ jobs:
         run: |
           node tools/getVersion.js ${{ inputs.electron }}
           echo "test-version=$(cat electron.txt)" >> $GITHUB_OUTPUT
-
-  test-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.test-matrix.outputs.matrix }}
-    name: test-os-matrix
-    steps:
-      - name: Test versions
-        shell: bash
-        id: test-matrix
-        run: |
-          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
+          echo "::notice::Using Electron version $(cat electron.txt) for Electron ${{ inputs.electron }}"
 
   build-win-x86:
     uses: ./.github/workflows/build-electron.yml
@@ -159,5 +162,6 @@ jobs:
         if: success()
         with:
           name: electron-edge-js-${{ inputs.electron }}
-          pattern: release/*-electron-edge-js-*-${{ inputs.electron }}
+          pattern: release/**/*
+          delete-merged: true
     

@@ -73,4 +73,5 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
           name: electron-edge-js
+          delete-merged: true
   
