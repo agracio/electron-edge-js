@@ -73,12 +73,12 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('package.json') }}
  
-      - name: npm install
-        shell: bash
-        run: npm i
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
-          DOTNET_NOLOGO: 1
+      # - name: npm install
+      #   shell: bash
+      #   run: npm i
+      #   env:
+      #     DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      #     DOTNET_NOLOGO: 1
 
       - name: Get latest Electron version for ${{ inputs.electron }}
         id: electron-test-version

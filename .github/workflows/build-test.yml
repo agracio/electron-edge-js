@@ -167,4 +167,5 @@ jobs:
         with:
           electron: ${{ inputs.electron }}
           os: ${{ inputs.os }}
+          upload: 'false'
           name: 'build-tests'
