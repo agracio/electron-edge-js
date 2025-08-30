@@ -13,7 +13,8 @@ on:
         type: string
       environment:
         description: 'environment'
-        required: true
+        required: false
+        default: 'build electron-edge-js'
         type: string
       arch:
         description: 'arch'

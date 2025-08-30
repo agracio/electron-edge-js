@@ -89,43 +89,43 @@ jobs:
 
   build-win-x86:
     uses: ./.github/workflows/build-electron.yml
+    name: build win-x86
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
       arch: ia32
-      environment: electron-edge-js
 
   build-win-x64:
     uses: ./.github/workflows/build-electron.yml
+    name: build win-x64
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
       arch: x64
-      environment: electron-edge-js
 
   build-win-arm64:
     uses: ./.github/workflows/build-electron.yml
+    name: build win-arm64
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
       arch: arm64
-      environment: electron-edge-js
 
   build-darwin-x64:
     uses: ./.github/workflows/build-electron.yml
+    name: build darwin-x64
     with:
       electron: ${{ inputs.electron }}
       os: macos-13
       arch: x64
-      environment: electron-edge-js
 
   build-darwin-arm64:
     uses: ./.github/workflows/build-electron.yml
+    name: build darwin-arm64
     with:
       electron: ${{ inputs.electron }}
       os: macos-15
       arch: arm64
-      environment: electron-edge-js
   
   test:
     uses: ./.github/workflows/build-test.yml
@@ -165,5 +165,5 @@ jobs:
         if: success()
         with:
           name: electron-edge-js-${{ inputs.electron }}
-          pattern: /**/**/${{ inputs.electron }}
+          pattern: '*-electron-edge-js-${{ inputs.electron }}'
     

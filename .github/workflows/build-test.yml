@@ -16,10 +16,16 @@ on:
         required: false
         default: ''
         type: string
+      environment:
+        description: 'environment'
+        required: false
+        default: 'test electron-edge-js'
+        type: string
 
 jobs:
   test-build:
     runs-on: ${{ inputs.os }}
+    environment: ${{ inputs.environment }}
     # name: test electron-${{ inputs.electron }} ${{ inputs.os }}
     name: test electron-${{ inputs.electron }}
     steps:
