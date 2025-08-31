@@ -50,28 +50,25 @@ function dotnet(compiler, buildParameters){
 }
 
 function coreclr(){
-    run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['restore'], function(code, signal) {
+    run('dotnet', ['build'], function(code, signal) {
         if (code === 0) {
-            run(process.platform === 'win32' ? 'dotnet.exe' : 'dotnet', ['build'], function(code, signal) {
-                if (code === 0) {
-                    try{
-                        fs.mkdirSync('test/测试', { recursive: true })
-                    }
-                    catch (e){
-                        console.error(e);
-                        throw e;
-                    }
-                    fs.copyFile('test/bin/Debug/test.dll', 'test/测试/Edge.Tests.CoreClr.dll', (e) => {
-                        if (e) {
-                            console.error(e);
-                            throw e;
-                        }
-                        runOnSuccess(0);
-                    });
+            try{
+                fs.mkdirSync('test/测试', { recursive: true })
+            }
+            catch (e){
+                console.error(e);
+                throw e;
+            }
+            fs.copyFile('test/bin/Debug/test.dll', 'test/测试/Edge.Tests.CoreClr.dll', (e) => {
+                if (e) {
+                    console.error(e);
+                    throw e;
                 }
+                runOnSuccess(0);
             });
         }
     });
+
 }
 
 build();
@@ -90,6 +87,7 @@ function run(cmd, args, onClose){
     });
 
     command.on('error', function(err) {
+        console.log(result);
         console.log(error);
         console.log(err);
     });
