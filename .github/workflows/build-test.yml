@@ -79,10 +79,10 @@ jobs:
           script: |
             try {
               const fs = require('fs')
-              fs.copyFileSync(`release/${process.platform}-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/edge_coreclr.node`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/edge_coreclr.node`);
-              fs.copyFileSync(`release/${process.platform}-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/edge_nativeclr.node`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/edge_nativeclr.node`);
+              fs.copyFileSync(`release/${process.platform}-electron-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/edge_coreclr.node`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/edge_coreclr.node`);
+              fs.copyFileSync(`release/${process.platform}-electron-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/edge_nativeclr.node`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/edge_nativeclr.node`);
               if(process.platform == 'darwin'){
-                fs.copyFileSync(`release/${process.platform}-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/MonoEmbedding.exe`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/MonoEmbedding.exe`);
+                fs.copyFileSync(`release/${process.platform}-electron-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/MonoEmbedding.exe`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/MonoEmbedding.exe`);
               }
             } catch(err) {
               core.error("Error copying artifacts")
