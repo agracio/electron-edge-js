@@ -44,7 +44,7 @@ jobs:
         id: test-matrix
         run: |
           echo "::notice::Starting build for Electron ${{ inputs.electron }}"
-          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\"}]}" >> $GITHUB_OUTPUT
+          echo "matrix={'include':[{\"name\":\"test-win-x64\",\"os\":\"windows-2025\",\"platform\":\"win\"},{\"name\":\"test-win-arm64\",\"os\":\"windows-11-arm\",\"platform\":\"win\"},{\"name\":\"test-darwin-x64\",\"os\":\"macos-13\",\"platform\":\"darwin\"},{\"name\":\"test-darwin-arm64\",\"os\":\"macos-15\",\"platform\":\"darwin\"}]}" >> $GITHUB_OUTPUT
 
   electron-version:
     runs-on: ubuntu-latest
@@ -80,45 +80,53 @@ jobs:
           echo "::notice::Using Electron version $(cat electron.txt) for Electron ${{ inputs.electron }}"
 
   build-win-x86:
-    uses: ./.github/workflows/build-electron.yml
+    uses: ./.github/workflows/build-edge.yml
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
+      platform: win
       arch: ia32
 
   build-win-x64:
-    uses: ./.github/workflows/build-electron.yml
+    uses: ./.github/workflows/build-edge.yml
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
+      platform: win
       arch: x64
 
   build-win-arm64:
-    uses: ./.github/workflows/build-electron.yml
+    uses: ./.github/workflows/build-edge.yml
     with:
       electron: ${{ inputs.electron }}
       os: windows-2025
+      platform: win
       arch: arm64
 
   build-darwin-x64:
-    uses: ./.github/workflows/build-electron.yml
+    uses: ./.github/workflows/build-edge.yml
     with:
       electron: ${{ inputs.electron }}
       os: macos-13
+      platform: darwin
       arch: x64
 
   build-darwin-arm64:
-    uses: ./.github/workflows/build-electron.yml
+    uses: ./.github/workflows/build-edge.yml
     with:
       electron: ${{ inputs.electron }}
       os: macos-15
+      platform: darwin
       arch: arm64
   
   test:
     uses: ./.github/workflows/build-test.yml
     with:
       electron: ${{ needs.electron-version.outputs.test-version }}
+      version: ${{ inputs.electron }}
       os: ${{ matrix.os }}
+      platform: ${{ matrix.platform }}
+      name: ${{ matrix.name }}
     needs: [electron-version, test-matrix, build-win-x86, build-win-x64, build-win-arm64, build-darwin-x64, build-darwin-arm64]
     strategy:
       matrix: ${{ fromJSON(needs.test-matrix.outputs.matrix) }}
@@ -126,26 +134,18 @@ jobs:
     name: ${{ matrix.name }}
 
   upload-artifacts:
-    if: ${{ inputs.build-all == false }}
+    if: ${{ inputs.build-all == false && success() }}
     runs-on: ubuntu-latest
     needs: [test]
 
-    name: upload artifacts electron-${{ inputs.electron }}
+    name: upload-artifacts
     steps:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        if: success()
         with:
           path: release
-          pattern: win32-electron-edge-js-*-${{ inputs.electron }}
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        if: success()
-        with:
-          path: release
-          pattern: darwin-electron-edge-js-*-${{ inputs.electron }}
+          pattern: '*-electron-edge-js-*-${{ inputs.electron }}'
 
       - name: Upload artifacts
         uses: actions/upload-artifact/merge@v4

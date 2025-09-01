@@ -11,54 +11,44 @@ on:
         description: 'Electron version'
         required: true
         type: string
-      arch:
-        description: 'arch'
-        required: false
-        default: ''
+      version:
+        description: 'Electron major version'
+        required: true
         type: string
       environment:
         description: 'environment'
         required: false
         default: 'test electron-edge-js'
         type: string
+      platform:
+        description: 'OS short name'
+        required: true
+        type: string
+      name:
+        description: 'short name'
+        required: true
+        type: string
 
 jobs:
   test-build:
     runs-on: ${{ inputs.os }}
     environment: ${{ inputs.environment }}
-    # name: electron-${{ inputs.electron }} ${{ inputs.os }}
-    # name: electron ${{ inputs.electron }}
-    name: test
+    name: ${{ inputs.name }}-electron-${{ inputs.electron }}
     timeout-minutes: 20
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: agracio/github-substring-action@v1.0.0
-        id: electron_version
-        with:
-          value: ${{ inputs.electron }}
-          length_from_start: 2
-
       - name: Create release folder
-        if:  runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          cmd /c if not exist "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}" mkdir "lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}"
-          cmd /c if not exist "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}" mkdir "lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}"
-          cmd /c if not exist "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}" mkdir "lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}"
-
-      - name: Create release folder
-        if:  runner.os == 'macOS'
         uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
             try {
               const fs = require('fs')
-              fs.mkdirSync('lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}', { recursive: true });
-              fs.mkdirSync('lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}', { recursive: true });
+              fs.rmdirSync(`lib/native/${process.platform}/${process.arch}/${{ inputs.version }}`, { recursive: true });
+              fs.mkdirSync(`lib/native/${process.platform}/${process.arch}/${{ inputs.version }}`, { recursive: true });
             } catch(err) {
               core.error("Error creating release directory")
               core.setFailed(err)
@@ -69,61 +59,31 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: release
-          pattern: win32-electron-edge-js-*-${{ steps.electron_version.outputs.substring }}*
+          pattern: win32-electron-edge-js-*-${{ inputs.version }}*
 
       - name: Download artifacts
-        if:  inputs.os == 'macos-15'
+        if: runner.os == 'macOS'
         uses: actions/download-artifact@v4
         with:
           path: release
-          pattern: darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}*
-
-      - name: Download artifacts
-        if: inputs.os == 'macos-13'
-        uses: actions/download-artifact@v4
-        with:
-          path: release
-          pattern: darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}*
-        
+          pattern: darwin-electron-edge-js-*-${{ inputs.version }}*
+       
       - name: List artifacts
         shell: bash
         run: ls -R release
 
       - name: Copy artifacts
-        if:  runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          cmd /c copy /y release\win32-electron-edge-js-ia32-${{ steps.electron_version.outputs.substring }}\win32\ia32\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\ia32\${{ steps.electron_version.outputs.substring }}
-          cmd /c copy /y release\win32-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}\win32\x64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\x64\${{ steps.electron_version.outputs.substring }}
-          cmd /c copy /y release\win32-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}\win32\arm64\${{ steps.electron_version.outputs.substring }}\edge_*.node lib\native\win32\arm64\${{ steps.electron_version.outputs.substring }}
-
-      - name: Copy artifacts
-        if:  inputs.os == 'macos-15'
         uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
             try {
               const fs = require('fs')
-              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
-              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
-              fs.copyFileSync('release/darwin-electron-edge-js-arm64-${{ steps.electron_version.outputs.substring }}/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/arm64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
-            } catch(err) {
-              core.error("Error copying artifacts")
-              core.setFailed(err)
-            }
-
-      - name: Copy artifacts
-        if: inputs.os == 'macos-13'
-        uses: actions/github-script@v7
-        with:
-          result-encoding: string
-          script: |
-            try {
-              const fs = require('fs')
-              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node');
-              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node');
-              fs.copyFileSync('release/darwin-electron-edge-js-x64-${{ steps.electron_version.outputs.substring }}/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe', 'lib/native/darwin/x64/${{ steps.electron_version.outputs.substring }}/MonoEmbedding.exe');
+              fs.copyFileSync(`release/${process.platform}-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/edge_coreclr.node`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/edge_coreclr.node`);
+              fs.copyFileSync(`release/${process.platform}-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/edge_nativeclr.node`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/edge_nativeclr.node`);
+              if(process.platform == 'darwin'){
+                fs.copyFileSync(`release/${process.platform}-edge-js-${process.arch}-${{ inputs.version }}/${process.platform}/${{ runner.arch }}/${{ inputs.version }}/MonoEmbedding.exe`, `lib/native/${process.platform}/${process.arch}/${{ inputs.version }}/MonoEmbedding.exe`);
+              }
             } catch(err) {
               core.error("Error copying artifacts")
               core.setFailed(err)
@@ -140,7 +100,7 @@ jobs:
         if:  runner.os == 'Windows'
         uses: andstor/file-existence-action@v3
         with:
-          files: "lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
+          files: "lib/native/win32/${{ runner.arch }}/${{ inputs.version }}/edge_coreclr.node, lib/native/win32/${{ runner.arch }}/${{ inputs.version }}/edge_nativeclr.node"
           fail: true
           ignore_case: true
 
@@ -148,7 +108,7 @@ jobs:
         if:  runner.os == 'macOS'
         uses: andstor/file-existence-action@v3
         with:
-          files: "lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_coreclr.node, lib/native/darwin/${{ runner.arch }}/${{ steps.electron_version.outputs.substring }}/edge_nativeclr.node"
+          files: "lib/native/darwin/${{ runner.arch }}/${{ inputs.version }}/edge_coreclr.node, lib/native/darwin/${{ runner.arch }}/${{ inputs.version }}/edge_nativeclr.node"
           fail: true
           ignore_case: true
 

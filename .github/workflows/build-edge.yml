@@ -21,13 +21,17 @@ on:
         required: false
         default: ''
         type: string
+      platform:
+        description: 'OS short name'
+        required: true
+        type: string
 
 jobs:
   build-electron:
     runs-on: ${{ inputs.os }}
     environment: ${{ inputs.environment }}
     # name: build electron-${{ inputs.electron }} ${{ inputs.os }} ${{ inputs.arch }}
-    name: build
+    name: build-${{ inputs.platform }}-${{ inputs.arch }}-electron-${{ inputs.electron }}
     timeout-minutes: 20
     steps:
       
@@ -75,15 +79,7 @@ jobs:
           path: ~/Library/Caches/node-gyp/
           key: '${{ runner.os }}-${{ inputs.electron }}'
 
-      - if: runner.os == 'Windows'
-        name: Build win ${{ inputs.arch }}
-        uses: ./.github/actions/build
-        with:
-          electron: ${{ inputs.electron }}
-          arch: ${{ inputs.arch }}
-
-      - if: runner.os == 'macOS'
-        name: Build darwin ${{ inputs.arch }}
+      - name: Build ${{ inputs.arch }}
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
