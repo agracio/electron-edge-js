@@ -6,8 +6,8 @@
     <TargetFrameworks>net462;net8.0;</TargetFrameworks>
     <AssemblyName>EdgeJs</AssemblyName>
     <PackageId>Edge.js</PackageId>
-    <PackageTags>node.js;node;.net;edge;edge.js;v8;clr;coreclr;mono;interop;javascript</PackageTags>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/agracio/electron-edge-js/master/LICENSE</PackageLicenseUrl>
+    <PackageTags>node.js;node;.net;edge;edge.js;electron;dotnet;v8;clr;coreclr;mono;interop;javascript</PackageTags>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/agracio/edge-js/master/LICENSE</PackageLicenseUrl>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <ItemGroup>
