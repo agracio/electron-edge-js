@@ -29,19 +29,19 @@
 
 | Electron     |  x86/x64           | arm64              |
 | ------------ |  ----------------- | ------------------ |
-|  32.x - 37.x | :heavy_check_mark: | :heavy_check_mark: |
+|  33.x - 38.x | :heavy_check_mark: | :heavy_check_mark: |
 
 ### macOS binaries pre-compiled for 
 
 | Electron     |  x64               | arm64              |
 | ------------ |  ----------------- | ------------------ |
-|  32.x - 37.x | :heavy_check_mark: | :heavy_check_mark: |
+|  33.x - 38.x | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Supports
 
 | Electron     | x64                | arm64              |
 |--------------|--------------------|--------------------|
-|  29.x - 37.x | :heavy_check_mark: | :heavy_check_mark: |
+|  29.x - 38.x | :heavy_check_mark: | :heavy_check_mark: |
 
 ### Linux
 On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.
@@ -50,7 +50,7 @@ On Linux  `npm install` will compile binaries with correct Electron headers for 
 
 | Electron     | x64                | arm64              |
 | ------------ | ------------------ | ------------------ |
-|  29.x - 37.x | :heavy_check_mark: | :heavy_check_mark: |
+|  29.x - 38.x | :heavy_check_mark: | :heavy_check_mark: |
 
 Other Linux architectures might work but have not been tested.
 
