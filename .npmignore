@@ -110,3 +110,4 @@ getVersion*.js
 *.vcxproj
 getVersion*.js
 electron*.txt
+tools/build.js
