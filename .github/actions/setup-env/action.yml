@@ -73,9 +73,17 @@ runs:
         key: ${{ inputs.os }}-${{ inputs.electron }}-${{ hashFiles('package.json') }}
 
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
+        
+    - name: Cache NuGet
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ inputs.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ inputs.os }}-nuget-
 
     - name: Setup Mono
       if: runner.os == 'macOS'
@@ -97,6 +105,8 @@ runs:
 
     - name: npm install
       shell: bash
-      run: npm i
+      run: npm i --no-audit
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
+        DOTNET_NOLOGO: 1
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
