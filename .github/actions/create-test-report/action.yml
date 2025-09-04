@@ -30,7 +30,7 @@ runs:
         script: |
           try {
             const fs = require('fs')
-            const jsonString = fs.readFileSync('mochawesome.json')
+            const jsonString = fs.readFileSync('test/mochawesome-report/mochawesome.json', 'utf8');
             var report = JSON.parse(jsonString);
 
             let duration = Number(report.stats.duration) || (report.stats.end - report.stats.start);
