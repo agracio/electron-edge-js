@@ -70,7 +70,7 @@ runs:
         cache-name: cache-node-modules
       with:
         path: node_modules
-        key: node-modules-${{ input.os }}-${{ inputs.electron }}-${{ hashFiles('package-lock.json') }}
+        key: node-modules-${{ inputs.os }}-${{ inputs.electron }}-${{ hashFiles('package-lock.json') }}
         
     - name: Cache NuGet
       uses: actions/cache@v4
