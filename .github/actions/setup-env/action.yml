@@ -61,7 +61,7 @@ runs:
         cache-name: cache-node-gyp
       with:
         path: ~/.cache/node-gyp
-        key: '${{ inputs.os }}-${{ runner.arch }}-${{ inputs.electron}}'
+        key: 'node-gyp-${{ runner.os }}-${{ runner.arch }}-${{ inputs.electron}}'
 
     - name: Cache node modules
       id: cache-nodemodules
@@ -70,21 +70,21 @@ runs:
         cache-name: cache-node-modules
       with:
         path: node_modules
-        key: ${{ inputs.os }}-${{ inputs.electron }}-${{ hashFiles('package.json') }}
+        key: node-modules-${{ runner.os }}-${{ inputs.electron }}-${{ hashFiles('package-lock.json') }}
+        
+    - name: Cache NuGet
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ inputs.os }}-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ inputs.os }}-
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '8.0.x' # SDK Version to use; x will use the latest version of the 8.0 channel
         
-    - name: Cache NuGet
-      uses: actions/cache@v4
-      with:
-        path: ~/.nuget/packages
-        key: ${{ inputs.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-        restore-keys: |
-          ${{ inputs.os }}-nuget-
-
     - name: Setup Mono
       if: runner.os == 'macOS'
       shell: bash
@@ -92,11 +92,13 @@ runs:
         brew install mono --overwrite
         brew reinstall pkg-config
 
-    # - name: Setup Mono
+    # - uses: actions/checkout@v4
+    # - uses: awalsh128/cache-apt-pkgs-action@latest
+    #   name: Setup Mono
     #   if: runner.os == 'Linux'
-    #   shell: bash
-    #   run: |
-    #     sudo apt -q install mono-complete pkg-config gdb
+    #   with:
+    #     packages: mono-complete pkg-config libglib2.0-dev
+    #     version: 1.0
 
     - name: Versions
       shell: bash

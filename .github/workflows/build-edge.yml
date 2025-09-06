@@ -68,7 +68,7 @@ jobs:
           cache-name: cache-node-gyp
         with:
           path: ~\AppData\Local\node-gyp\Cache
-          key: '${{ runner.os }}-${{ inputs.arch }}-${{ inputs.electron }}'
+          key: 'node-gyp-${{ runner.os }}-${{ inputs.arch }}-${{ inputs.electron }}'
 
       - if: runner.os == 'macOS'
         name: Cache node-gyp macOS
@@ -77,7 +77,7 @@ jobs:
           cache-name: cache-node-gyp
         with:
           path: ~/Library/Caches/node-gyp/
-          key: '${{ runner.os }}-${{ inputs.arch }}-${{ inputs.electron }}'
+          key: 'node-gyp-${{ runner.os }}-${{ inputs.arch }}-${{ inputs.electron }}'
 
       - name: Build ${{ inputs.arch }}
         uses: ./.github/actions/build

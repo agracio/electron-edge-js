@@ -99,20 +99,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
     
-      - name: Cache node modules
-        id: cache-nodemodules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
-
-      - name: npm install
-        shell: bash
-        run: npm i
-        env:
-          DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
       - name: Electron versions
         shell: bash
