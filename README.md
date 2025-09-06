@@ -139,6 +139,21 @@ module.export = {
     }
 }
 ```  
+
+### Vite
+
+When using dotnet Core CLR environment variable `process.env.EDGE_USE_CORECLR` needs to be set in Vite config instead of code.
+
+`vite.config.ts`
+
+```typescript
+export default defineConfig(({ command }) => {
+  process.env.EDGE_USE_CORECLR = 1;
+  return {
+    // ..
+  }
+});
+```
  
 Related issues to use for troubleshooting:  
 https://github.com/agracio/electron-edge-js/issues/39  
