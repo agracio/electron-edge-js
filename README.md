@@ -163,7 +163,8 @@ https://github.com/agracio/electron-edge-js/issues/138
 
 ## electron-builder
 
-`electron-edge-js` should be excluded from rebuild.
+electron-builder example based on `electron-edge-js-quick-start`  
+https://github.com/agracio/electron-edge-js-quick-start-builder
 
 ## electron-forge
 
