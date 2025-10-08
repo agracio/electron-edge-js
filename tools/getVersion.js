@@ -3,6 +3,7 @@ const { execSync } = require('child_process');
 
 const majors = [33, 34, 35, 36, 37, 38];
 const oses = ['macos-13', 'macos-15', 'ubuntu-22.04', 'ubuntu-22.04-arm', 'windows-2025', 'windows-11-arm'];
+// const oses = ['ubuntu-22.04', 'ubuntu-22.04-arm'];
 
 getVersion();
 

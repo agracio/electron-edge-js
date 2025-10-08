@@ -89,7 +89,7 @@ TemporaryGeneratedFile*.*
 /lib/native/win32/arm64/*/vccorlib140.dll
 /lib/native/win32/arm64/*/vcruntime140.dll
 
-test/mochawesome-report
+test/mochawesome-report/
 mochawesome-report
 mochawesome.json
 
