@@ -92,13 +92,13 @@ runs:
         brew install mono --overwrite
         brew reinstall pkg-config
 
-    # - uses: actions/checkout@v4
-    # - uses: awalsh128/cache-apt-pkgs-action@latest
-    #   name: Setup Mono
-    #   if: runner.os == 'Linux'
-    #   with:
-    #     packages: mono-complete pkg-config libglib2.0-dev
-    #     version: 1.0
+    - uses: actions/checkout@v4
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      name: Setup Mono
+      if: runner.os == 'Linux'
+      with:
+        packages: mono-complete pkg-config libglib2.0-dev
+        version: 1.0
 
     - name: Versions
       shell: bash
