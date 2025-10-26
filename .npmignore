@@ -94,12 +94,12 @@ performance
 tools/*.cs
 tools/*.vbs
 tools/nuget
+tools/coverage.js
+tools/*test*.js
+tools/download*.js
 *.nupkg
 appveyor*.*
 .github
-tools/coverage.js
-tools/test*.js
-tools/download*.js
 test/mochawesome-report
 mochawesome-report
 mochawesome.json
@@ -111,3 +111,5 @@ getVersion*.js
 getVersion*.js
 electron*.txt
 tools/build.js
+.gitattributes
+Dockerfile
