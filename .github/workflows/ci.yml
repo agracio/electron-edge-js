@@ -82,7 +82,7 @@ env:
 
 jobs:
   electron-versions:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.electron-versions.outputs.matrix }}
 
