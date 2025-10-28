@@ -6,7 +6,7 @@ on:
       electron:
         description: 'Electron version to build for'
         required: true
-        default: '38'
+        default: '39'
         type: choice
         options:
         - '34'
