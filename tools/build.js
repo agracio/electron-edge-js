@@ -141,23 +141,24 @@ function buildAll() {
     if(process.platform === 'linux'){
         build(process.arch);
     }
-    else{
+    else if(process.platform === 'darwin'){
+        // On macOS, build only for the current architecture as universal builds are not supported
+        build(process.arch);
+        console.log();
+        copyBuildOutput(a);
+        deleteBuildDir();
+    }
+    else if(process.platform === 'win32'){
         for (const a of arch) {
-            // if(a === 'ia32' && process.platform === 'win32' && Number(electronVersion) > 22){
-            //     console.log();
-            //     console.log(`Skipping x86 build for Electron ${electronVersion}`);
-            //     continue;
-            // }
-            if(a === 'ia32' && process.platform !== 'win32'){
-                console.log();
-                console.log(`Skipping x86 build on non-windows platform`);
-                continue;
-            }
             build(a);
             console.log();
             copyBuildOutput(a);
+            deleteBuildDir();
         } 
-        deleteBuildDir();
+    }
+    else{
+        console.error(`Unsupported platform: ${process.platform}`);
+        process.exit(1);
     }
     console.log();
     console.log('All builds completed successfully');
