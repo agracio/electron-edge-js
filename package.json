@@ -47,12 +47,12 @@
     "nan": "npm:@agracio/nan@^2.24.0"
   },
   "devDependencies": {
-    "electron": "^39.0.0",
+    "electron": "^39.2.4",
     "follow-redirects": "^1.15.11",
-    "mocha": "11.7.4",
+    "mocha": "11.7.5",
     "mochawesome": "^7.1.4",
-    "mochawesome-merge": "^5.0.0",
-    "mochawesome-report-generator": "^6.3.0"
+    "mochawesome-merge": "^5.1.0",
+    "mochawesome-report-generator": "^6.3.2"
   },
   "homepage": "https://github.com/agracio/electron-edge-js",
   "repository": {
