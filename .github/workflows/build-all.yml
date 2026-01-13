@@ -9,12 +9,6 @@ env:
   DOTNET_NOLOGO: 1
 
 jobs:
-       
-  build-34:
-    uses: ./.github/workflows/build.yml
-    with:
-      electron: 34
-      build-all: true
 
   build-35:
     uses: ./.github/workflows/build.yml
@@ -46,9 +40,15 @@ jobs:
       electron: 39
       build-all: true
 
+  build-40:
+    uses: ./.github/workflows/build.yml
+    with:
+      electron: 40
+      build-all: true
+
   upload-artifacts:
     runs-on: ubuntu-latest
-    needs: [build-34, build-35, build-36, build-37, build-38, build-39]
+    needs: [build-35, build-36, build-37, build-38, build-39, build-40]
     timeout-minutes: 20
     strategy:
       fail-fast: false

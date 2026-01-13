@@ -6,15 +6,15 @@ on:
       electron:
         description: 'Electron version to build for'
         required: true
-        default: '39'
+        default: '40'
         type: choice
         options:
-        - '34'
         - '35'
         - '36'
         - '37'
         - '38'
         - '39'
+        - '40'
   workflow_call:
     inputs:
       electron:
