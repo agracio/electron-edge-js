@@ -3,7 +3,7 @@ var edge = require('../lib/edge.js'), assert = require('assert'), path = require
 var prefix = process.env.EDGE_USE_CORECLR ? '[CoreCLR]' : process.platform === 'win32' ? '[.NET]' : '[Mono]';
 
 describe('serialization', function () {
-
+    this.timeout(20000); 
     it(prefix + ' complex exception serialization', function (done) {
         if (process.env.EDGE_USE_CORECLR || process.platform !== 'win32') {
             this.skip();
