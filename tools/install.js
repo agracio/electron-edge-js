@@ -69,9 +69,12 @@ if (process.platform === 'win32') {
 	copyRedist(lib64bit, dest64dirs);
 	copyRedist(libarm64, destarmdirs);
 
-	spawn('dotnet', ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
+	spawn('dotnet', ['restore'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
 	.on('close', function() {
-		//require('./checkplatform');
+		spawn('dotnet', ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
+			// .on('close', function() {
+			// 	require('./checkplatform');
+			// });
 	});
 
 } 
@@ -91,7 +94,10 @@ else {
 				fs.rmSync(path.resolve(__dirname, '../build'), { recursive: true, force: true });
 			}
 
-			spawn('dotnet', ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
+				spawn('dotnet', ['restore'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
+				.on('close', function() {
+					spawn('dotnet', ['build', '--configuration', 'Release'], { stdio: 'inherit', cwd: path.resolve(__dirname, '..', 'lib', 'bootstrap') })
+				});
 		}
 		else{
 			build();

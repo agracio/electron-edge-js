@@ -5,7 +5,7 @@
     "url": "http://tomasz.janczuk.org",
     "twitter": "tjanczuk"
   },
-  "version": "40.0.0",
+  "version": "40.0.1",
   "description": "Edge.js: run .NET and Node.js in-process on Electron",
   "tags": [
     "owin",
@@ -47,7 +47,7 @@
     "nan": "npm:@agracio/nan@^2.24.0"
   },
   "devDependencies": {
-    "electron": "^40.0.0",
+    "electron": "^40.1.0",
     "follow-redirects": "^1.15.11",
     "mocha": "11.7.5",
     "mochawesome": "^7.1.4",
