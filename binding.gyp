@@ -265,7 +265,8 @@
                 '/clr',
                 '/wd4506',
                 '/DHAVE_NATIVECLR'
-              ]
+              ],
+              'FloatingPointModel': 'Precise'
             },
             'VCLinkerTool': {
               'AdditionalOptions': [
