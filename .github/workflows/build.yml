@@ -9,12 +9,12 @@ on:
         default: '40'
         type: choice
         options:
-        - '35'
         - '36'
         - '37'
         - '38'
         - '39'
         - '40'
+        - '41'
   workflow_call:
     inputs:
       electron:
