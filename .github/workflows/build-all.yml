@@ -58,19 +58,19 @@ jobs:
     steps:
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: release
           pattern: win32-electron-edge-js*
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: release
           pattern: darwin-electron-edge-js*
 
       - name: Upload artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v7
         with:
           name: electron-edge-js
           pattern: '*electron-edge-js*'

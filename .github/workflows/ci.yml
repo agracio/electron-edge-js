@@ -38,6 +38,7 @@ on:
       - '*.sln'
       - '*.vcxproj'
       - 'tools/build.js'
+      - 'tools/electron_42_patch.js'
   push:
     branches-ignore:
       - 'circleci'
@@ -76,6 +77,7 @@ on:
       - '*.sln'
       - '*.vcxproj'
       - 'tools/build.js'
+      - 'tools/electron_42_patch.js'
 
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true # required to setup CSC
@@ -92,12 +94,12 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # - name: Setup NodeJS
-      #   uses: actions/setup-node@v4
+      #   uses: actions/setup-node@v6
       #   with:
-      #     node-version: 22
+      #     node-version: 24
       #     cache: 'npm'
       #     cache-dependency-path: package-lock.json
     
@@ -119,7 +121,7 @@ jobs:
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup env
         uses: ./.github/actions/setup-env

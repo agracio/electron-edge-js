@@ -24,7 +24,7 @@ runs:
       run: node tools/mergeTests.js ${{ inputs.electron }}
 
     - name: Test report
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       with:
         result-encoding: string
         script: |
@@ -93,7 +93,7 @@ runs:
           }
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: ${{ inputs.upload == 'true' && success() }}
       with:
         name: ${{ inputs.name }}-${{ inputs.os }}-${{ inputs.electron }}

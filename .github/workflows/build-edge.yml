@@ -36,7 +36,7 @@ jobs:
     steps:
       
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup env
         uses: ./.github/actions/setup-env
@@ -49,7 +49,7 @@ jobs:
         run: npm i -g node-gyp
 
       - name: Create release folder
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -63,7 +63,7 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Cache node-gyp Windows
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-node-gyp
         with:
@@ -72,7 +72,7 @@ jobs:
 
       - if: runner.os == 'macOS'
         name: Cache node-gyp macOS
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-node-gyp
         with:
@@ -86,7 +86,7 @@ jobs:
           arch: ${{ inputs.arch }}
     
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: runner.os == 'Windows' && success()
         with:
           name: win32-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
@@ -94,7 +94,7 @@ jobs:
             release
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: runner.os == 'macOS' && success()
         with:
           name: darwin-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
