@@ -83,7 +83,7 @@ function patchAllKnownCaches(electronVersion) {
         return;
     }
     for (const headerPath of candidates) {
-        console.log(`found cppgc/heap.h at ${headerPath}`.bold.blue);
+        // console.log(`found cppgc/heap.h at ${headerPath}`.bold.blue);
         patchCppgcHeapAt(headerPath);
     }
 }
