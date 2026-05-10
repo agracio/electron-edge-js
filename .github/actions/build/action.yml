@@ -12,26 +12,34 @@ runs:
   using: "composite"
   steps:
 
-    - name: Build ${{ inputs.arch }}
+    - name: node-gyp configure
+      shell: bash
+      run: node-gyp configure --target=${{ inputs.electron }}.0.0 --disturl=https://electronjs.org/headers --runtime=electron --release --arch=${{ inputs.arch }}
+
+    - name: Windows arm64 patch
+      if: runner.os == 'Windows' && inputs.arch == 'arm64'
       shell: pwsh
       run: |
       
-          node-gyp configure --target=${{ inputs.electron }}.0.0 --disturl=https://electronjs.org/headers --runtime=electron --release --arch=${{ inputs.arch }}
-
           if ( '${{ inputs.arch }}' -eq 'arm64' -And '${{ runner.os }}' -eq 'Windows'){
             (Get-Content -Raw build/build_managed.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/build_managed.vcxproj
             (Get-Content -Raw build/edge_coreclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
             (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace '<FloatingPointModel>Strict</FloatingPointModel>', '<!-- <FloatingPointModel>Strict</FloatingPointModel> -->' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
           }
-          
-          if ( '${{ inputs.electron }}' -eq 32 -And '${{ runner.os }}' -eq 'Windows'){
-              (Get-Content -Raw build/build_managed.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/build_managed.vcxproj
-              (Get-Content -Raw build/edge_coreclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_coreclr.vcxproj
-              (Get-Content -Raw build/edge_nativeclr.vcxproj) -replace 'std:c\+\+17', 'std:c++20' | Out-File -Encoding Utf8 build/edge_nativeclr.vcxproj
-          }
 
-          node-gyp build
+    - name: Windows Electron 42 patch
+      if: ${{ runner.os  == 'Windows' && inputs.electron >= 42 }}
+      shell: bash
+      run: node tools/electron_42_patch.js ${{ inputs.electron }}.0.0
 
+    - name: node-gyp build
+      shell: bash
+      run: node-gyp build
+
+    - name: Copy build artifacts
+      shell: pwsh
+      run: |
+      
           if ( '${{ runner.os }}' -eq 'Windows'){
             cmd /c copy /y build\Release\edge_*.node release\win32\${{ inputs.arch }}\${{ inputs.electron }}
             cmd /c rmdir /S /Q build
@@ -45,5 +53,3 @@ runs:
             
             node-gyp clean
           }
-
-
