@@ -50,7 +50,7 @@ On Linux  `npm install` will compile binaries with correct Electron headers for 
 
 | Electron     | x64                | arm64              |
 | ------------ | ------------------ | ------------------ |
-|  29.x - 43.x | :heavy_check_mark: | :heavy_check_mark: |
+|  29.x - 42.x | :heavy_check_mark: | :heavy_check_mark: |
 
 Other Linux architectures might work but have not been tested.
 
