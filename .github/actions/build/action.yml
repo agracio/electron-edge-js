@@ -28,7 +28,7 @@ runs:
           }
 
     - name: Windows Electron 42 patch
-      if: ${{ runner.os  == 'Windows' && inputs.electron >= 42 }}
+      if: ${{ runner.os  == 'Windows' && inputs.electron == 42 }}
       shell: bash
       run: node tools/electron_42_patch.js ${{ inputs.electron }}.0.0
 
