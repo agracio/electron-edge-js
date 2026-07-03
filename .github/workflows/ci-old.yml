@@ -91,7 +91,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-15-intel, macos-15, ubuntu-22.04, ubuntu-22.04-arm]
-        electron: [32.3.3, 33.4.11, 34.5.8, 35.7.5, 36.9.5]
+        electron: [33.4.11, 34.5.8, 35.7.5, 36.9.5, 37.10.3]
         
     name: test-${{ matrix.os }}-v${{ matrix.electron }}
     steps:
