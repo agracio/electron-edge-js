@@ -51,7 +51,7 @@
     "electron": "^42.0.1",
     "follow-redirects": "^1.16.0",
     "mocha": "^11.7.5",
-    "mochawesome": "^7.1.4",
+    "mochawesome": "^8.0.1",
     "mochawesome-merge": "^5.1.1",
     "mochawesome-report-generator": "^6.3.2"
   },
