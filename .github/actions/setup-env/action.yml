@@ -105,6 +105,12 @@ runs:
       run: |
         node -v && npm -v && dotnet --version && node -p process.platform && node -p process.arch
 
+    - name: Disable AppImage restrictions
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
+
     - name: npm install
       shell: bash
       run: npm i --no-audit
