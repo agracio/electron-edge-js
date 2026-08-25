@@ -184,9 +184,10 @@ public class CoreCLREmbedding
 
     private class EdgeAssemblyResolver
     {
-        internal readonly Dictionary<string, string> CompileAssemblies = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, string> _libraries = new(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<string, string> _nativeLibraries = new(StringComparer.OrdinalIgnoreCase);
+        private readonly object _syncRoot = new();
+        internal readonly ConcurrentDictionary<string, string> CompileAssemblies = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, string> _libraries = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, string> _nativeLibraries = new(StringComparer.OrdinalIgnoreCase);
         private readonly IList<string> _knownPaths = new List<string>();
         
         private readonly string _packagesPath;
@@ -346,10 +347,13 @@ public class CoreCLREmbedding
                 // Try to load from Edge.js compiler
                 if (compilerDependencies)
                 {
-                    foreach (var knownPath in _knownPaths)
+                    lock (_syncRoot)
                     {
-                        assemblyPath = Path.Combine(knownPath, Path.GetFileName(normalizedPath));
-                        if(File.Exists(assemblyPath)) break;
+                        foreach (var knownPath in _knownPaths)
+                        {
+                            assemblyPath = Path.Combine(knownPath, Path.GetFileName(normalizedPath));
+                            if(File.Exists(assemblyPath)) break;
+                        }
                     }
                 }
 
@@ -563,9 +567,12 @@ public class CoreCLREmbedding
         {
             DebugMessage("CoreCLREmbedding::AddAssemblyPath (CLR) - Adding known assembly path {0}", assemblyPath);
             
-            if (!_knownPaths.Contains(assemblyPath))
+            lock (_syncRoot)
             {
-                _knownPaths.Add(assemblyPath);
+                if (!_knownPaths.Contains(assemblyPath))
+                {
+                    _knownPaths.Add(assemblyPath);
+                }
             }
         }
 
@@ -592,21 +599,24 @@ public class CoreCLREmbedding
 
         private bool TryAddAssembly(string assemblyName)
         {
-            foreach (var path in _knownPaths)
+            lock (_syncRoot)
             {
-                var assembly = Path.Combine(path, assemblyName + ".dll");
-                if (File.Exists(assembly))
+                foreach (var path in _knownPaths)
                 {
-                    _libraries[assemblyName] = assembly;
-                    return true;
-                }
-                else
-                {
-                    assembly = Path.Combine(path, assemblyName + ".exe");
+                    var assembly = Path.Combine(path, assemblyName + ".dll");
                     if (File.Exists(assembly))
                     {
                         _libraries[assemblyName] = assembly;
                         return true;
+                    }
+                    else
+                    {
+                        assembly = Path.Combine(path, assemblyName + ".exe");
+                        if (File.Exists(assembly))
+                        {
+                            _libraries[assemblyName] = assembly;
+                            return true;
+                        }
                     }
                 }
             }
