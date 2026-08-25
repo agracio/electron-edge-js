@@ -77,6 +77,7 @@ on:
       - '*.sln'
       - '*.vcxproj'
       - 'tools/build.js'
+      - 'tools/getVersion.js'
       - 'tools/electron_42_patch.js'
 
 env:
