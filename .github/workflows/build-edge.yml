@@ -39,16 +39,19 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup env
+        if: ${{ (inputs.arch == 'ia32' && inputs.electron < 44) || (inputs.arch == 'x64') || (inputs.arch == 'arm64') }}
         uses: ./.github/actions/setup-env
         with:
           electron: '${{ inputs.electron }}.0.0'
           os: ${{ inputs.os }}
 
       - name: install node-gyp
+        if: ${{ (inputs.arch == 'ia32' && inputs.electron < 44) || (inputs.arch == 'x64') || (inputs.arch == 'arm64') }}
         shell: bash
         run: npm i -g node-gyp
 
       - name: Create release folder
+        if: ${{ (inputs.arch == 'ia32' && inputs.electron < 44) || (inputs.arch == 'x64') || (inputs.arch == 'arm64') }}
         uses: actions/github-script@v9
         with:
           result-encoding: string
@@ -79,7 +82,9 @@ jobs:
           path: ~/Library/Caches/node-gyp/
           key: 'node-gyp-${{ runner.os }}-${{ inputs.arch }}-${{ inputs.electron }}'
 
+
       - name: Build ${{ inputs.arch }}
+        if: ${{ (inputs.arch == 'ia32' && inputs.electron < 44) || (inputs.arch == 'x64') || (inputs.arch == 'arm64') }}
         uses: ./.github/actions/build
         with:
           electron: ${{ inputs.electron }}
@@ -87,7 +92,7 @@ jobs:
     
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
-        if: runner.os == 'Windows' && success()
+        if: ${{ ((inputs.arch == 'ia32' && inputs.electron < 44) || (inputs.arch == 'x64') || (inputs.arch == 'arm64')) && runner.os == 'Windows' && success() }}
         with:
           name: win32-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
           path: |
@@ -95,7 +100,7 @@ jobs:
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
-        if: runner.os == 'macOS' && success()
+        if: ${{ ((inputs.arch == 'ia32' && inputs.electron < 44) || (inputs.arch == 'x64') || (inputs.arch == 'arm64')) && runner.os == 'macOS' && success() }}
         with:
           name: darwin-electron-edge-js-${{ inputs.arch }}-${{ inputs.electron }}
           path: |
