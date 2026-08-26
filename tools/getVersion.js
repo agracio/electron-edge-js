@@ -40,6 +40,8 @@ function getVersion() {
     
         oses.forEach((os) => {
             versions.forEach((version) => {
+                let major = Number(version.split('.')[0]);
+                if(major > 42 && os.startsWith('ubuntu')) return; // skip unsupported versions
                 results.push({'electron': `${version}`, 'os': `${os}`});
             });
         });
