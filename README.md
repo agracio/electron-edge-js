@@ -23,9 +23,11 @@
 When using Electron version that is not pre-compiled `electron-edge-js` binaries will be compiled during `npm install` using `node-gyp`.
 - Linux will always compile `electron-edge-js` binaries during `npm install` using `node-gyp`.
 
+> [!WARNING] 
+> - Currently `electron-edge-js` on Linux does not support **Electron 43** and above due to unknown bug.  
+
 > [!NOTE] 
-> - Currently Linux build does not support **Electron 43** and above due to unknown bug.  
-> - Due to `nan` module compatibility issues versions prior to **Electron 29** are not supported.
+> - Versions prior to **Electron 29** are not supported.
 
 -----
 
