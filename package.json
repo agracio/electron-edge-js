@@ -44,12 +44,12 @@
   "license": "MIT",
   "dependencies": {
     "edge-cs": "npm:@agracio/edge-cs@^1.3.7",
-    "nan": "^2.29.0"
+    "nan": "^2.30.0"
   },
   "devDependencies": {
     "colors": "^1.4.0",
-    "electron": "^44.9.0",
-    "follow-redirects": "^1.16.1",
+    "electron": "^44.9.3",
+    "follow-redirects": "^1.16.2",
     "mocha": "^12.0.3",
     "mochawesome": "^8.1.1",
     "mochawesome-merge": "^5.1.1",

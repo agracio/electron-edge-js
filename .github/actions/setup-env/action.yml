@@ -113,7 +113,9 @@ runs:
 
     - name: npm install
       shell: bash
-      run: npm i --no-audit
+      run: |
+        npm install-scripts approve electron
+        npm i --no-audit
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: 1
         DOTNET_NOLOGO: 1
