@@ -27,7 +27,7 @@ When using Electron version that is not pre-compiled `electron-edge-js` binaries
 > - Currently `electron-edge-js` on Linux does not support **Electron 43** and above due to unknown bug.  
 
 > [!NOTE] 
-> - Versions prior to **Electron 29** are not supported.
+> - Versions prior to **Electron 40** are not supported.
 
 -----
 
@@ -35,20 +35,20 @@ When using Electron version that is not pre-compiled `electron-edge-js` binaries
 
 | Electron    | x86                | x64                | arm64              |
 | ----------- |--------------------|--------------------|--------------------|
-| 39.x - 43.x | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| 44.x        | :x:                | :heavy_check_mark: | :heavy_check_mark: |
+| 40.x - 43.x | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| 44.x - 45.x | :x:                | :heavy_check_mark: | :heavy_check_mark: |
 
 ### macOS binaries pre-compiled for 
 
 | Electron    |  x64               | arm64              |
 | ----------- |  ----------------- | ------------------ |
-| 39.x - 44.x | :heavy_check_mark: | :heavy_check_mark: |
+| 40.x - 45.x | :heavy_check_mark: | :heavy_check_mark: |
 
 #### Supports
 
 | Electron    | x64                | arm64              |
 |------------ |--------------------|--------------------|
-| 29.x - 44.x | :heavy_check_mark: | :heavy_check_mark: |
+| 40.x - 45.x | :heavy_check_mark: | :heavy_check_mark: |
 
 ### Linux
 On Linux  `npm install` will compile binaries with correct Electron headers for a given Electron version.
@@ -57,7 +57,7 @@ On Linux  `npm install` will compile binaries with correct Electron headers for 
 
 | Electron    | x64                | arm64              |
 | ----------- | ------------------ | ------------------ |
-| 29.x - 42.x | :heavy_check_mark: | :heavy_check_mark: |
+| 40.x - 42.x | :heavy_check_mark: | :heavy_check_mark: |
 
 Other Linux architectures might work but have not been tested.
 

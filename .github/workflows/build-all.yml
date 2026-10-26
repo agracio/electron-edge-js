@@ -10,18 +10,6 @@ env:
 
 jobs:
 
-  build-38:
-    uses: ./.github/workflows/build.yml
-    with:
-      electron: 38
-      build-all: true
-
-  build-39:
-    uses: ./.github/workflows/build.yml
-    with:
-      electron: 39
-      build-all: true
-
   build-40:
     uses: ./.github/workflows/build.yml
     with:
@@ -46,14 +34,26 @@ jobs:
       electron: 43
       build-all: true
 
+  build-44:
+    uses: ./.github/workflows/build.yml
+    with:
+      electron: 44
+      build-all: true
+      
+  build-45:
+    uses: ./.github/workflows/build.yml
+    with:
+      electron: 45
+      build-all: true
+
   upload-artifacts:
     runs-on: ubuntu-latest
-    needs: [build-38, build-39, build-40, build-41, build-42, build-43]
+    needs: [build-40, build-41, build-42, build-43, build-44, build-45]
     timeout-minutes: 20
     strategy:
       fail-fast: false
 
-    name: upload artifcts
+    name: upload artifacts
     if: success()
     steps:
 

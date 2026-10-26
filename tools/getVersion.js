@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { execSync } = require('child_process');
 
-const majors = [39, 40, 41, 42, 43, 44];
+const majors = [40, 41, 42, 43, 44, 45];
 const oses = ['macos-15-intel', 'macos-15', 'ubuntu-26.04', 'ubuntu-26.04-arm', 'windows-2025', 'windows-11-arm'];
 // const oses = ['ubuntu-22.04', 'ubuntu-22.04-arm'];
 
